@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap');
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: 35 30% 97%; /* warm cream #faf6ef */
+  --foreground: 22 40% 12%; /* espresso near-black */
+  --primary: 22 55% 28%; /* espresso brown #6b3a1f */
+  --primary-foreground: 35 30% 97%;
+  --accent: 38 65% 55%; /* warm amber #c9833a */
+  --surface: 35 25% 91%; /* warm oat */
+  --muted-foreground: 22 15% 50%;
+  --border: 35 20% 82%;
+  --footer: 22 55% 28%; /* espresso brown */
+  --footer-foreground: 35 30% 97%;
+}
+
+.dark {
+  --background: 28 25% 9%; /* deep warm brown-black */
+  --foreground: 40 35% 92%; /* light cream */
+  --primary: 32 50% 78%; /* pale tan */
+  --primary-foreground: 28 30% 14%;
+  --accent: 38 75% 58%; /* brighter amber */
+  --surface: 30 20% 15%;
+  --muted-foreground: 35 15% 62%;
+  --border: 30 18% 24%;
+  --footer: 28 22% 12%; /* deep brown */
+  --footer-foreground: 40 35% 90%;
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-surface: hsl(var(--surface));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-footer: hsl(var(--footer));
+  --color-footer-foreground: hsl(var(--footer-foreground));
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: hsl(var(--accent) / 0.3);
+  }
+}
+
+@layer utilities {
+  .container-site {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 76rem;
+    padding-inline: 1.5rem;
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "@groundwork/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "migrate": "tsx scripts/migrate.ts",
+    "seed": "tsx scripts/seed.ts",
+    "studio": "drizzle-kit studio",
+    "lint": "oxlint src scripts"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "drizzle-orm": "^0.44.0",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/pg": "^8.11.10",
+    "drizzle-kit": "^0.31.0",
+    "dotenv": "^16.4.5",
+    "oxlint": "^1.75.0",
+    "tsx": "^4.19.2",
+    "typescript": "~6.0.2"
+  }
+}
