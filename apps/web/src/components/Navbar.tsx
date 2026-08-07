@@ -8,6 +8,9 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { cn } from '@/lib/utils'
 
 function isNavActive(href: string, pathname: string, hash: string): boolean {
+  if (href === '/#top') {
+    return pathname === '/' && (hash === '' || hash === '#top')
+  }
   if (href.startsWith('/#')) {
     return pathname === '/' && hash === href.slice(1)
   }
