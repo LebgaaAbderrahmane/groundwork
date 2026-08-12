@@ -74,6 +74,19 @@ export function FindUs() {
             </a>
           </Button>
         </motion.div>
+
+        <motion.div
+          variants={fadeUp}
+          className="mt-14 w-full max-w-3xl overflow-hidden rounded-xl border border-white/15 shadow-2xl"
+        >
+          <iframe
+            src="https://maps.google.com/maps?q=14%20Kingsland%20Road%2C%20Dalston%2C%20London%20E8&output=embed&z=15"
+            title="Groundwork Coffee on the map — 14 Kingsland Road, Dalston, London E8"
+            loading="lazy"
+            allowFullScreen
+            className="h-72 w-full md:h-80"
+          />
+        </motion.div>
       </motion.div>
     </section>
   )
