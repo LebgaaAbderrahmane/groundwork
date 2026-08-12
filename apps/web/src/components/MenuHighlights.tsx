@@ -1,23 +1,10 @@
-import { motion, type Variants } from 'motion/react'
+import { motion } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { MENU } from '@/data/content'
 import { SectionHeading } from '@/components/shared/section-heading'
 import { Button } from '@/components/ui/button'
-
-const list: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12 } },
-}
-
-const card: Variants = {
-  hidden: { opacity: 0, y: 32 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: 'easeOut' },
-  },
-}
+import { fadeUp, revealStagger, VIEWPORT } from '@/lib/motion'
 
 export function MenuHighlights() {
   return (
@@ -26,16 +13,16 @@ export function MenuHighlights() {
         <SectionHeading eyebrow="From our kitchen" title="What's" accent="On" />
 
         <motion.div
-          variants={list}
+          variants={revealStagger(0.12)}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: '-80px' }}
+          viewport={VIEWPORT}
           className="mt-14 grid gap-8 md:grid-cols-2"
         >
           {MENU.map((item) => (
             <motion.article
               key={item.name}
-              variants={card}
+              variants={fadeUp}
               className="group overflow-hidden rounded-lg border border-border/70 bg-background transition-colors duration-200 ease-out hover:border-primary"
             >
               <div className="aspect-[4/3] overflow-hidden">

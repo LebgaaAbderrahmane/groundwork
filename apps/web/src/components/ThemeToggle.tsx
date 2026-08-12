@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { Check, Monitor, Moon, Sun } from 'lucide-react'
 import { useThemeStore, type ThemeOption } from '@/store/theme'
 import { cn } from '@/lib/utils'
+import { EASE_SNAPPY } from '@/lib/motion'
 
 const OPTIONS: Array<{ value: ThemeOption; label: string; icon: typeof Sun }> = [
   { value: 'light', label: 'Light', icon: Sun },
@@ -57,18 +59,35 @@ export function ThemeToggle({ layout = 'icon' }: { layout?: 'icon' | 'full' }) {
 
   return (
     <div className="relative" ref={ref}>
-      <button
+      <motion.button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="Change theme"
         aria-expanded={open}
+        whileTap={{ scale: 0.9 }}
         className="flex size-10 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-surface hover:text-primary"
       >
-        <ActiveIcon className="size-5" strokeWidth={1.7} />
-      </button>
+        <motion.span
+          key={resolved}
+          initial={{ scale: 0.4, opacity: 0, rotate: -30 }}
+          animate={{ scale: 1, opacity: 1, rotate: 0 }}
+          transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+          className="flex"
+        >
+          <ActiveIcon className="size-5" strokeWidth={1.7} />
+        </motion.span>
+      </motion.button>
 
-      {open && (
-        <div className="absolute right-0 top-12 w-44 rounded-xl border border-border bg-background p-1.5 shadow-lg">
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="theme-menu"
+            initial={{ opacity: 0, y: -8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.96 }}
+            transition={{ duration: 0.18, ease: EASE_SNAPPY }}
+            className="absolute right-0 top-12 w-44 origin-top-right rounded-xl border border-border bg-background p-1.5 shadow-lg"
+          >
           <div className="flex items-center justify-between px-3 pb-1 pt-1.5">
             <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
               Theme
@@ -92,8 +111,9 @@ export function ThemeToggle({ layout = 'icon' }: { layout?: 'icon' | 'full' }) {
               {theme === opt.value && <Check className="size-4 text-primary" strokeWidth={2} />}
             </button>
           ))}
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

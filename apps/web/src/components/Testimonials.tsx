@@ -1,21 +1,8 @@
-import { motion, type Variants } from 'motion/react'
+import { motion } from 'motion/react'
 import { Star } from 'lucide-react'
 import { TESTIMONIALS } from '@/data/content'
 import { SectionHeading } from '@/components/shared/section-heading'
-
-const list: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.14 } },
-}
-
-const card: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: 'easeOut' },
-  },
-}
+import { fadeUp, revealStagger, VIEWPORT } from '@/lib/motion'
 
 export function Testimonials() {
   return (
@@ -30,16 +17,16 @@ export function Testimonials() {
         />
 
         <motion.div
-          variants={list}
+          variants={revealStagger(0.12)}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: '-80px' }}
+          viewport={VIEWPORT}
           className="mt-14 grid gap-8 md:grid-cols-3"
         >
           {TESTIMONIALS.map((testimonial) => (
             <motion.figure
               key={testimonial.name}
-              variants={card}
+              variants={fadeUp}
               className="flex flex-col rounded-lg border border-border/70 bg-background p-8"
             >
               <div className="flex items-center gap-1" aria-label="5 out of 5 stars">

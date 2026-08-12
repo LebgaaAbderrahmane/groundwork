@@ -2,15 +2,16 @@ import { motion } from 'motion/react'
 import { ArrowRight } from 'lucide-react'
 import { ADDRESS, HOURS } from '@/data/content'
 import { Button } from '@/components/ui/button'
+import { fadeUp, VIEWPORT } from '@/lib/motion'
 
 export function FindUs() {
   return (
     <section id="find" className="scroll-mt-20 bg-footer py-28 text-footer-foreground md:py-36">
       <motion.div
-        initial={{ opacity: 0, y: 32 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.7, ease: 'easeOut' }}
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={VIEWPORT}
         className="container-site flex flex-col items-center text-center"
       >
         <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-footer-foreground/60">
