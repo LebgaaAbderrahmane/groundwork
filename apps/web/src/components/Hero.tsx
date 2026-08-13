@@ -33,20 +33,31 @@ export function Hero() {
         style={{ y: parallaxY, scale: parallaxScale }}
         className="absolute inset-0"
       >
-        <img
+        <motion.img
           src={HERO_IMAGE}
           alt="Warm independent coffee shop interior with wooden tables, Edison bulbs and exposed brick in morning light"
           loading="eager"
           fetchPriority="high"
+          initial={{ opacity: 0, scale: 1.08 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: EASE_EMPHASIZED }}
           className="h-full w-full object-cover"
         />
       </motion.div>
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.5)_0%,rgba(0,0,0,0.25)_45%,rgba(0,0,0,0.7)_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.35)_100%)]" />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+        className="absolute inset-0"
+        aria-hidden
+      >
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.5)_0%,rgba(0,0,0,0.25)_45%,rgba(0,0,0,0.7)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.35)_100%)]" />
+      </motion.div>
 
       <motion.div
-        variants={revealStagger(0.12, 0.15)}
+        variants={revealStagger(0.12, 0.55)}
         initial="hidden"
         animate="show"
         className="container-site relative z-10 flex flex-col items-center py-28 pt-36 text-center"
@@ -109,7 +120,7 @@ export function Hero() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.4, duration: 0.5 }}
+        transition={{ delay: 2, duration: 0.5 }}
         className="pointer-events-none absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2"
       >
         <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-white/70">
