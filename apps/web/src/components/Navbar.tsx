@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { Link, useLocation } from 'react-router-dom'
 import { Coffee, Menu, ShoppingBag, X } from 'lucide-react'
 import { NAV_LINKS } from '@/data/content'
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { cartCount, useCart } from '@/store/cart'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { cn } from '@/lib/utils'
+import { springMicro } from '@/lib/motion'
 
 function isNavActive(href: string, pathname: string, hash: string): boolean {
   if (href === '/#top') {
@@ -52,12 +54,13 @@ export function Navbar() {
                 )}
               >
                 {link.label}
-                <span
-                  className={cn(
-                    'absolute inset-x-0 bottom-0 h-0.5 rounded-t-full bg-accent transition-opacity duration-200 ease-out',
-                    active ? 'opacity-100' : 'opacity-0',
-                  )}
-                />
+                {active && (
+                  <motion.span
+                    layoutId="nav-underline"
+                    transition={springMicro}
+                    className="absolute inset-x-0 bottom-0 h-0.5 rounded-t-full bg-accent"
+                  />
+                )}
               </Link>
             )
           })}
@@ -68,11 +71,20 @@ export function Navbar() {
               className="relative flex size-10 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-surface hover:text-primary"
             >
               <ShoppingBag className="size-5" strokeWidth={1.7} />
+              <AnimatePresence initial={false}>
               {count > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                <motion.span
+                  key={count}
+                  initial={{ scale: 0.4, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.4, opacity: 0 }}
+                  transition={springMicro}
+                  className="absolute -right-0.5 -top-0.5 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground"
+                >
                   {count}
-                </span>
+                </motion.span>
               )}
+            </AnimatePresence>
             </Link>
             <ThemeToggle />
           </div>
@@ -130,9 +142,18 @@ export function Navbar() {
               <ShoppingBag className="size-4" /> Bag
             </span>
             {count > 0 && (
-              <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                {count}
-              </span>
+              <AnimatePresence initial={false}>
+                <motion.span
+                  key={count}
+                  initial={{ scale: 0.4, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.4, opacity: 0 }}
+                  transition={springMicro}
+                  className="flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground"
+                >
+                  {count}
+                </motion.span>
+              </AnimatePresence>
             )}
           </Link>
           <Button asChild className="mt-2 w-full">

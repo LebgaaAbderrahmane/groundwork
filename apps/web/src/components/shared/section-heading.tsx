@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
+import { EASE_EMPHASIZED, VIEWPORT } from '@/lib/motion'
 
 type SectionHeadingProps = {
   eyebrow?: string
@@ -41,8 +42,8 @@ export function SectionHeading({
       <motion.span
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
+        viewport={VIEWPORT}
+        transition={{ duration: 0.5, ease: EASE_EMPHASIZED }}
         className="h-[3px] w-20 origin-left rounded-full bg-accent"
       />
     </div>

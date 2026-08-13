@@ -1,15 +1,16 @@
 import { motion } from 'motion/react'
 import { GALLERY } from '@/data/content'
+import { fadeUp, revealStagger, VIEWPORT } from '@/lib/motion'
 
 export function Gallery() {
   return (
     <section className="bg-background py-24 md:py-32">
       <div className="container-site">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT}
           className="mb-10"
         >
           <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
@@ -17,14 +18,17 @@ export function Gallery() {
           </span>
         </motion.div>
 
-        <div className="-mx-6 flex snap-x overflow-x-auto px-6 pb-2">
-          {GALLERY.map((image, index) => (
+        <motion.div
+          variants={revealStagger(0.06)}
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT}
+          className="-mx-6 flex snap-x overflow-x-auto px-6 pb-2"
+        >
+          {GALLERY.map((image) => (
             <motion.figure
               key={image.src}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: index * 0.08 }}
+              variants={fadeUp}
               className="group relative h-[280px] min-w-[78%] shrink-0 snap-start overflow-hidden sm:min-w-[45%] lg:min-w-[19.5%] lg:flex-1"
             >
               <img
@@ -35,7 +39,7 @@ export function Gallery() {
               />
             </motion.figure>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   )
