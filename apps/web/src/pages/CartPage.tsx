@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import { useDocumentTitle } from '@/lib/hooks'
@@ -18,8 +17,10 @@ export function CartPage() {
   const lines = useCart((s) => s.lines)
   const setQuantity = useCart((s) => s.setQuantity)
   const remove = useCart((s) => s.remove)
-  const [pickup, setPickup] = useState(0)
-  const [notes, setNotes] = useState('')
+  const pickup = useCart((s) => s.pickupIndex)
+  const setPickup = useCart((s) => s.setPickupIndex)
+  const notes = useCart((s) => s.notes)
+  const setNotes = useCart((s) => s.setNotes)
 
   const subtotal = cartSubtotal(lines)
 
@@ -115,7 +116,7 @@ export function CartPage() {
             ))}
           </div>
 
-          <aside className="h-fit rounded-lg border border-border/70 bg-background p-6">
+          <aside className="sticky top-24 h-fit rounded-lg border border-border/70 bg-background p-6">
             <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
               Order summary
             </h2>
@@ -162,10 +163,7 @@ export function CartPage() {
             </div>
 
             <Button asChild size="lg" className="mt-6 w-full">
-              <Link
-                to="/checkout"
-                state={{ pickupIndex: pickup, notes }}
-              >
+              <Link to="/checkout">
                 Checkout <ArrowRight className="size-4" aria-hidden />
               </Link>
             </Button>

@@ -26,9 +26,13 @@ type AddInput = {
 
 type CartState = {
   lines: CartLine[]
+  pickupIndex: number
+  notes: string
   add: (input: AddInput) => void
   remove: (key: string) => void
   setQuantity: (key: string, quantity: number) => void
+  setPickupIndex: (index: number) => void
+  setNotes: (notes: string) => void
   clear: () => void
 }
 
@@ -51,6 +55,8 @@ export const useCart = create<CartState>()(
   persist(
     (set) => ({
       lines: [],
+      pickupIndex: 0,
+      notes: '',
       add: (input) =>
         set((state) => {
           const key = lineKey(input.productId, input.options)
@@ -88,7 +94,9 @@ export const useCart = create<CartState>()(
               ? state.lines.filter((l) => l.key !== key)
               : state.lines.map((l) => (l.key === key ? { ...l, quantity } : l)),
         })),
-      clear: () => set({ lines: [] }),
+      setPickupIndex: (pickupIndex) => set({ pickupIndex }),
+      setNotes: (notes) => set({ notes }),
+      clear: () => set({ lines: [], pickupIndex: 0, notes: '' }),
     }),
     { name: 'cribstone-cart' },
   ),

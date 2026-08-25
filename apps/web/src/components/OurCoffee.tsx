@@ -46,7 +46,7 @@ export function OurCoffee() {
           </div>
 
           <Button asChild variant="outline" size="lg" className="mt-10">
-            <a href="#order">
+            <a href="/menu">
               Shop our beans <ArrowRight className="size-4" aria-hidden />
             </a>
           </Button>

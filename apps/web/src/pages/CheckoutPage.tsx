@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ArrowLeft, Loader2, ShoppingBag } from 'lucide-react'
+import { toast } from 'sonner'
 import { useDocumentTitle } from '@/lib/hooks'
 import { cartSubtotal, useCart } from '@/store/cart'
 import { trpc } from '@/lib/trpc'
@@ -9,35 +10,42 @@ import { Button } from '@/components/ui/button'
 import { PICKUP_OPTIONS } from './CartPage'
 import { cn } from '@/lib/utils'
 
-type LocationState = { pickupIndex?: number; notes?: string }
-
 export function CheckoutPage() {
   useDocumentTitle('Checkout')
   const navigate = useNavigate()
-  const location = useLocation()
-  const state = (location.state ?? {}) as LocationState
 
   const lines = useCart((s) => s.lines)
   const clear = useCart((s) => s.clear)
+  const pickup = useCart((s) => s.pickupIndex)
+  const notes = useCart((s) => s.notes)
 
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [payment, setPayment] = useState<'in_store' | 'card'>('in_store')
   const [error, setError] = useState<string | null>(null)
 
+  useEffect(() => {
+    if (lines.length === 0) {
+      navigate('/menu', { replace: true })
+    }
+  }, [lines.length, navigate])
+
   const createOrder = trpc.orders.create.useMutation({
     onSuccess: (data) => {
       clear()
+      toast.success('Order placed! See you soon.')
       navigate(`/order/${data.orderId}`, {
         state: { totalPence: data.totalPence },
       })
     },
     onError: (err) => {
-      setError(err.message ?? 'Something went wrong placing your order.')
+      const msg = err.message ?? 'Something went wrong placing your order.'
+      setError(msg)
+      toast.error(msg)
     },
   })
 
-  const pickupMinutes = PICKUP_OPTIONS[state.pickupIndex ?? 0]?.minutes ?? 0
+  const pickupMinutes = PICKUP_OPTIONS[pickup]?.minutes ?? 0
   const subtotal = cartSubtotal(lines)
 
   function submit(e: React.FormEvent) {
@@ -57,9 +65,23 @@ export function CheckoutPage() {
       paymentMethod: payment,
       customerName: name,
       customerPhone: phone.trim() || undefined,
-      notes: state.notes || undefined,
+      notes: notes || undefined,
       pickupAt: new Date(Date.now() + pickupMinutes * 60_000).toISOString(),
     })
+  }
+
+  if (lines.length === 0) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 pt-24 text-center">
+        <ShoppingBag className="size-12 text-accent" strokeWidth={1.2} aria-hidden />
+        <h1 className="mt-6 font-display text-4xl font-bold text-foreground">
+          Nothing to check out
+        </h1>
+        <p className="mt-3 max-w-sm text-sm font-light text-foreground/60">
+          Your bag is empty — head to the menu to add something.
+        </p>
+      </main>
+    )
   }
 
   return (
@@ -153,7 +175,7 @@ export function CheckoutPage() {
             </div>
           </div>
 
-          <aside className="h-fit rounded-lg border border-border/70 bg-background p-6">
+          <aside className="sticky top-24 h-fit rounded-lg border border-border/70 bg-background p-6">
             <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
               Summary
             </h2>

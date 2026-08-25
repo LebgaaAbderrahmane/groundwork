@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Plus, Search, X } from 'lucide-react'
+import { toast } from 'sonner'
 import { BRAND } from '@cribstone/shared'
 import { useDocumentTitle } from '@/lib/hooks'
 import { trpc } from '@/lib/trpc'
@@ -41,6 +42,12 @@ export function MenuPage() {
       basePricePence: product.pricePence,
       options,
       quantity,
+    })
+    toast.success(`${product.name} added to your bag`, {
+      action: {
+        label: 'View bag',
+        onClick: () => window.location.assign('/cart'),
+      },
     })
   }
 
@@ -126,6 +133,22 @@ export function MenuPage() {
                 </div>
               </div>
             ))}
+          </div>
+        ) : menu.isError ? (
+          <div className="mt-20 text-center">
+            <p className="font-display text-2xl font-bold text-foreground">
+              Couldn't load the menu
+            </p>
+            <p className="mt-2 text-sm font-light text-muted-foreground">
+              Something went wrong on our end. Give it another go in a moment.
+            </p>
+            <button
+              type="button"
+              onClick={() => menu.refetch()}
+              className="mt-6 rounded-full border border-border bg-background px-5 py-2.5 text-xs font-medium uppercase tracking-[0.12em] text-foreground transition-colors hover:border-primary/40"
+            >
+              Try again
+            </button>
           </div>
         ) : visible.length === 0 ? (
           <div className="mt-20 text-center">
