@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
 import { pounds } from '@/lib/format'
 import { Badge, Button, Card, Field, Input, Textarea } from '@/components/ui'
@@ -19,23 +20,29 @@ export function MenuPage() {
     onSuccess: () => {
       invalidate()
       setNewCategory('')
+      toast.success('Category created')
     },
+    onError: (err) => toast.error(err.message),
   })
 
   const deleteCategory = trpc.menu.admin.deleteCategory.useMutation({
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success('Category deleted') },
+    onError: (err) => toast.error(err.message),
   })
 
   const updateCategory = trpc.menu.admin.updateCategory.useMutation({
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success('Category updated') },
+    onError: (err) => toast.error(err.message),
   })
 
   const toggleProduct = trpc.menu.admin.updateProduct.useMutation({
     onSuccess: invalidate,
+    onError: (err) => toast.error(err.message),
   })
 
   const deleteProduct = trpc.menu.admin.deleteProduct.useMutation({
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success('Product deleted') },
+    onError: (err) => toast.error(err.message),
   })
 
   const data = list.data
@@ -77,7 +84,30 @@ export function MenuPage() {
       </header>
 
       <div className="mt-8 space-y-6">
-        {list.isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
+        {list.isLoading && (
+          <div className="space-y-6">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <Card key={i} className="animate-pulse">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-6 w-32 rounded bg-surface" />
+                    <div className="h-5 w-14 rounded-full bg-surface" />
+                  </div>
+                  <div className="h-8 w-8 rounded bg-surface" />
+                </div>
+                <div className="mt-4 space-y-2">
+                  {Array.from({ length: 3 }).map((_, j) => (
+                    <div key={j} className="flex items-center gap-3 rounded-lg border border-border/40 bg-surface/30 px-4 py-3">
+                      <div className="size-2 rounded-full bg-surface" />
+                      <div className="h-4 w-40 rounded bg-surface" />
+                      <div className="ml-auto h-4 w-12 rounded bg-surface" />
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
         {!list.isLoading && categories.length === 0 && (
           <p className="text-sm font-light text-muted-foreground">
             No categories yet — add your first one above.
@@ -114,6 +144,7 @@ export function MenuPage() {
                       })
                     }
                     className="size-4 accent-[hsl(var(--primary))]"
+                    aria-label={`Toggle ${cat.name} visibility`}
                   />
                   <span className="text-[10px] font-medium uppercase tracking-[0.1em] text-muted-foreground">
                     Live
@@ -122,12 +153,7 @@ export function MenuPage() {
                 <Button
                   variant="outline"
                   onClick={() =>
-                    deleteCategory.mutate(
-                      { id: cat.id },
-                      {
-                        onError: (err) => alert(err.message),
-                      },
-                    )
+                    deleteCategory.mutate({ id: cat.id })
                   }
                   loading={deleteCategory.isPending}
                   title="Delete category"
@@ -146,9 +172,7 @@ export function MenuPage() {
                   expanded={expanded === p.id}
                   onToggleExpand={() => setExpanded(expanded === p.id ? null : p.id)}
                   onToggleActive={(active) => toggleProduct.mutate({ id: p.id, active })}
-                  onDelete={() =>
-                    deleteProduct.mutate({ id: p.id }, { onError: (err) => alert(err.message) })
-                  }
+                  onDelete={() => deleteProduct.mutate({ id: p.id })}
                 />
               ))}
               <AddProduct categoryId={cat.id} />
@@ -191,6 +215,8 @@ function ProductRow({
           type="button"
           onClick={onToggleExpand}
           className="flex flex-1 items-center gap-3 text-left"
+          aria-expanded={expanded}
+          aria-label={`${product.name} — ${pounds(product.pricePence)} — ${active ? 'visible' : 'hidden'}`}
         >
           <span
             className={cn(
@@ -216,12 +242,13 @@ function ProductRow({
             checked={active}
             onChange={(e) => onToggleActive(e.target.checked)}
             className="size-4 accent-[hsl(var(--primary))]"
+            aria-label={`Toggle ${product.name} visibility`}
           />
           <span className="text-[10px] font-medium uppercase tracking-[0.1em] text-muted-foreground">
             Live
           </span>
         </label>
-        <Button variant="ghost" className="size-9 p-0 text-muted-foreground hover:text-danger" onClick={onDelete} title="Delete product">
+        <Button variant="ghost" className="size-9 p-0 text-muted-foreground hover:text-danger" onClick={onDelete} title="Delete product" aria-label={`Delete ${product.name}`}>
           <Trash2 className="size-4" aria-hidden />
         </Button>
       </div>
@@ -241,16 +268,20 @@ function ProductDetail({ product }: { product: Product }) {
   const groups = (list?.optionGroups ?? []).filter((g) => g.productId === product.id)
 
   const createGroup = trpc.menu.admin.createOptionGroup.useMutation({
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success('Option group added') },
+    onError: (err) => toast.error(err.message),
   })
   const deleteGroup = trpc.menu.admin.deleteOptionGroup.useMutation({
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success('Option group deleted') },
+    onError: (err) => toast.error(err.message),
   })
   const createOption = trpc.menu.admin.createOption.useMutation({
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success('Option added') },
+    onError: (err) => toast.error(err.message),
   })
   const deleteOption = trpc.menu.admin.deleteOption.useMutation({
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success('Option deleted') },
+    onError: (err) => toast.error(err.message),
   })
 
   const [newGroup, setNewGroup] = useState({ name: '', required: false })
@@ -283,11 +314,11 @@ function ProductDetail({ product }: { product: Product }) {
                 </p>
                 <Button
                   variant="ghost"
-                 
                   className="size-8 p-0 text-muted-foreground hover:text-danger"
                   onClick={() => deleteGroup.mutate({ id: g.id })}
                   title="Delete group"
                   type="button"
+                  aria-label={`Delete ${g.name} group`}
                 >
                   <Trash2 className="size-4" aria-hidden />
                 </Button>
@@ -307,11 +338,11 @@ function ProductDetail({ product }: { product: Product }) {
                       </span>
                       <Button
                         variant="ghost"
-                       
                         className="size-7 p-0 text-muted-foreground hover:text-danger"
                         onClick={() => deleteOption.mutate({ id: o.id })}
                         title="Delete option"
                         type="button"
+                        aria-label={`Delete ${o.label} option`}
                       >
                         <Trash2 className="size-3.5" aria-hidden />
                       </Button>
@@ -338,6 +369,7 @@ function ProductDetail({ product }: { product: Product }) {
                   }
                   placeholder="e.g. Oat milk"
                   className="flex-1"
+                  aria-label={`New option name for ${g.name}`}
                 />
                 <Input
                   value={newOption.groupId === g.id ? newOption.price : ''}
@@ -346,8 +378,9 @@ function ProductDetail({ product }: { product: Product }) {
                   }
                   placeholder="+£0.30"
                   className="w-24"
+                  aria-label={`Price delta for new ${g.name} option`}
                 />
-                <Button type="submit" className="size-9 px-2">
+                <Button type="submit" className="size-9 px-2" aria-label={`Add option to ${g.name}`}>
                   <Plus className="size-4" aria-hidden />
                 </Button>
               </form>
@@ -401,11 +434,12 @@ function AddProduct({ categoryId }: { categoryId: number }) {
   const utils = trpc.useUtils()
   const invalidate = () => utils.menu.admin.list.invalidate()
   const create = trpc.menu.admin.createProduct.useMutation({
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success('Product added') },
+    onError: (err) => toast.error(err.message),
   })
 
   const [open, setOpen] = useState(false)
-  const [form, setForm] = useState({ name: '', price: '', description: '' })
+  const [form, setForm] = useState({ name: '', price: '', description: '', imageUrl: '' })
 
   function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -416,15 +450,16 @@ function AddProduct({ categoryId }: { categoryId: number }) {
       name: form.name.trim(),
       pricePence: price,
       description: form.description.trim() || undefined,
+      imageUrl: form.imageUrl.trim() || undefined,
     })
-    setForm({ name: '', price: '', description: '' })
+    setForm({ name: '', price: '', description: '', imageUrl: '' })
     setOpen(false)
   }
 
   if (!open) {
     return (
       <Button variant="outline" className="mt-3 w-full border-dashed" onClick={() => setOpen(true)}>
-        <Plus className="size-4" aria-hidden /> Add product to {categoryId ? 'category' : 'menu'}
+        <Plus className="size-4" aria-hidden /> Add product to category
       </Button>
     )
   }
@@ -470,6 +505,30 @@ function AddProduct({ categoryId }: { categoryId: number }) {
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             placeholder="Two shots, single origin, velvety milk…"
           />
+        </Field>
+      </div>
+      <div className="sm:col-span-3">
+        <Field label="Image URL (optional)" htmlFor={`p-img-${categoryId}`}>
+          <div className="flex gap-2">
+            <Input
+              id={`p-img-${categoryId}`}
+              type="url"
+              value={form.imageUrl}
+              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+              placeholder="https://example.com/photo.jpg"
+              className="flex-1"
+            />
+            {form.imageUrl && (
+              <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border">
+                <img
+                  src={form.imageUrl}
+                  alt="Preview"
+                  className="size-full object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                />
+              </div>
+            )}
+          </div>
         </Field>
       </div>
     </form>
