@@ -4,6 +4,7 @@ import { trpc } from '@/lib/trpc'
 import { pounds, timeAgo } from '@/lib/format'
 import { Badge, Button, Card } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { useDocumentTitle } from '@/lib/hooks'
 
 const STATUS_STYLES: Record<string, string> = {
   received: 'bg-surface text-foreground',
@@ -18,6 +19,7 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 export function OrdersPage() {
+  useDocumentTitle('Orders')
   const utils = trpc.useUtils()
   const queue = trpc.orders.queue.useQuery(undefined, { refetchInterval: 5000 })
 
@@ -77,7 +79,7 @@ export function OrdersPage() {
                     {order.type === 'dine_in' ? 'Dine in' : 'Pickup'}
                   </Badge>
                   {order.paymentMethod === 'in_store' && order.paymentStatus === 'pending' && (
-                    <Badge className="bg-red-800/15 text-red-700">
+                    <Badge className="bg-danger/15 text-danger">
                       Pay at counter
                     </Badge>
                   )}

@@ -4,8 +4,10 @@ import { trpc } from '@/lib/trpc'
 import { clockTime } from '@/lib/format'
 import { Badge, Button, Card, Field, Input } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { useDocumentTitle } from '@/lib/hooks'
 
 export function CustomersPage() {
+  useDocumentTitle('Customers')
   const utils = trpc.useUtils()
   const list = trpc.customers.list.useQuery()
   const award = trpc.customers.awardPoints.useMutation({
@@ -139,7 +141,7 @@ export function CustomersPage() {
                     <span
                       className={cn(
                         'font-semibold tabular-nums',
-                        t.points > 0 ? 'text-primary' : 'text-red-700',
+                        t.points > 0 ? 'text-primary' : 'text-danger',
                       )}
                     >
                       {t.points > 0 ? '+' : ''}

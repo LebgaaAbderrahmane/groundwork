@@ -1,18 +1,13 @@
-import { motion } from 'motion/react'
-import { ArrowRight } from 'lucide-react'
-import { BRAND } from '@cribstone/shared'
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { ArrowRight, MapPin } from 'lucide-react'
-import { ADDRESS, FIND_US_IMAGE, HOURS } from '@/data/content'
+import { BRAND } from '@cribstone/shared'
+import { FIND_US_IMAGE } from '@/data/content'
 import { Button } from '@/components/ui/button'
 import { fadeUp, revealStagger, VIEWPORT } from '@/lib/motion'
 
-const MAPS_URL =
-  'https://maps.google.com/?q=14+Kingsland+Road,+Dalston,+London+E8'
-
-const MAPS_EMBED =
-  'https://maps.google.com/maps?q=14%20Kingsland%20Road%2C%20Dalston%2C%20London%20E8&output=embed&z=15'
+const MAPS_URL = `https://maps.google.com/?q=${encodeURIComponent(BRAND.address)}`
+const MAPS_EMBED = `https://maps.google.com/maps?q=${encodeURIComponent(BRAND.address)}&output=embed&z=15`
 
 export function FindUs() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -32,7 +27,7 @@ export function FindUs() {
       <motion.div style={{ y: parallaxY, scale: parallaxScale }} className="absolute inset-0">
         <img
           src={FIND_US_IMAGE}
-          alt="Independent coffee shop exterior with plants and chalkboard on a London street"
+          alt={`${BRAND.name} exterior with plants and chalkboard`}
           loading="lazy"
           className="h-full w-full object-cover"
         />
@@ -48,31 +43,7 @@ export function FindUs() {
         viewport={VIEWPORT}
         className="container-site relative z-10 grid items-center gap-12 py-28 lg:grid-cols-2"
       >
-        <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-footer-foreground/60">
-          Find us
-        </span>
-        <h2 className="mt-4 font-display text-4xl font-bold italic leading-tight md:text-6xl">
-          Come and Say <em className="not-italic text-accent">Hello</em>
-        </h2>
-
-        <p className="mt-6 max-w-xl text-base font-light leading-relaxed text-footer-foreground/80">
-          {BRAND.hours}
-        </p>
-        <p className="mt-1 text-sm font-light text-footer-foreground/60">{BRAND.address}</p>
-
-        <Button asChild size="lg" variant="cream" className="mt-10">
-          <a
-            href={`https://maps.google.com/?q=${encodeURIComponent(BRAND.address)}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Get directions <ArrowRight className="size-4" aria-hidden />
-          </a>
-        </Button>
-        <motion.div
-          variants={fadeUp}
-          className="flex flex-col items-center text-center lg:items-start lg:text-left"
-        >
+        <motion.div variants={fadeUp} className="flex flex-col items-center text-center lg:items-start lg:text-left">
           <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-white/70">
             Find us
           </span>
@@ -82,9 +53,9 @@ export function FindUs() {
           </h2>
 
           <p className="mt-6 max-w-md text-base font-light leading-relaxed text-white/85">
-            {HOURS}
+            {BRAND.hours}
           </p>
-          <p className="mt-1 text-sm font-light text-white/70">{ADDRESS}</p>
+          <p className="mt-1 text-sm font-light text-white/70">{BRAND.address}</p>
 
           <div className="mt-10">
             <Button asChild size="lg" variant="cream">
@@ -102,7 +73,7 @@ export function FindUs() {
           <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
             <span className="flex items-center gap-2 text-xs text-white/85">
               <MapPin className="size-4 shrink-0 text-accent" aria-hidden />
-              {ADDRESS}
+              {BRAND.address}
             </span>
             <a
               href={MAPS_URL}
@@ -115,7 +86,7 @@ export function FindUs() {
           </div>
           <iframe
             src={MAPS_EMBED}
-            title="Groundwork Coffee on the map — 14 Kingsland Road, Dalston, London E8"
+            title={`${BRAND.name} on the map — ${BRAND.address}`}
             loading="lazy"
             allowFullScreen
             className="h-64 w-full lg:h-80"

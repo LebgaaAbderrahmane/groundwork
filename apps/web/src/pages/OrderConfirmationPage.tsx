@@ -1,4 +1,5 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
+import { useDocumentTitle } from '@/lib/hooks'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { pounds } from '@/lib/format'
 import { Button } from '@/components/ui/button'
@@ -7,6 +8,7 @@ import { trpc } from '@/lib/trpc'
 type LocationState = { totalPence?: number }
 
 export function OrderConfirmationPage() {
+  useDocumentTitle('Order Confirmed')
   const { orderId } = useParams<{ orderId: string }>()
   const location = useLocation()
   const state = (location.state ?? {}) as LocationState

@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { Plus, RefreshCw, Trash2 } from 'lucide-react'
 import { trpc } from '@/lib/trpc'
 import { Badge, Button, Card, Input } from '@/components/ui'
+import { useDocumentTitle } from '@/lib/hooks'
 
 export function TablesPage() {
+  useDocumentTitle('Tables')
   const utils = trpc.useUtils()
   const list = trpc.tables.list.useQuery()
   const invalidate = () => utils.tables.list.invalidate()
@@ -82,7 +84,7 @@ export function TablesPage() {
                   <Button
                     variant="ghost"
                    
-                    className="size-9 p-0 text-muted-foreground hover:text-red-700"
+                    className="size-9 p-0 text-muted-foreground hover:text-danger"
                     title="Remove table"
                     onClick={() => remove.mutate({ id: t.id })}
                   >

@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { Save } from 'lucide-react'
 import { trpc } from '@/lib/trpc'
 import { Button, Card, Field, Input, Select, Textarea } from '@/components/ui'
+import { useDocumentTitle } from '@/lib/hooks'
 
 export function SettingsPage() {
+  useDocumentTitle('Settings')
   const utils = trpc.useUtils()
   const settings = trpc.settings.get.useQuery()
 

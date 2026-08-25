@@ -10,7 +10,7 @@ const buttonVariants: Record<ButtonVariant, string> = {
   outline:
     'border border-border bg-background text-foreground hover:bg-surface',
   ghost: 'text-foreground/80 hover:bg-surface hover:text-foreground',
-  danger: 'bg-red-800/90 text-red-50 hover:bg-red-800',
+  danger: 'bg-danger/90 text-danger-foreground hover:bg-danger',
 }
 
 export function Button({

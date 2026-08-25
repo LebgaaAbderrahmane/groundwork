@@ -5,8 +5,10 @@ import { BRAND } from '@cribstone/shared'
 import { trpc } from '@/lib/trpc'
 import { useSession } from '@/store/session'
 import { Button, Field, Input } from '@/components/ui'
+import { useDocumentTitle } from '@/lib/hooks'
 
 export function LoginPage() {
+  useDocumentTitle('Sign In')
   const navigate = useNavigate()
   const setUser = useSession((s) => s.setUser)
   const [email, setEmail] = useState('')
