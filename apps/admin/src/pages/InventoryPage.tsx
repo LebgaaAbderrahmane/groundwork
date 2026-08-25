@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Minus, Plus, Save, Trash2 } from 'lucide-react'
+import { Minus, Plus, Save, Search, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
 import { clockTime } from '@/lib/format'
 import { Badge, Button, Card, Field, Input, Select } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import { useDocumentTitle } from '@/lib/hooks'
+import { useDocumentTitle, useDebounce } from '@/lib/hooks'
 
 const REASONS = [
   { value: 'receipt', label: 'Stock receipt' },
@@ -53,6 +53,13 @@ export function InventoryPage() {
 
   const ingredients = list.data ?? []
   const ingredientMap = new Map(ingredients.map((i) => [i.id, i]))
+
+  const [stockSearch, setStockSearch] = useState('')
+  const debouncedSearch = useDebounce(stockSearch, 200)
+  const q = debouncedSearch.trim().toLowerCase()
+  const filteredIngredients = q
+    ? ingredients.filter((i) => i.name.toLowerCase().includes(q) || i.unit.toLowerCase().includes(q))
+    : ingredients
 
   function submitCreate(e: React.FormEvent) {
     e.preventDefault()
@@ -163,9 +170,21 @@ export function InventoryPage() {
 
       <section className="mt-6">
         <Card>
-          <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-            Stock levels
-          </h2>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+              Stock levels
+            </h2>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" aria-hidden />
+              <input
+                type="search"
+                value={stockSearch}
+                onChange={(e) => setStockSearch(e.target.value)}
+                placeholder="Filter ingredients…"
+                className="w-48 rounded-lg border border-border bg-background py-1.5 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent"
+              />
+            </div>
+          </div>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[560px] text-sm">
               <thead>
@@ -178,7 +197,7 @@ export function InventoryPage() {
                 </tr>
               </thead>
               <tbody>
-                {ingredients.map((i) => (
+                {filteredIngredients.map((i) => (
                   <tr key={i.id} className="border-b border-border/60 last:border-0">
                     <td className="py-2.5 pr-3 font-medium text-foreground">
                       {i.name}
@@ -204,10 +223,10 @@ export function InventoryPage() {
                     </td>
                   </tr>
                 ))}
-                {ingredients.length === 0 && (
+                {filteredIngredients.length === 0 && (
                   <tr>
                     <td colSpan={5} className="py-6 text-center font-light text-muted-foreground">
-                      No ingredients yet.
+                      {q ? `No ingredients matching "${debouncedSearch}"` : 'No ingredients yet.'}
                     </td>
                   </tr>
                 )}

@@ -3,7 +3,7 @@ import { ChevronRight, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
 import { pounds } from '@/lib/format'
-import { Badge, Button, Card, EmptyState, LiveBadge, TimeAgo } from '@/components/ui'
+import { Badge, Button, Card, EmptyState, LiveBadge, PaymentStatusBadge, TimeAgo } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useDocumentTitle, useBroadcastChannel } from '@/lib/hooks'
 
@@ -109,9 +109,10 @@ export function OrdersPage() {
                     {order.type === 'dine_in' ? 'Dine in' : 'Pickup'}
                   </Badge>
                   {order.paymentMethod === 'in_store' && order.paymentStatus === 'pending' && (
-                    <Badge className="bg-danger/15 text-danger">
-                      Pay at counter
-                    </Badge>
+                    <PaymentStatusBadge status="pending" />
+                  )}
+                  {order.paymentStatus === 'paid' && order.paymentMethod === 'card' && (
+                    <PaymentStatusBadge status="paid" />
                   )}
                   {order.customerPhone && (
                     <Badge className="bg-background text-muted-foreground ring-1 ring-border">

@@ -369,3 +369,33 @@ export function StatsCard({
     </Card>
   )
 }
+
+const PAYMENT_STATUS_STYLES: Record<string, string> = {
+  paid: 'bg-primary/15 text-primary',
+  pending: 'bg-accent/15 text-accent',
+}
+
+const PAYMENT_STATUS_LABELS: Record<string, string> = {
+  paid: 'Paid',
+  pending: 'Pending',
+}
+
+export function PaymentStatusBadge({
+  status,
+  className,
+}: {
+  status: string
+  className?: string
+}) {
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.08em]',
+        PAYMENT_STATUS_STYLES[status] ?? 'bg-surface text-muted-foreground',
+        className,
+      )}
+    >
+      {PAYMENT_STATUS_LABELS[status] ?? status}
+    </span>
+  )
+}
