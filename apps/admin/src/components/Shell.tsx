@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { NavLink, Outlet, useNavigate, useBlocker } from 'react-router-dom'
 import {
   Coffee,
   Home,
@@ -16,9 +16,10 @@ import { BRAND } from '@cribstone/shared'
 import { trpc } from '@/lib/trpc'
 import { useSession } from '@/store/session'
 import { LoginPage } from '@/pages/LoginPage'
-import { Button } from '@/components/ui'
+import { Button, ConfirmDialog } from '@/components/ui'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { cn } from '@/lib/utils'
+import { isUnsavedDirty, subscribeUnsaved, setUnsavedDirty } from '@/lib/unsaved'
 
 const NAV = [
   { to: '/', label: 'Dashboard', icon: Home, end: true },
@@ -51,6 +52,42 @@ function Layout() {
       navigate('/login')
     },
   })
+
+  const dirty = useSyncExternalStore(subscribeUnsaved, isUnsavedDirty)
+
+  const blocker = useBlocker(() => {
+    if (!dirty) return false
+    return true
+  })
+
+  const [blockerTarget, setBlockerTarget] = useState<string | null>(null)
+  const confirmedRef = useRef(false)
+
+  useEffect(() => {
+    if (blocker.state === 'blocked' && !confirmedRef.current) {
+      setBlockerTarget(blocker.location.pathname)
+    }
+  }, [blocker])
+
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (dirty) e.preventDefault()
+    }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [dirty])
+
+  function confirmLeave() {
+    confirmedRef.current = true
+    setUnsavedDirty(false)
+    setBlockerTarget(null)
+    if (blocker.state === 'blocked') blocker.proceed()
+  }
+
+  function cancelLeave() {
+    setBlockerTarget(null)
+    if (blocker.state === 'blocked') blocker.reset()
+  }
 
   if (me.isLoading) {
     return (
@@ -115,6 +152,15 @@ function Layout() {
           <Outlet />
         </main>
       </div>
+
+      <ConfirmDialog
+        open={blockerTarget !== null}
+        onClose={cancelLeave}
+        onConfirm={confirmLeave}
+        title="Unsaved changes"
+        description="You have unsaved changes. Leave without saving?"
+        confirmLabel="Leave"
+      />
     </div>
   )
 }

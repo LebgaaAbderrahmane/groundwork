@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Users } from 'lucide-react'
+import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
 import { useSession } from '@/store/session'
-import { Badge, Button, Card, Field, Input, Select } from '@/components/ui'
+import { Avatar, Badge, Button, Card, ConfirmDialog, EmptyState, Field, Input, Select } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useDocumentTitle } from '@/lib/hooks'
 
@@ -19,25 +20,42 @@ export function StaffPage() {
   const list = trpc.staff.list.useQuery()
   const invalidate = () => utils.staff.list.invalidate()
 
-  const invite = trpc.staff.invite.useMutation({ onSuccess: invalidate })
-  const updateRole = trpc.staff.updateRole.useMutation({ onSuccess: invalidate })
-  const setActive = trpc.staff.setActive.useMutation({ onSuccess: invalidate })
+  const invite = trpc.staff.invite.useMutation({
+    onSuccess: () => {
+      invalidate()
+      toast.success('Team member invited')
+      setForm({ name: '', email: '', role: 'barista', password: '' })
+    },
+    onError: (err) => toast.error(err.message ?? 'Could not invite'),
+  })
+  const updateRole = trpc.staff.updateRole.useMutation({
+    onSuccess: () => {
+      invalidate()
+      toast.success('Role updated')
+    },
+    onError: (err) => toast.error(err.message ?? 'Could not update role'),
+  })
+  const setActive = trpc.staff.setActive.useMutation({
+    onSuccess: () => {
+      invalidate()
+      toast.success('Status updated')
+    },
+    onError: (err) => toast.error(err.message ?? 'Could not update status'),
+  })
 
   const [form, setForm] = useState({ name: '', email: '', role: 'barista', password: '' })
-  const [error, setError] = useState<string | null>(null)
+  const [removeTarget, setRemoveTarget] = useState<{ id: number; name: string } | null>(null)
 
   const staff = list.data ?? []
 
   function submit(e: React.FormEvent) {
     e.preventDefault()
-    setError(null)
-    invite.mutate(
-      { name: form.name.trim(), email: form.email.trim(), role: form.role as 'owner' | 'manager' | 'barista', password: form.password },
-      {
-        onSuccess: () => setForm({ name: '', email: '', role: 'barista', password: '' }),
-        onError: (err) => setError(err.message ?? 'Could not invite'),
-      },
-    )
+    invite.mutate({
+      name: form.name.trim(),
+      email: form.email.trim(),
+      role: form.role as 'owner' | 'manager' | 'barista',
+      password: form.password,
+    })
   }
 
   return (
@@ -72,9 +90,6 @@ export function StaffPage() {
               <Input id="s-pass" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="min 8 chars" required />
             </Field>
           </div>
-          {error && (
-            <p className="mt-3 rounded-lg bg-accent/15 px-3 py-2 text-xs text-accent">{error}</p>
-          )}
           <Button type="submit" loading={invite.isPending} className="mt-4">
             <Plus className="size-4" aria-hidden /> Invite
           </Button>
@@ -86,63 +101,82 @@ export function StaffPage() {
           <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
             {staff.length} team member{staff.length === 1 ? '' : 's'}
           </h2>
-          <ul className="mt-4 space-y-2">
-            {staff.map((u) => (
-              <li key={u.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/70 bg-surface/50 px-4 py-3">
-                <div className="min-w-0">
-                  <p className="flex items-center gap-2 font-medium text-foreground">
-                    {u.name}
-                    {u.id === me?.id && <Badge className="bg-accent/15 text-accent">You</Badge>}
-                  </p>
-                  <p className={cn('text-sm text-muted-foreground', u.active === 0 && 'line-through opacity-60')}>
-                    {u.email}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Select
-                    value={u.role}
-                    onChange={(e) =>
-                      updateRole.mutate(
-                        { userId: u.id, role: e.target.value as 'owner' | 'manager' | 'barista' },
-                        { onError: (err) => alert(err.message) },
-                      )
-                    }
-                    className="w-36"
-                  >
-                    <option value="owner">Owner</option>
-                    <option value="manager">Manager</option>
-                    <option value="barista">Barista</option>
-                  </Select>
-                  <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
-                    <input
-                      type="checkbox"
-                      checked={u.active === 1}
+
+          {staff.length === 0 ? (
+            <EmptyState
+              icon={<Users className="size-8" strokeWidth={1.4} />}
+              title="No team members yet"
+              description="Invite your first team member above."
+            />
+          ) : (
+            <ul className="mt-4 divide-y divide-border">
+              {staff.map((u) => (
+                <li key={u.id} className="flex flex-wrap items-center gap-4 py-3 first:pt-0 last:pb-0">
+                  <Avatar name={u.name} />
+                  <div className="min-w-0 flex-1">
+                    <p className="flex items-center gap-2 font-medium text-foreground">
+                      {u.name}
+                      {u.id === me?.id && <Badge className="bg-accent/15 text-accent">You</Badge>}
+                    </p>
+                    <p className={cn('text-sm text-muted-foreground', u.active === 0 && 'line-through opacity-60')}>
+                      {u.email}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Select
+                      value={u.role}
                       onChange={(e) =>
-                        setActive.mutate(
-                          { userId: u.id, active: e.target.checked },
-                          { onError: (err) => alert(err.message) },
-                        )
+                        updateRole.mutate({
+                          userId: u.id,
+                          role: e.target.value as 'owner' | 'manager' | 'barista',
+                        })
                       }
-                      className="size-4 accent-[hsl(var(--primary))]"
-                    />
-                    <span className="text-[10px] font-medium uppercase tracking-[0.1em]">
-                      {u.active === 1 ? 'Active' : 'Disabled'}
-                    </span>
-                  </label>
-                  <Badge className="bg-background text-muted-foreground ring-1 ring-border">
-                    {ROLE_LABELS[u.role] ?? u.role}
-                  </Badge>
-                </div>
-              </li>
-            ))}
-            {staff.length === 0 && (
-              <li className="py-6 text-center text-sm font-light text-muted-foreground">
-                No team members yet.
-              </li>
-            )}
-          </ul>
+                      className="w-36"
+                    >
+                      <option value="owner">Owner</option>
+                      <option value="manager">Manager</option>
+                      <option value="barista">Barista</option>
+                    </Select>
+                    <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
+                      <input
+                        type="checkbox"
+                        checked={u.active === 1}
+                        onChange={(e) =>
+                          setActive.mutate({ userId: u.id, active: e.target.checked })
+                        }
+                        className="size-4 accent-[hsl(var(--primary))]"
+                      />
+                      <span className="text-[10px] font-medium uppercase tracking-[0.1em]">
+                        {u.active === 1 ? 'Active' : 'Disabled'}
+                      </span>
+                    </label>
+                    <Badge className="bg-background text-muted-foreground ring-1 ring-border">
+                      {ROLE_LABELS[u.role] ?? u.role}
+                    </Badge>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
       </div>
+
+      <ConfirmDialog
+        open={removeTarget !== null}
+        onClose={() => setRemoveTarget(null)}
+        onConfirm={() => {
+          if (removeTarget) {
+            setActive.mutate(
+              { userId: removeTarget.id, active: false },
+              { onSettled: () => setRemoveTarget(null) },
+            )
+          }
+        }}
+        title={`Remove ${removeTarget?.name ?? ''}?`}
+        description="This will deactivate their account. They won't be able to sign in."
+        confirmLabel="Deactivate"
+        loading={setActive.isPending}
+      />
     </div>
   )
 }
