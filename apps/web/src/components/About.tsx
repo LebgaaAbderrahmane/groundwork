@@ -2,18 +2,19 @@ import { motion } from 'motion/react'
 import { BRAND } from '@cribstone/shared'
 import { ABOUT_CHIPS, ABOUT_IMAGE } from '@/data/content'
 import { Chip } from '@/components/shared/chip'
+import { fadeUp, fadeUpScale, revealStagger, VIEWPORT } from '@/lib/motion'
 
 export function About() {
   return (
     <section id="about" className="scroll-mt-20 bg-surface py-24 md:py-32">
-      <div className="container-site grid items-center gap-16 lg:grid-cols-2">
-        <motion.div
-          initial={{ opacity: 0, y: 32 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="order-2 lg:order-1"
-        >
+      <motion.div
+        variants={revealStagger(0.14)}
+        initial="hidden"
+        whileInView="show"
+        viewport={VIEWPORT}
+        className="container-site grid items-center gap-16 lg:grid-cols-2"
+      >
+        <motion.div variants={fadeUp} className="order-2 lg:order-1">
           <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
             Our story
           </span>
@@ -40,13 +41,7 @@ export function About() {
           </div>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="order-1 overflow-hidden rounded-lg lg:order-2"
-        >
+        <motion.div variants={fadeUpScale} className="order-1 overflow-hidden rounded-lg lg:order-2">
           <img
             src={ABOUT_IMAGE}
             alt="Coffee shop founder behind the bar, smiling in a casual apron with a warm café backdrop"
@@ -54,7 +49,7 @@ export function About() {
             className="aspect-[4/5] w-full object-cover"
           />
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   )
 }

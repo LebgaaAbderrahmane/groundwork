@@ -104,6 +104,8 @@ export const ABOUT_CHIPS = ['Est. 2025', 'Family-Run', 'Community Hub']
 
 export type GalleryImage = { src: string; alt: string }
 
+export const FIND_US_IMAGE = unsplash('photo-1525610553991-2bede1a236e2', 1600)
+
 export const GALLERY: GalleryImage[] = [
   {
     src: unsplash('photo-1553413077-190dd305871c'),

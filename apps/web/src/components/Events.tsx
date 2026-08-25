@@ -3,15 +3,16 @@ import { ArrowRight } from 'lucide-react'
 import { BRAND } from '@cribstone/shared'
 import { Button } from '@/components/ui/button'
 import { Chip } from '@/components/shared/chip'
+import { fadeUp, VIEWPORT } from '@/lib/motion'
 
 export function Events() {
   return (
     <section className="bg-surface py-24 md:py-32">
       <motion.div
-        initial={{ opacity: 0, y: 32 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.7, ease: 'easeOut' }}
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={VIEWPORT}
         className="container-site flex flex-col items-center text-center"
       >
         <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">

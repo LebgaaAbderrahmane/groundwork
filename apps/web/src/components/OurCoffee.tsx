@@ -3,17 +3,19 @@ import { ArrowRight } from 'lucide-react'
 import { COFFEE_CHIPS, OUR_COFFEE_IMAGES } from '@/data/content'
 import { Button } from '@/components/ui/button'
 import { Chip } from '@/components/shared/chip'
+import { fadeUp, fadeUpScale, revealStagger, VIEWPORT } from '@/lib/motion'
 
 export function OurCoffee() {
   return (
     <section id="coffee" className="scroll-mt-20 bg-background py-24 md:py-32">
-      <div className="container-site grid items-center gap-16 lg:grid-cols-2">
-        <motion.div
-          initial={{ opacity: 0, y: 32 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
-        >
+      <motion.div
+        variants={revealStagger(0.14)}
+        initial="hidden"
+        whileInView="show"
+        viewport={VIEWPORT}
+        className="container-site grid items-center gap-16 lg:grid-cols-2"
+      >
+        <motion.div variants={fadeUp}>
           <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
             Our coffee
           </span>
@@ -50,13 +52,7 @@ export function OurCoffee() {
           </Button>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="relative mx-auto w-full max-w-lg lg:max-w-none"
-        >
+        <motion.div variants={fadeUpScale} className="relative mx-auto w-full max-w-lg lg:max-w-none">
           <div className="overflow-hidden rounded-lg">
             <img
               src={OUR_COFFEE_IMAGES.large}
@@ -74,7 +70,7 @@ export function OurCoffee() {
             />
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   )
 }
