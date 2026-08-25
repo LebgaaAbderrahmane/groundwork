@@ -7,8 +7,8 @@ import { cartSubtotal, useCart } from '@/store/cart'
 import { trpc } from '@/lib/trpc'
 import { pounds } from '@/lib/format'
 import { Button } from '@/components/ui/button'
+import { PaymentMethodSelector } from '@/components/payment'
 import { PICKUP_OPTIONS } from './CartPage'
-import { cn } from '@/lib/utils'
 
 export function CheckoutPage() {
   useDocumentTitle('Checkout')
@@ -139,38 +139,8 @@ export function CheckoutPage() {
               <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
                 Payment
               </h2>
-              <div className="mt-4 space-y-2">
-                {(
-                  [
-                    { value: 'in_store', label: 'Pay at the counter', note: 'Card or cash on pickup' },
-                    { value: 'card', label: 'Pay by card now', note: 'Mock checkout for this version' },
-                  ] as const
-                ).map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => setPayment(opt.value)}
-                    className={cn(
-                      'flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left transition-colors',
-                      payment === opt.value
-                        ? 'border-primary bg-surface'
-                        : 'border-border hover:border-primary/40',
-                    )}
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{opt.label}</p>
-                      <p className="text-xs font-light text-muted-foreground">{opt.note}</p>
-                    </div>
-                    <span
-                      className={cn(
-                        'size-4 rounded-full border-2',
-                        payment === opt.value
-                          ? 'border-primary bg-primary'
-                          : 'border-border',
-                      )}
-                    />
-                  </button>
-                ))}
+              <div className="mt-4">
+                <PaymentMethodSelector value={payment} onChange={(v) => setPayment(v as 'in_store' | 'card')} />
               </div>
             </div>
           </div>

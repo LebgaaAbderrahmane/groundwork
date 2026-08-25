@@ -3,6 +3,7 @@ import { useDocumentTitle } from '@/lib/hooks'
 import { ArrowRight, AlertTriangle, CheckCircle2, Coffee, Package } from 'lucide-react'
 import { pounds } from '@/lib/format'
 import { Button } from '@/components/ui/button'
+import { PaymentStatusBadge } from '@/components/payment'
 import { trpc } from '@/lib/trpc'
 import { cn } from '@/lib/utils'
 
@@ -142,6 +143,12 @@ export function OrderConfirmationPage() {
         on the ticket and we'll have it ready for pickup.
       </p>
 
+      {data?.paymentStatus && (
+        <div className="mt-3">
+          <PaymentStatusBadge status={data.paymentStatus} />
+        </div>
+      )}
+
       {data && isLive && (
         <div className="mt-8">
           <StatusTracker status={data.status} />
@@ -160,6 +167,11 @@ export function OrderConfirmationPage() {
 
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
         <Button asChild size="lg">
+          <Link to={`/receipt/${orderId}`}>
+            View receipt
+          </Link>
+        </Button>
+        <Button asChild size="lg" variant="outline">
           <Link to="/menu">
             Order more <ArrowRight className="size-4" aria-hidden />
           </Link>

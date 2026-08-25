@@ -15,6 +15,7 @@ import { MenuPage } from '@/pages/MenuPage'
 import { CartPage } from '@/pages/CartPage'
 import { CheckoutPage } from '@/pages/CheckoutPage'
 import { OrderConfirmationPage } from '@/pages/OrderConfirmationPage'
+import { ReceiptPage } from '@/pages/ReceiptPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
 function HomePage() {
@@ -62,6 +63,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/order/:orderId" element={<OrderConfirmationPage />} />
+          <Route path="/receipt/:orderId" element={<ReceiptPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />
