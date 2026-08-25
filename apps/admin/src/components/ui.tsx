@@ -1,6 +1,8 @@
 import type { ReactNode, ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react'
+import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
-import { Loader2 } from 'lucide-react'
+import { Loader2, X } from 'lucide-react'
 
 type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'danger'
 
@@ -157,5 +159,148 @@ export function Field({
       <Label htmlFor={htmlFor}>{label}</Label>
       {children}
     </div>
+  )
+}
+
+export function Dialog({
+  open,
+  onClose,
+  title,
+  children,
+}: {
+  open: boolean
+  onClose: () => void
+  title: string
+  children: ReactNode
+}) {
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [open, onClose])
+
+  if (!open) return null
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-foreground/40 p-4"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+    >
+      <div
+        className="w-full max-w-lg rounded-xl border border-border bg-background p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-lg font-semibold text-foreground">{title}</h2>
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={onClose}
+            className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface hover:text-foreground"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+        <div className="mt-4">{children}</div>
+      </div>
+    </div>,
+    document.body,
+  )
+}
+
+export function Separator({ className }: { className?: string }) {
+  return <div className={cn('border-t border-border', className)} />
+}
+
+export function Avatar({
+  name,
+  className,
+}: {
+  name: string
+  className?: string
+}) {
+  const initials = name
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
+
+  return (
+    <div
+      className={cn(
+        'flex size-9 shrink-0 items-center justify-center rounded-full bg-accent/15 text-xs font-semibold text-accent',
+        className,
+      )}
+    >
+      {initials}
+    </div>
+  )
+}
+
+export function EmptyState({
+  icon,
+  title,
+  description,
+  action,
+}: {
+  icon?: ReactNode
+  title: string
+  description?: string
+  action?: ReactNode
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center py-12 text-center">
+      {icon && <div className="text-muted-foreground">{icon}</div>}
+      <p className="mt-3 font-display text-lg font-semibold text-foreground">{title}</p>
+      {description && (
+        <p className="mt-1 max-w-sm text-sm font-light text-muted-foreground">{description}</p>
+      )}
+      {action && <div className="mt-4">{action}</div>}
+    </div>
+  )
+}
+
+export function ConfirmDialog({
+  open,
+  onClose,
+  onConfirm,
+  title,
+  description,
+  confirmLabel = 'Confirm',
+  loading = false,
+}: {
+  open: boolean
+  onClose: () => void
+  onConfirm: () => void
+  title: string
+  description?: string
+  confirmLabel?: string
+  loading?: boolean
+}) {
+  return (
+    <Dialog open={open} onClose={onClose} title={title}>
+      {description && (
+        <p className="text-sm font-light text-muted-foreground">{description}</p>
+      )}
+      <div className="mt-6 flex justify-end gap-3">
+        <Button variant="outline" onClick={onClose} disabled={loading}>
+          Cancel
+        </Button>
+        <Button variant="danger" onClick={onConfirm} loading={loading}>
+          {confirmLabel}
+        </Button>
+      </div>
+    </Dialog>
   )
 }
