@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Minus, Plus, Save, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
 import { clockTime } from '@/lib/format'
 import { Badge, Button, Card, Field, Input, Select } from '@/components/ui'
@@ -27,8 +28,14 @@ export function InventoryPage() {
     utils.analytics.dashboard.invalidate()
   }
 
-  const adjust = trpc.inventory.adjust.useMutation({ onSuccess: invalidate })
-  const create = trpc.inventory.createIngredient.useMutation({ onSuccess: invalidate })
+  const adjust = trpc.inventory.adjust.useMutation({
+    onSuccess: () => { invalidate(); toast.success('Stock adjusted') },
+    onError: (err) => toast.error(err.message),
+  })
+  const create = trpc.inventory.createIngredient.useMutation({
+    onSuccess: () => { invalidate(); toast.success('Ingredient added') },
+    onError: (err) => toast.error(err.message),
+  })
 
   const [form, setForm] = useState({
     name: '',

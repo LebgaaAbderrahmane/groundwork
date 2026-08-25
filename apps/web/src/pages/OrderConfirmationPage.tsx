@@ -1,11 +1,55 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useDocumentTitle } from '@/lib/hooks'
-import { ArrowRight, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { ArrowRight, AlertTriangle, CheckCircle2, Coffee, Package } from 'lucide-react'
 import { pounds } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { trpc } from '@/lib/trpc'
+import { cn } from '@/lib/utils'
 
 type LocationState = { totalPence?: number }
+
+const STATUS_STEPS = [
+  { key: 'received', label: 'Received', icon: Package },
+  { key: 'making', label: 'Making', icon: Coffee },
+  { key: 'ready', label: 'Ready', icon: CheckCircle2 },
+] as const
+
+const STATUS_ORDER = ['received', 'making', 'ready', 'collected'] as const
+
+function StatusTracker({ status }: { status: string }) {
+  const currentIdx = STATUS_ORDER.indexOf(status as typeof STATUS_ORDER[number])
+
+  return (
+    <div className="flex items-center gap-3">
+      {STATUS_STEPS.map((step, i) => {
+        const active = currentIdx >= i
+        const current = currentIdx === i
+        const Icon = step.icon
+        return (
+          <div key={step.key} className="flex items-center gap-3">
+            <div className="flex flex-col items-center gap-1.5">
+              <div
+                className={cn(
+                  'flex size-10 items-center justify-center rounded-full transition-colors',
+                  active ? 'bg-primary text-primary-foreground' : 'bg-surface text-muted-foreground',
+                  current && 'ring-2 ring-primary/30 ring-offset-2 ring-offset-background',
+                )}
+              >
+                <Icon className="size-5" strokeWidth={1.6} />
+              </div>
+              <span className={cn('text-[10px] font-medium uppercase tracking-[0.1em]', active ? 'text-foreground' : 'text-muted-foreground')}>
+                {step.label}
+              </span>
+            </div>
+            {i < STATUS_STEPS.length - 1 && (
+              <div className={cn('mb-5 h-0.5 w-10 rounded-full', currentIdx > i ? 'bg-primary' : 'bg-surface')} />
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 
 export function OrderConfirmationPage() {
   useDocumentTitle('Order Confirmed')
@@ -14,7 +58,14 @@ export function OrderConfirmationPage() {
   const state = (location.state ?? {}) as LocationState
   const order = trpc.orders.getById.useQuery(
     { orderId: Number(orderId) },
-    { enabled: Boolean(orderId) && /^\d+$/.test(orderId ?? '') },
+    {
+      enabled: Boolean(orderId) && /^\d+$/.test(orderId ?? ''),
+      refetchInterval: (query) => {
+        const status = query.state.data?.status
+        if (status === 'collected' || status === 'cancelled') return false
+        return 5000
+      },
+    },
   )
 
   const totalPence = order.data?.totalPence ?? state.totalPence
@@ -55,14 +106,29 @@ export function OrderConfirmationPage() {
     )
   }
 
+  const data = order.data
+  const isLive = data && data.status !== 'collected' && data.status !== 'cancelled'
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 pt-24 text-center">
-      <CheckCircle2 className="size-14 text-primary" strokeWidth={1.2} aria-hidden />
+      {data?.status === 'collected' ? (
+        <CheckCircle2 className="size-14 text-primary" strokeWidth={1.2} aria-hidden />
+      ) : data?.status === 'cancelled' ? (
+        <AlertTriangle className="size-14 text-danger" strokeWidth={1.2} aria-hidden />
+      ) : (
+        <Coffee className="size-14 text-accent" strokeWidth={1.2} aria-hidden />
+      )}
+
       <h1 className="mt-6 font-display text-5xl font-bold text-foreground">
-        You're all <em className="italic text-accent">set</em>
+        {data?.status === 'collected'
+          ? 'Order collected'
+          : data?.status === 'cancelled'
+            ? 'Order cancelled'
+            : "You're all set"}
       </h1>
+
       <p className="mt-4 max-w-md text-sm font-light text-foreground/60">
-        {order.data?.customerName ? `${order.data.customerName}, ` : ''}we've got your
+        {data?.customerName ? `${data.customerName}, ` : ''}we've got your
         order in. Look for{' '}
         <span className="font-medium text-foreground">
           order #{orderId ?? '—'}
@@ -75,6 +141,22 @@ export function OrderConfirmationPage() {
         )}{' '}
         on the ticket and we'll have it ready for pickup.
       </p>
+
+      {data && isLive && (
+        <div className="mt-8">
+          <StatusTracker status={data.status} />
+        </div>
+      )}
+
+      {isLive && (
+        <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <span className="relative flex size-2">
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
+            <span className="relative inline-flex size-2 rounded-full bg-primary" />
+          </span>
+          Live — status updates automatically
+        </p>
+      )}
 
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
         <Button asChild size="lg">

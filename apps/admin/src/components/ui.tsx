@@ -1,5 +1,5 @@
 import type { ReactNode, ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
 import { Loader2, X } from 'lucide-react'
@@ -302,5 +302,70 @@ export function ConfirmDialog({
         </Button>
       </div>
     </Dialog>
+  )
+}
+
+export function TimeAgo({ date, className }: { date: Date | string; className?: string }) {
+  const [, setTick] = useState(0)
+  const target = new Date(date).getTime()
+
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 30_000)
+    return () => clearInterval(id)
+  }, [])
+
+  const ms = Date.now() - target
+  const secs = Math.max(0, Math.floor(ms / 1000))
+  if (secs < 60) return <span className={className}>just now</span>
+  const mins = Math.floor(secs / 60)
+  if (mins < 60) return <span className={className}>{mins}m ago</span>
+  const hrs = Math.floor(mins / 60)
+  return <span className={className}>{hrs}h {mins % 60}m ago</span>
+}
+
+export function LiveBadge({ className }: { className?: string }) {
+  return (
+    <span className={cn('inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.1em] text-muted-foreground', className)}>
+      <span className="relative flex size-2">
+        <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
+        <span className="relative inline-flex size-2 rounded-full bg-primary" />
+      </span>
+      Live
+    </span>
+  )
+}
+
+export function StatsCard({
+  icon,
+  label,
+  value,
+  sub,
+}: {
+  icon: ReactNode
+  label: string
+  value: string | number
+  sub?: string
+}) {
+  return (
+    <Card>
+      <div className="flex items-center gap-3">
+        <span className="flex size-10 items-center justify-center rounded-lg bg-surface text-primary">
+          {icon}
+        </span>
+        <div>
+          <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            {label}
+          </p>
+          <p className="mt-0.5 font-display text-2xl font-bold text-foreground">
+            {value}
+            {sub && (
+              <span className="ml-1 text-sm font-normal text-muted-foreground">
+                {sub}
+              </span>
+            )}
+          </p>
+        </div>
+      </div>
+    </Card>
   )
 }

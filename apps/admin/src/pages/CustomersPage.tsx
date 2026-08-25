@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Search } from 'lucide-react'
+import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
 import { clockTime } from '@/lib/format'
 import { Badge, Button, Card, Field, Input } from '@/components/ui'
@@ -15,7 +16,9 @@ export function CustomersPage() {
       utils.customers.list.invalidate()
       utils.customers.search.invalidate()
       utils.customers.transactions.invalidate()
+      toast.success('Points awarded')
     },
+    onError: (err) => toast.error(err.message),
   })
 
   const [phone, setPhone] = useState('')

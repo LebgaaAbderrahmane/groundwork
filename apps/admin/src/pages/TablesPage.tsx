@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { Plus, RefreshCw, Trash2 } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
+import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
-import { Badge, Button, Card, Input } from '@/components/ui'
+import { BRAND } from '@cribstone/shared'
+import { Button, Card, EmptyState, Input } from '@/components/ui'
 import { useDocumentTitle } from '@/lib/hooks'
 
 export function TablesPage() {
@@ -10,11 +13,30 @@ export function TablesPage() {
   const list = trpc.tables.list.useQuery()
   const invalidate = () => utils.tables.list.invalidate()
 
-  const create = trpc.tables.create.useMutation({ onSuccess: invalidate })
-  const regenerate = trpc.tables.regenerateQR.useMutation({ onSuccess: invalidate })
-  const remove = trpc.tables.remove.useMutation({ onSuccess: invalidate })
+  const create = trpc.tables.create.useMutation({
+    onSuccess: () => {
+      invalidate()
+      toast.success('Table added')
+    },
+    onError: (err) => toast.error(err.message),
+  })
+  const regenerate = trpc.tables.regenerateQR.useMutation({
+    onSuccess: () => {
+      invalidate()
+      toast.success('QR code regenerated')
+    },
+    onError: (err) => toast.error(err.message),
+  })
+  const remove = trpc.tables.remove.useMutation({
+    onSuccess: () => {
+      invalidate()
+      toast.success('Table removed')
+    },
+    onError: (err) => toast.error(err.message),
+  })
 
   const [label, setLabel] = useState('')
+  const [openQr, setOpenQr] = useState<number | null>(null)
 
   const tables = list.data ?? []
 
@@ -24,6 +46,9 @@ export function TablesPage() {
     create.mutate({ label: label.trim() })
     setLabel('')
   }
+
+  const qrUrl = (token: string) =>
+    `https://${BRAND.domain}/order/table/${token}`
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -59,46 +84,76 @@ export function TablesPage() {
           <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
             {tables.length} table{tables.length === 1 ? '' : 's'}
           </h2>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-            {tables.map((t) => (
-              <li key={t.id} className="flex items-center justify-between gap-3 rounded-lg border border-border/70 bg-surface/50 px-4 py-3">
-                <div className="min-w-0">
-                  <p className="font-medium text-foreground">{t.label}</p>
-                  <p className="truncate font-mono text-xs text-muted-foreground">
-                    token · {t.qrToken.slice(0, 8)}…
-                  </p>
+          {tables.length === 0 ? (
+            <EmptyState
+              title="No tables yet"
+              description="Add a table above to generate a QR code for dine-in ordering."
+            />
+          ) : (
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {tables.map((t) => (
+                <div
+                  key={t.id}
+                  className="rounded-lg border border-border/70 bg-surface/50 p-4"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-medium text-foreground">{t.label}</p>
+                      <p className="truncate font-mono text-xs text-muted-foreground">
+                        {t.qrToken.slice(0, 12)}…
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Button
+                        variant="outline"
+                        className="size-8 p-0"
+                        title="Regenerate QR"
+                        onClick={() => regenerate.mutate({ id: t.id })}
+                      >
+                        <RefreshCw className="size-3.5" aria-hidden />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="size-8 p-0 text-muted-foreground hover:text-danger"
+                        title="Remove table"
+                        onClick={() => remove.mutate({ id: t.id })}
+                      >
+                        <Trash2 className="size-3.5" aria-hidden />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center gap-4">
+                    <div
+                      className="cursor-pointer rounded-lg border border-border bg-white p-2 transition-shadow hover:shadow-md"
+                      onClick={() => setOpenQr(openQr === t.id ? null : t.id)}
+                      title="Click to enlarge"
+                    >
+                      <QRCodeSVG
+                        value={qrUrl(t.qrToken)}
+                        size={openQr === t.id ? 160 : 64}
+                        level="M"
+                        includeMargin={false}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs text-muted-foreground">
+                        {openQr === t.id ? (
+                          <>Scan to order at <strong>{t.label}</strong></>
+                        ) : (
+                          <>Click QR to preview</>
+                        )}
+                      </p>
+                      {openQr === t.id && (
+                        <p className="mt-1 truncate font-mono text-[10px] text-muted-foreground/60">
+                          {qrUrl(t.qrToken)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Badge className="bg-background text-muted-foreground ring-1 ring-border">
-                    QR ready
-                  </Badge>
-                  <Button
-                    variant="outline"
-                   
-                    className="size-9 p-0"
-                    title="Regenerate QR"
-                    onClick={() => regenerate.mutate({ id: t.id })}
-                  >
-                    <RefreshCw className="size-4" aria-hidden />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                   
-                    className="size-9 p-0 text-muted-foreground hover:text-danger"
-                    title="Remove table"
-                    onClick={() => remove.mutate({ id: t.id })}
-                  >
-                    <Trash2 className="size-4" aria-hidden />
-                  </Button>
-                </div>
-              </li>
-            ))}
-            {tables.length === 0 && (
-              <li className="col-span-full py-6 text-center text-sm font-light text-muted-foreground">
-                No tables yet.
-              </li>
-            )}
-          </ul>
+              ))}
+            </div>
+          )}
         </Card>
       </div>
     </div>

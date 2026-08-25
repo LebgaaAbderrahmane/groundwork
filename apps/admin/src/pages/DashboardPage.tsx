@@ -1,7 +1,7 @@
 import { LayoutList, PackageX, Receipt, TrendingUp } from 'lucide-react'
 import { trpc } from '@/lib/trpc'
 import { pounds } from '@/lib/format'
-import { Badge, Card } from '@/components/ui'
+import { Badge, Card, EmptyState, StatsCard } from '@/components/ui'
 import { Link } from 'react-router-dom'
 import { useDocumentTitle } from '@/lib/hooks'
 
@@ -34,61 +34,30 @@ export function DashboardPage() {
       </header>
 
       <section className="mt-8 grid gap-4 sm:grid-cols-3">
-        <Card>
-          <div className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-lg bg-surface text-primary">
-              <TrendingUp className="size-5" strokeWidth={1.7} />
-            </span>
-            <div>
-              <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                Revenue
-              </p>
-              <p className="mt-0.5 font-display text-2xl font-bold text-foreground">
-                {pounds(d?.summary.revenuePence ?? 0)}
-              </p>
-            </div>
-          </div>
-        </Card>
-        <Card>
-          <div className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-lg bg-surface text-primary">
-              <Receipt className="size-5" strokeWidth={1.7} />
-            </span>
-            <div>
-              <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                Orders
-              </p>
-              <p className="mt-0.5 font-display text-2xl font-bold text-foreground">
-                {d?.summary.orderCount ?? 0}
-                <span className="ml-1 text-sm font-normal text-muted-foreground">
-                  · avg {pounds(d?.summary.averageOrderPence ?? 0)}
-                </span>
-              </p>
-            </div>
-          </div>
-        </Card>
-        <Card>
-          <div className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-lg bg-surface text-primary">
-              <PackageX className="size-5" strokeWidth={1.7} />
-            </span>
-            <div>
-              <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                Low stock
-              </p>
-              <p className="mt-0.5 font-display text-2xl font-bold text-foreground">
-                {d?.lowStock.length ?? 0}
-              </p>
-            </div>
-          </div>
-          {d && d.lowStock.length > 0 && (
-            <p className="mt-2 text-xs text-muted-foreground">
-              {d.lowStock.slice(0, 3).map((i) => i.name).join(', ')}
-              {d.lowStock.length > 3 && ` +${d.lowStock.length - 3} more`}
-            </p>
-          )}
-        </Card>
+        <StatsCard
+          icon={<TrendingUp className="size-5" strokeWidth={1.7} />}
+          label="Revenue"
+          value={pounds(d?.summary.revenuePence ?? 0)}
+        />
+        <StatsCard
+          icon={<Receipt className="size-5" strokeWidth={1.7} />}
+          label="Orders"
+          value={d?.summary.orderCount ?? 0}
+          sub={`· avg ${pounds(d?.summary.averageOrderPence ?? 0)}`}
+        />
+        <StatsCard
+          icon={<PackageX className="size-5" strokeWidth={1.7} />}
+          label="Low stock"
+          value={d?.lowStock.length ?? 0}
+        />
       </section>
+
+      {d && d.lowStock.length > 0 && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          {d.lowStock.slice(0, 3).map((i) => i.name).join(', ')}
+          {d.lowStock.length > 3 && ` +${d.lowStock.length - 3} more`}
+        </p>
+      )}
 
       <section className="mt-6 grid gap-4 lg:grid-cols-2">
         <Card>
@@ -107,9 +76,7 @@ export function DashboardPage() {
               ))}
             </ul>
           ) : (
-            <p className="mt-4 text-sm font-light text-muted-foreground">
-              No sales yet today.
-            </p>
+            <EmptyState title="No sales yet today" />
           )}
         </Card>
 
@@ -137,9 +104,7 @@ export function DashboardPage() {
               ))}
             </div>
           ) : (
-            <p className="mt-4 text-sm font-light text-muted-foreground">
-              No orders recorded yet.
-            </p>
+            <EmptyState title="No orders recorded yet" />
           )}
         </Card>
       </section>
@@ -158,9 +123,7 @@ export function DashboardPage() {
               ))}
             </ul>
           ) : (
-            <p className="mt-4 text-sm font-light text-muted-foreground">
-              All stocked up.
-            </p>
+            <EmptyState title="All stocked up" />
           )}
         </Card>
       </section>
