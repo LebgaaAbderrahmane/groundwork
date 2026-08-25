@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Coffee } from 'lucide-react'
-import { ADDRESS, NAV_LINKS } from '@/data/content'
+import { BRAND } from '@cribstone/shared'
+import { NAV_LINKS } from '@/data/content'
 
 export function Footer() {
   return (
@@ -13,7 +14,7 @@ export function Footer() {
             aria-hidden
           />
           <span className="font-display text-2xl italic text-accent">
-            Groundwork
+            {BRAND.shortName}
           </span>
         </Link>
 
@@ -30,7 +31,7 @@ export function Footer() {
         </nav>
 
         <p className="text-xs font-light text-footer-foreground/50">
-          © 2026 Groundwork Coffee · {ADDRESS}
+          © {new Date().getFullYear()} {BRAND.name} · {BRAND.address}
         </p>
       </div>
     </footer>

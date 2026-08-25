@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, gte, lte, ne, sql } from 'drizzle-orm'
-import { ingredients, orderItems, orders } from '@groundwork/db'
+import { ingredients, orderItems, orders } from '@cribstone/db'
 import { protectedProcedure, router } from '../trpc'
 
 export const analyticsRouter = router({

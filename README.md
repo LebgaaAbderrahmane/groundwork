@@ -1,4 +1,4 @@
-# Groundwork Coffee
+# Cribstone Coffee
 
 A full single-shop coffee shop system: a public marketing + order-ahead site, a staff admin
 dashboard, and a shared API + Postgres backend — all in one pnpm monorepo.
@@ -11,7 +11,7 @@ Zustand · React Query.
 | Path                 | What it is                                                        |
 | -------------------- | ----------------------------------------------------------------- |
 | `apps/web`           | Public site: marketing landing + `/menu`, `/cart`, `/checkout`    |
-| `apps/admin`         | Staff dashboard: dashboard, orders queue (SSE), menu, inventory…  |
+| `apps/admin`         | Staff dashboard: dashboard, orders queue (SSE), menu, inventory… |
 | `apps/api`           | Express + tRPC API, SSE events, auth, loyalty, mock payments      |
 | `packages/db`        | Drizzle schema, migrations, seed script                           |
 | `packages/shared`    | Zod input schemas + domain constants shared by API and frontends  |
@@ -38,11 +38,11 @@ pnpm db:seed
 pnpm dev
 ```
 
-| App     | URL                        | Sign in (admin)                        |
-| ------- | -------------------------- | -------------------------------------- |
-| Web     | http://localhost:5173      | —                                      |
-| Admin   | http://localhost:5174      | `jamie@groundworkcoffee.co.uk` / `groundwork2026` |
-| API     | http://localhost:4000      | tRPC at `/api/trpc`, SSE at `/api/events` |
+| App     | URL                        | Sign in (admin)                                |
+| ------- | -------------------------- | ---------------------------------------------- |
+| Web     | http://localhost:5173      | —                                              |
+| Admin   | http://localhost:5174      | `braxton@cribstonecoffee.com` / `cribstone2026` |
+| API     | http://localhost:4000      | tRPC at `/api/trpc`, SSE at `/api/events`       |
 
 ## Full-stack demo (Docker)
 
@@ -60,7 +60,7 @@ docker compose up -d --build     # db + api + web(8080) + admin(8081)
 | Admin   | http://localhost:8081 |
 
 > The `api` container runs `pnpm db:migrate && pnpm db:seed` on start; seeding is idempotent
-> (skips when a shop already exists). For local dev the DB is the same `groundwork-db` container,
+> (skips when a shop already exists). For local dev the DB is the same `cribstone-db` container,
 > so dev and docker demo share data unless you delete the volume (`docker compose down -v`).
 
 ## Common commands
@@ -77,6 +77,8 @@ docker compose up -d --build     # db + api + web(8080) + admin(8081)
 
 ## Architecture notes
 
+- **Brand config:** All brand constants (name, address, email, founder) live in
+  `packages/shared/src/brand.ts`. Update once, reflected everywhere.
 - **Auth**: httpOnly JWT access (15 min) + rotating refresh cookie. `protectedProcedure` resolves
   the user from the access cookie; `ownerProcedure` requires the `owner` role.
 - **Orders**: server re-prices every line from the DB (client prices are ignored), validates
@@ -84,8 +86,8 @@ docker compose up -d --build     # db + api + web(8080) + admin(8081)
   phone number, and emits SSE updates. Status pipeline: `received → making → ready → collected`.
 - **Real-time queue**: the admin orders page opens `GET /api/events` (SSE) and invalidates its
   queue query on every event; nginx is configured with `proxy_buffering off` for that route.
-- **Loyalty**: customers are keyed by `(shopId, phone)`; every order with a phone creates/finds the
-  customer, increments visits, and adds a point.
+- **Loyalty**: customers are keyed by `(shopId, phone)`; every order with a phone creates/finds
+  the customer, increments visits, and adds a point.
 - **Payments**: mock. `in_store` orders start `pending` and are marked `paid` at `collected`;
   `card` orders are marked paid immediately.
 
@@ -103,6 +105,8 @@ apps/
   admin/src/
     pages/       # Login, Dashboard, Orders, Menu, Inventory, Staff, Customers, Tables, Settings
 packages/
+  shared/src/
+    brand.ts     # single source of truth for all brand constants
   db/src/schema.ts      # 17 tables (orders, products, ingredients, recipes, customers, …)
   db/migrations/        # SQL migrations
   shared/src/           # zod schemas + domain constants
@@ -111,7 +115,7 @@ packages/
 ## Tests
 
 `pnpm test` runs the API suite (`apps/api/test`) with Vitest + supertest. The suite drops and
-recreates a scratch `groundwork_test` database and re-seeds it before each run, so it is fully
+recreates a scratch `cribstone_test` database and re-seeds it before each run, so it is fully
 self-contained (the `db` container just needs to be up).
 
 ## Design decisions

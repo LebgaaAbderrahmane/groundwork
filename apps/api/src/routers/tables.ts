@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { and, asc, eq } from 'drizzle-orm'
-import { tables } from '@groundwork/db'
-import { tableInput } from '@groundwork/shared'
+import { tables } from '@cribstone/db'
+import { tableInput } from '@cribstone/shared'
 import { protectedProcedure, ownerProcedure, router } from '../trpc'
 
 const tableIdInput = z.object({ id: z.number().int().positive() })

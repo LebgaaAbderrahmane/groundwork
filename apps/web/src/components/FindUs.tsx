@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { ArrowRight } from 'lucide-react'
-import { ADDRESS, HOURS } from '@/data/content'
+import { BRAND } from '@cribstone/shared'
 import { Button } from '@/components/ui/button'
 
 export function FindUs() {
@@ -21,13 +21,13 @@ export function FindUs() {
         </h2>
 
         <p className="mt-6 max-w-xl text-base font-light leading-relaxed text-footer-foreground/80">
-          {HOURS}
+          {BRAND.hours}
         </p>
-        <p className="mt-1 text-sm font-light text-footer-foreground/60">{ADDRESS}</p>
+        <p className="mt-1 text-sm font-light text-footer-foreground/60">{BRAND.address}</p>
 
         <Button asChild size="lg" variant="cream" className="mt-10">
           <a
-            href="https://maps.google.com/?q=14+Kingsland+Road,+Dalston,+London+E8"
+            href={`https://maps.google.com/?q=${encodeURIComponent(BRAND.address)}`}
             target="_blank"
             rel="noreferrer"
           >

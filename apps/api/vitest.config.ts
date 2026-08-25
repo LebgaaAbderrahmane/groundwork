@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitest/config'
 
 const TEST_DATABASE_URL =
-  'postgres://groundwork:groundwork@localhost:5432/groundwork_test'
+  'postgres://cribstone:cribstone@localhost:5432/cribstone_test'
 
 export default defineConfig({
   test: {

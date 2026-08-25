@@ -6,7 +6,7 @@ export default defineConfig({
   out: './migrations',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL ?? 'postgres://groundwork:groundwork@localhost:5432/groundwork',
+    url: process.env.DATABASE_URL ?? 'postgres://cribstone:cribstone@localhost:5432/cribstone',
   },
   verbose: true,
   strict: true,

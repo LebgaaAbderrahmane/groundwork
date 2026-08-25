@@ -12,6 +12,7 @@ import {
   UserRound,
   Table2,
 } from 'lucide-react'
+import { BRAND } from '@cribstone/shared'
 import { trpc } from '@/lib/trpc'
 import { useSession } from '@/store/session'
 import { LoginPage } from '@/pages/LoginPage'
@@ -68,7 +69,7 @@ function Layout() {
         <div className="flex items-center gap-2.5 px-5 py-5">
           <Coffee className="size-5 text-accent" strokeWidth={1.8} />
           <span className="font-display text-xl italic text-foreground">
-            Groundwork
+            {BRAND.shortName}
           </span>
         </div>
 
@@ -129,7 +130,7 @@ function MobileNav({
         <div className="flex items-center gap-2">
           <Coffee className="size-5 text-accent" strokeWidth={1.8} />
           <span className="font-display text-lg italic text-foreground">
-            Groundwork
+            {BRAND.shortName}
           </span>
         </div>
         <div className="flex items-center gap-2">

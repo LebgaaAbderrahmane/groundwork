@@ -1,4 +1,4 @@
-import type { PaymentMethod } from '@groundwork/shared'
+import type { PaymentMethod } from '@cribstone/shared'
 
 export interface PaymentProvider {
   charge(opts: {

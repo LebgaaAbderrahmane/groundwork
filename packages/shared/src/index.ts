@@ -1,3 +1,4 @@
+export * from './brand'
 export * from './domain'
 export * from './orders'
 export * from './auth'

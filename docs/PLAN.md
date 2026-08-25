@@ -1,11 +1,11 @@
-# Groundwork Coffee — Full System Plan
+# Cribstone Coffee — Full System Plan
 
 > Living document. Update statuses as phases complete.
 > Last updated: 2026-08-06
 
 ## 1. Goal
 
-Turn the static Groundwork Coffee marketing site into a complete, single-shop
+Turn the static Cribstone Coffee marketing site into a complete, single-shop
 coffee shop system: live menu + online order-ahead for customers, and an admin
 dashboard for the owner/baristas to run menu, orders, inventory, staff, loyalty
 and analytics.
@@ -54,8 +54,8 @@ pnpm db:migrate / db:generate / db:seed / db:studio
 ```
 
 **Seed data** (idempotent-ish, dev only):
-- Shop: Groundwork Coffee · 14 Kingsland Road, Dalston, London E8
-- Owner login: `jamie@groundworkcoffee.co.uk` / `groundwork2026`
+- Shop: Cribstone Coffee · 1845 Harpswell Islands Road, Orr's Island, ME 04066
+- Owner login: `braxton@cribstonecoffee.com` / `cribstone2026`
 - 4 categories · 6 products · milk/size option groups · 5 ingredients + recipes · 3 tables
 
 **Env vars** (`.env.example`): `DATABASE_URL`, `JWT_SECRET`, `PORT`,
@@ -99,7 +99,7 @@ Order status pipeline: `received → making → ready → collected` (+ `cancell
 - Realtime: `GET /api/events` SSE (`order:update` events)
 - Services: inventory auto-deduct on order, loyalty points, mock payments
   (`PaymentProvider` interface)
-- Tests: vitest + supertest against a fresh `groundwork_test` DB (recreated by
+- Tests: vitest + supertest against a fresh `cribstone_test` DB (recreated by
   `test/global-setup.ts`; run `pnpm test`)
 
 **Done (P3):** auth login/logout/me · menu publicMenu + admin CRUD · orders

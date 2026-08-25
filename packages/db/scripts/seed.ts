@@ -44,10 +44,10 @@ async function main() {
   const [shop] = await db
     .insert(shops)
     .values({
-      name: 'Groundwork Coffee',
-      slug: 'groundwork',
-      address: '14 Kingsland Road, Dalston, London E8',
-      phone: '+44 20 1234 5678',
+      name: 'Cribstone Coffee',
+      slug: 'cribstone',
+      address: '1845 Harpswell Islands Road, Orr\'s Island, ME 04066',
+      phone: '+1 207 555 0123',
       hours: 'Monday–Friday 7am–5pm · Saturday–Sunday 8am–5pm',
       paymentMode: 'in_store',
     })
@@ -55,9 +55,9 @@ async function main() {
 
   await db.insert(users).values({
     shopId: shop.id,
-    name: 'Jamie Walsh',
-    email: 'jamie@groundworkcoffee.co.uk',
-    passwordHash: await bcrypt.hash('groundwork2026', 12),
+    name: 'Braxton Jarratt',
+    email: 'braxton@cribstonecoffee.com',
+    passwordHash: await bcrypt.hash('cribstone2026', 12),
     role: 'owner',
   })
 
@@ -170,7 +170,7 @@ async function main() {
   ])
 
   console.log('Seeded shop "%s" (id=%d).', shop.name, shop.id)
-  console.log('Owner login: jamie@groundworkcoffee.co.uk / groundwork2026')
+  console.log('Owner login: braxton@cribstonecoffee.com / cribstone2026')
   await pool.end()
 }
 

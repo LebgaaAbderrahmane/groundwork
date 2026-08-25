@@ -90,7 +90,7 @@ export const useCart = create<CartState>()(
         })),
       clear: () => set({ lines: [] }),
     }),
-    { name: 'groundwork-cart' },
+    { name: 'cribstone-cart' },
   ),
 )
 

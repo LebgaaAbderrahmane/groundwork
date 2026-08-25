@@ -12,7 +12,7 @@ describe('menu', () => {
 
     expect(res.status).toBe(200)
     const data = res.body.result.data
-    expect(data.shop.name).toBe('Groundwork Coffee')
+    expect(data.shop.name).toBe('Cribstone Coffee')
     expect(data.categories.length).toBeGreaterThanOrEqual(4)
 
     const espresso = data.categories.find((c: { name: string }) => c.name === 'Espresso')

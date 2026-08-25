@@ -5,11 +5,11 @@ import { migrate } from 'drizzle-orm/node-postgres/migrator'
 
 const { Pool } = pg
 
-const TEST_DB = 'groundwork_test'
-const ADMIN_URL = 'postgres://groundwork:groundwork@localhost:5432/postgres'
+const TEST_DB = 'cribstone_test'
+const ADMIN_URL = 'postgres://cribstone:cribstone@localhost:5432/postgres'
 const TEST_URL =
   process.env.DATABASE_URL ??
-  `postgres://groundwork:groundwork@localhost:5432/${TEST_DB}`
+  `postgres://cribstone:cribstone@localhost:5432/${TEST_DB}`
 
 export default async function globalSetup() {
   const admin = new Pool({ connectionString: ADMIN_URL })

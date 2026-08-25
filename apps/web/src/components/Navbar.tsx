@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Coffee, Menu, ShoppingBag, X } from 'lucide-react'
+import { BRAND } from '@cribstone/shared'
 import { NAV_LINKS } from '@/data/content'
 import { Button } from '@/components/ui/button'
 import { cartCount, useCart } from '@/store/cart'
@@ -35,7 +36,7 @@ export function Navbar() {
             strokeWidth={1.8}
           />
           <span className="font-display text-xl italic text-foreground">
-            Groundwork
+            {BRAND.shortName}
           </span>
         </Link>
 

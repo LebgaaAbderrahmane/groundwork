@@ -10,22 +10,22 @@ describe('auth', () => {
     const res = await agent
       .post('/api/trpc/auth.login')
       .send({
-        email: 'jamie@groundworkcoffee.co.uk',
-        password: 'groundwork2026',
+        email: 'braxton@cribstonecoffee.com',
+        password: 'cribstone2026',
       })
 
     expect(res.status).toBe(200)
-    expect(res.body.result.data.user.email).toBe('jamie@groundworkcoffee.co.uk')
+    expect(res.body.result.data.user.email).toBe('braxton@cribstonecoffee.com')
     expect(res.body.result.data.user.role).toBe('owner')
 
     const me = await agent.get('/api/trpc/auth.me')
     expect(me.status).toBe(200)
-    expect(me.body.result.data.user.name).toBe('Jamie Walsh')
+    expect(me.body.result.data.user.name).toBe('Braxton Jarratt')
   })
 
   it('rejects invalid credentials', async () => {
     const res = await request(app).post('/api/trpc/auth.login').send({
-      email: 'jamie@groundworkcoffee.co.uk',
+      email: 'braxton@cribstonecoffee.com',
       password: 'wrong-password',
     })
     expect(res.status).toBe(401)
@@ -40,7 +40,7 @@ describe('auth', () => {
     const agent = request.agent(app)
     await agent
       .post('/api/trpc/auth.login')
-      .send({ email: 'jamie@groundworkcoffee.co.uk', password: 'groundwork2026' })
+      .send({ email: 'braxton@cribstonecoffee.com', password: 'cribstone2026' })
     const logout = await agent.post('/api/trpc/auth.logout').send({})
     expect(logout.status).toBe(200)
     const me = await agent.get('/api/trpc/auth.me')

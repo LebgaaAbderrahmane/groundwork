@@ -7,15 +7,15 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/db/package.json packages/db/
 COPY packages/shared/package.json packages/shared/
 COPY apps/api/package.json apps/api/
-RUN pnpm install --frozen-lockfile --filter @groundwork/api --filter @groundwork/db --filter @groundwork/shared
+RUN pnpm install --frozen-lockfile --filter @cribstone/api --filter @cribstone/db --filter @cribstone/shared
 
 FROM base AS build
 COPY . .
-RUN pnpm --filter @groundwork/api --filter @groundwork/db --filter @groundwork/shared exec tsc -b
+RUN pnpm --filter @cribstone/api --filter @cribstone/db --filter @cribstone/shared exec tsc -b
 
 FROM base AS runner
 ENV NODE_ENV=production
 COPY --from=build /app /app
 WORKDIR /app
 EXPOSE 4000
-CMD ["pnpm", "--filter", "@groundwork/api", "start"]
+CMD ["pnpm", "--filter", "@cribstone/api", "start"]

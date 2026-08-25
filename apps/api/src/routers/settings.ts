@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
-import { shops } from '@groundwork/db'
-import { settingsInput } from '@groundwork/shared'
+import { shops } from '@cribstone/db'
+import { settingsInput } from '@cribstone/shared'
 import { protectedProcedure, router, ownerProcedure } from '../trpc'
 
 export const settingsRouter = router({

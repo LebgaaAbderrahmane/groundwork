@@ -1,12 +1,12 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { and, asc, desc, eq, lte } from 'drizzle-orm'
-import { ingredients, inventoryMovements, recipes } from '@groundwork/db'
+import { ingredients, inventoryMovements, recipes } from '@cribstone/db'
 import {
   adjustStockInput,
   ingredientInput,
   recipeInput,
-} from '@groundwork/shared'
+} from '@cribstone/shared'
 import { protectedProcedure, router, ownerProcedure } from '../trpc'
 
 export const inventoryRouter = router({

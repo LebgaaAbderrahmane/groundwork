@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Plus, Search, X } from 'lucide-react'
+import { BRAND } from '@cribstone/shared'
 import { trpc } from '@/lib/trpc'
 import { pounds } from '@/lib/format'
 import { useCart, type SelectedOption } from '@/store/cart'
@@ -46,7 +47,7 @@ export function MenuPage() {
       <div className="container-site">
         <header className="text-center">
           <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-            Order ahead · {menu.data?.shop?.name ?? 'Groundwork Coffee'}
+            Order ahead · {menu.data?.shop?.name ?? BRAND.name}
           </span>
           <h1 className="mt-3 font-display text-5xl font-bold text-foreground md:text-6xl">
             The <em className="italic text-accent">Menu</em>

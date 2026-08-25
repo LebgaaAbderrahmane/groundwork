@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { and, desc, eq } from 'drizzle-orm'
-import { customers, loyaltyTransactions } from '@groundwork/db'
-import { awardPointsInput, customerSearchInput } from '@groundwork/shared'
+import { customers, loyaltyTransactions } from '@cribstone/db'
+import { awardPointsInput, customerSearchInput } from '@cribstone/shared'
 import { protectedProcedure, router } from '../trpc'
 import { getCustomerByPhone } from '../services/loyalty'
 

@@ -8,7 +8,7 @@ import {
   options,
   products,
   shops,
-} from '@groundwork/db'
+} from '@cribstone/db'
 import {
   ORDER_STATUS_FLOW,
   advanceOrderInput,
@@ -16,7 +16,7 @@ import {
   createOrderInput,
   myOrdersInput,
   type OrderStatus,
-} from '@groundwork/shared'
+} from '@cribstone/shared'
 import { publicProcedure, protectedProcedure, router } from '../trpc'
 import type { DB } from '../db'
 import { deductInventory } from '../services/inventory'

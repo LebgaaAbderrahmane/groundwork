@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { BRAND } from '@cribstone/shared'
 import { ABOUT_CHIPS, ABOUT_IMAGE } from '@/data/content'
 import { Chip } from '@/components/shared/chip'
 
@@ -17,20 +18,19 @@ export function About() {
             Our story
           </span>
           <h2 className="mt-4 font-display text-4xl font-bold leading-tight text-foreground md:text-5xl">
-            Opened with One Machine and a <em className="italic text-accent">Big Idea</em>
+            Built on a Horse Trailer and a <em className="italic text-accent">Big Dream</em>
           </h2>
 
           <p className="mt-8 text-base font-light leading-relaxed text-foreground/70">
-            Groundwork opened in 2019, the day Jamie Walsh — a former accountant
-            who'd spent ten years chasing other people's spreadsheets — finally
-            quit to build the café he'd always wanted. One espresso machine, one
-            barista, and a very long list of coffee books.
+            {BRAND.name} started as a converted horse trailer on Orr's Island —
+            {BRAND.founder} and his two kids, Quinn and Julia, serving espresso
+            from a parking lot with nothing but a dream and a Bard Coffee
+            subscription. The locals kept coming back. They brought friends.
           </p>
           <p className="mt-4 text-base font-light leading-relaxed text-foreground/70">
-            Today the same machine still runs the bar, but the room is full of
-            regulars, first dates and freelancers who've made it their second
-            office. We're still small, still independent, and still fussy about
-            the coffee.
+            Today we've traded the trailer for a proper counter, but the mission
+            hasn't changed: great beans, honest drinks, and a room where
+            everyone knows your name — or will by the time your cup is empty.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-2.5">

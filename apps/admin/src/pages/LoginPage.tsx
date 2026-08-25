@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Coffee } from 'lucide-react'
+import { BRAND } from '@cribstone/shared'
 import { trpc } from '@/lib/trpc'
 import { useSession } from '@/store/session'
 import { Button, Field, Input } from '@/components/ui'
@@ -32,7 +33,7 @@ export function LoginPage() {
         <div className="flex items-center justify-center gap-2.5">
           <Coffee className="size-6 text-accent" strokeWidth={1.8} />
           <span className="font-display text-2xl italic text-foreground">
-            Groundwork
+            {BRAND.shortName}
           </span>
         </div>
         <h1 className="mt-8 text-center font-display text-3xl font-bold text-foreground">
@@ -51,7 +52,7 @@ export function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@groundworkcoffee.co.uk"
+              placeholder={`you@${BRAND.domain}`}
             />
           </Field>
           <Field label="Password" htmlFor="password">

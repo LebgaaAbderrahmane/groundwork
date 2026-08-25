@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import { ArrowRight } from 'lucide-react'
+import { BRAND } from '@cribstone/shared'
 import { Button } from '@/components/ui/button'
 import { Chip } from '@/components/shared/chip'
 
@@ -31,7 +32,7 @@ export function Events() {
         </div>
 
         <Button asChild size="lg" className="mt-10">
-          <a href="mailto:hello@groundworkcoffee.co.uk">
+          <a href={`mailto:${BRAND.email}`}>
             Enquire about events <ArrowRight className="size-4" aria-hidden />
           </a>
         </Button>
