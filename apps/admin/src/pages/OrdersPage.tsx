@@ -1,10 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { ChevronRight, X } from 'lucide-react'
+import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
-import { pounds, timeAgo } from '@/lib/format'
-import { Badge, Button, Card } from '@/components/ui'
+import { pounds } from '@/lib/format'
+import { Badge, Button, Card, EmptyState, LiveBadge, TimeAgo } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import { useDocumentTitle } from '@/lib/hooks'
+import { useDocumentTitle, useBroadcastChannel } from '@/lib/hooks'
 
 const STATUS_STYLES: Record<string, string> = {
   received: 'bg-surface text-foreground',
@@ -18,10 +19,32 @@ const STATUS_LABELS: Record<string, string> = {
   ready: 'Ready',
 }
 
+type OrderBroadcast = { type: 'order:new' | 'order:update'; orderId?: number }
+
 export function OrdersPage() {
   useDocumentTitle('Orders')
   const utils = trpc.useUtils()
+  const prevCountRef = useRef(0)
   const queue = trpc.orders.queue.useQuery(undefined, { refetchInterval: 5000 })
+
+  const { post } = useBroadcastChannel<OrderBroadcast>('cribstone-orders', (data) => {
+    if (data.type === 'order:new' || data.type === 'order:update') {
+      utils.orders.queue.invalidate()
+    }
+  })
+
+  useEffect(() => {
+    const orders = queue.data
+    if (!orders) return
+    if (prevCountRef.current > 0 && orders.length > prevCountRef.current) {
+      const newest = orders[0]
+      toast.info(`New order #${newest.id}`, {
+        description: `${newest.customerName || 'Guest'} — ${pounds(newest.totalPence)}`,
+      })
+      post({ type: 'order:new', orderId: newest.id })
+    }
+    prevCountRef.current = orders.length
+  }, [queue.data, post])
 
   useEffect(() => {
     const es = new EventSource('/api/events')
@@ -32,36 +55,43 @@ export function OrdersPage() {
   }, [utils.orders.queue])
 
   const advance = trpc.orders.advanceStatus.useMutation({
-    onSuccess: () => utils.orders.queue.invalidate(),
+    onSuccess: () => {
+      utils.orders.queue.invalidate()
+      post({ type: 'order:update' })
+    },
   })
   const cancel = trpc.orders.cancel.useMutation({
-    onSuccess: () => utils.orders.queue.invalidate(),
+    onSuccess: () => {
+      utils.orders.queue.invalidate()
+      post({ type: 'order:update' })
+    },
   })
 
   const orders = queue.data ?? []
 
   return (
     <div className="mx-auto max-w-5xl">
-      <header>
-        <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-          Live · updates over SSE
-        </span>
-        <h1 className="mt-1 font-display text-4xl font-bold text-foreground">
-          Order queue
-        </h1>
-        <p className="mt-1 text-sm font-light text-muted-foreground">
-          {orders.length} active {orders.length === 1 ? 'order' : 'orders'}
-        </p>
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            Live · updates over SSE
+          </span>
+          <h1 className="mt-1 font-display text-4xl font-bold text-foreground">
+            Order queue
+          </h1>
+          <p className="mt-1 text-sm font-light text-muted-foreground">
+            {orders.length} active {orders.length === 1 ? 'order' : 'orders'}
+          </p>
+        </div>
+        <LiveBadge />
       </header>
 
       {orders.length === 0 ? (
-        <Card className="mt-8 flex flex-col items-center justify-center py-16 text-center">
-          <p className="font-display text-2xl font-bold text-foreground">
-            All caught up
-          </p>
-          <p className="mt-2 text-sm font-light text-muted-foreground">
-            New orders will appear here the moment they're placed.
-          </p>
+        <Card className="mt-8">
+          <EmptyState
+            title="All caught up"
+            description="New orders will appear here the moment they're placed."
+          />
         </Card>
       ) : (
         <div className="mt-8 grid gap-4">
@@ -90,11 +120,9 @@ export function OrdersPage() {
                   )}
                 </div>
 
-                <p className="mt-2 truncate text-sm font-medium text-foreground">
+                <p className="mt-2 flex items-center gap-2 text-sm font-medium text-foreground">
                   {order.customerName || 'Guest'}
-                  <span className="ml-2 text-muted-foreground">
-                    {timeAgo(order.createdAt)}
-                  </span>
+                  <TimeAgo date={order.createdAt} className="text-muted-foreground" />
                 </p>
 
                 <ul className="mt-2 space-y-0.5">
@@ -113,7 +141,7 @@ export function OrdersPage() {
 
                 {order.notes && (
                   <p className="mt-2 rounded-lg bg-accent/10 px-3 py-2 text-xs italic text-accent">
-                    “{order.notes}”
+                    "{order.notes}"
                   </p>
                 )}
               </div>
