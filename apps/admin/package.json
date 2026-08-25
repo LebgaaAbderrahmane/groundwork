@@ -1,5 +1,5 @@
 {
-  "name": "@groundwork/admin",
+  "name": "@cribstone/admin",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@groundwork/api": "workspace:*",
-    "@groundwork/shared": "workspace:*",
+    "@cribstone/api": "workspace:*",
+    "@cribstone/shared": "workspace:*",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-query": "^5.101.4",
     "@trpc/client": "^11.18.0",

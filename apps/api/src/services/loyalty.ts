@@ -1,5 +1,5 @@
 import { and, eq } from 'drizzle-orm'
-import { customers, loyaltyTransactions } from '@groundwork/db'
+import { customers, loyaltyTransactions } from '@cribstone/db'
 import type { DB } from '../db'
 
 export async function getCustomerByPhone(db: DB, shopId: number, phone: string) {

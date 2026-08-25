@@ -1,3 +1,6 @@
+import { motion } from 'motion/react'
+import { ArrowRight } from 'lucide-react'
+import { BRAND } from '@cribstone/shared'
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { ArrowRight, MapPin } from 'lucide-react'
@@ -45,6 +48,27 @@ export function FindUs() {
         viewport={VIEWPORT}
         className="container-site relative z-10 grid items-center gap-12 py-28 lg:grid-cols-2"
       >
+        <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-footer-foreground/60">
+          Find us
+        </span>
+        <h2 className="mt-4 font-display text-4xl font-bold italic leading-tight md:text-6xl">
+          Come and Say <em className="not-italic text-accent">Hello</em>
+        </h2>
+
+        <p className="mt-6 max-w-xl text-base font-light leading-relaxed text-footer-foreground/80">
+          {BRAND.hours}
+        </p>
+        <p className="mt-1 text-sm font-light text-footer-foreground/60">{BRAND.address}</p>
+
+        <Button asChild size="lg" variant="cream" className="mt-10">
+          <a
+            href={`https://maps.google.com/?q=${encodeURIComponent(BRAND.address)}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Get directions <ArrowRight className="size-4" aria-hidden />
+          </a>
+        </Button>
         <motion.div
           variants={fadeUp}
           className="flex flex-col items-center text-center lg:items-start lg:text-left"

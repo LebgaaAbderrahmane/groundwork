@@ -3,7 +3,7 @@ import { create } from 'zustand'
 export type ThemeOption = 'light' | 'dark' | 'system'
 export type ResolvedTheme = 'light' | 'dark'
 
-const STORAGE_KEY = 'gw-theme'
+const STORAGE_KEY = 'cc-theme'
 
 function systemTheme(): ResolvedTheme {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'

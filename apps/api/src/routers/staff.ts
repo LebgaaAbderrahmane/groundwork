@@ -1,12 +1,12 @@
 import { TRPCError } from '@trpc/server'
 import { and, asc, eq } from 'drizzle-orm'
 import bcrypt from 'bcryptjs'
-import { users } from '@groundwork/db'
+import { users } from '@cribstone/db'
 import {
   inviteStaffInput,
   setActiveInput,
   updateRoleInput,
-} from '@groundwork/shared'
+} from '@cribstone/shared'
 import { ownerProcedure, router } from '../trpc'
 
 const publicUser = {

@@ -11,7 +11,7 @@ async function ownerAgent() {
   const agent = request.agent(app)
   await agent
     .post('/api/trpc/auth.login')
-    .send({ email: 'jamie@groundworkcoffee.co.uk', password: 'groundwork2026' })
+    .send({ email: 'braxton@cribstonecoffee.com', password: 'cribstone2026' })
   return agent
 }
 

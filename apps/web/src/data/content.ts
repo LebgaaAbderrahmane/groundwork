@@ -1,3 +1,5 @@
+import { BRAND } from '@cribstone/shared'
+
 export type NavLink = { label: string; href: string }
 
 export const NAV_LINKS: NavLink[] = [
@@ -14,11 +16,10 @@ const unsplash = (id: string, w = 1200) =>
 export const HERO_IMAGE = unsplash('photo-1554118811-1e0d58224f24', 1600)
 
 export const HERO = {
-  label: 'Specialty Coffee · Dalston, London',
+  label: BRAND.tagline,
   headline: ['Good Coffee.', 'Good People.', 'Great Days.'],
   accentWord: 'Great Days.',
-  subtitle:
-    'Single-origin espresso, seasonal filter, and everything baked from scratch',
+  subtitle: BRAND.subtitle,
   trust: ['Specialty Roaster', 'Organic Milk', 'Dog Friendly'],
 }
 
@@ -99,7 +100,7 @@ export const COFFEE_CHIPS = ['Direct Trade', 'Single Origin', 'Seasonal Rotating
 
 export const ABOUT_IMAGE = unsplash('photo-1509042239860-f550ce710b93', 1000)
 
-export const ABOUT_CHIPS = ['Est. 2019', 'Specialty SCA', 'Community Hub']
+export const ABOUT_CHIPS = ['Est. 2025', 'Family-Run', 'Community Hub']
 
 export type GalleryImage = { src: string; alt: string }
 
@@ -136,7 +137,7 @@ export type Testimonial = {
 
 export const TESTIMONIALS: Testimonial[] = [
   {
-    quote: 'Best flat white in Dalston, no competition. The banana bread is dangerous.',
+    quote: 'Best flat white on the island, no competition. The banana bread is dangerous.',
     name: '@coffeelover',
     visit: 'Google Review',
   },
@@ -146,13 +147,12 @@ export const TESTIMONIALS: Testimonial[] = [
     visit: 'Google Review',
   },
   {
-    quote: 'Warmest room in Dalston. Came for a coffee, stayed three hours working.',
+    quote: 'Warmest room on Orr\'s Island. Came for a coffee, stayed three hours working.',
     name: '@tom_eats',
     visit: 'Google Review',
   },
 ]
 
-export const HOURS =
-  'Monday–Friday 7am–5pm · Saturday–Sunday 8am–5pm'
+export const HOURS = BRAND.hours
 
-export const ADDRESS = '14 Kingsland Road, Dalston, London E8'
+export const ADDRESS = BRAND.address

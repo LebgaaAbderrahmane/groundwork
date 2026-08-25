@@ -57,7 +57,7 @@ export function StaffPage() {
               <Input id="s-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Sam Taylor" required />
             </Field>
             <Field label="Email" htmlFor="s-email">
-              <Input id="s-email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="sam@groundworkcoffee.co.uk" required />
+              <Input id="s-email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="sam@cribstonecoffee.com" required />
             </Field>
             <Field label="Role" htmlFor="s-role">
               <Select id="s-role" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>

@@ -1,5 +1,5 @@
 {
-  "name": "groundwork-coffee",
+  "name": "cribstone-coffee",
   "private": true,
   "version": "0.1.0",
   "packageManager": "pnpm@11.3.0",
@@ -7,15 +7,15 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "pnpm --parallel --filter @groundwork/api --filter @groundwork/web --filter @groundwork/admin dev",
+    "dev": "pnpm --parallel --filter @cribstone/api --filter @cribstone/web --filter @cribstone/admin dev",
     "dev:db": "docker compose up -d db",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r --parallel exec tsc -b --noEmit",
-    "test": "pnpm --filter @groundwork/api test",
-    "db:migrate": "pnpm --filter @groundwork/db migrate",
-    "db:generate": "pnpm --filter @groundwork/db generate",
-    "db:seed": "pnpm --filter @groundwork/db seed",
-    "db:studio": "pnpm --filter @groundwork/db studio"
+    "test": "pnpm --filter @cribstone/api test",
+    "db:migrate": "pnpm --filter @cribstone/db migrate",
+    "db:generate": "pnpm --filter @cribstone/db generate",
+    "db:seed": "pnpm --filter @cribstone/db seed",
+    "db:studio": "pnpm --filter @cribstone/db studio"
   }
 }

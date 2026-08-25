@@ -8,14 +8,14 @@ import {
   orderItems,
   products,
   shops,
-} from '@groundwork/db'
+} from '@cribstone/db'
 import {
   categoryInput,
   optionGroupInput,
   optionInput,
   productInput,
   reorderInput,
-} from '@groundwork/shared'
+} from '@cribstone/shared'
 import { ownerProcedure, publicProcedure, router } from '../trpc'
 
 const idInput = z.object({ id: z.number().int().positive() })

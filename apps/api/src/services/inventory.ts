@@ -1,5 +1,5 @@
 import { and, eq, inArray } from 'drizzle-orm'
-import { ingredients, inventoryMovements, recipes } from '@groundwork/db'
+import { ingredients, inventoryMovements, recipes } from '@cribstone/db'
 import type { DB } from '../db'
 
 type OrderItem = {

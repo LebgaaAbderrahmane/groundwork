@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { SignJWT, jwtVerify } from 'jose'
 import { env } from '../env'
-import type { UserRole } from '@groundwork/shared'
+import type { UserRole } from '@cribstone/shared'
 
 export const ACCESS_COOKIE = 'gw_access'
 export const REFRESH_COOKIE = 'gw_refresh'

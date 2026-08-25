@@ -1,18 +1,18 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: groundwork-db
+    container_name: cribstone-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-groundwork}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-groundwork}
-      POSTGRES_DB: ${POSTGRES_DB:-groundwork}
+      POSTGRES_USER: ${POSTGRES_USER:-cribstone}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cribstone}
+      POSTGRES_DB: ${POSTGRES_DB:-cribstone}
     ports:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-groundwork} -d ${POSTGRES_DB:-groundwork}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cribstone} -d ${POSTGRES_DB:-cribstone}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -21,13 +21,13 @@ services:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
-    container_name: groundwork-api
+    container_name: cribstone-api
     restart: unless-stopped
     env_file: .env
     environment:
-      DATABASE_URL: postgres://${POSTGRES_USER:-groundwork}:${POSTGRES_PASSWORD:-groundwork}@db:5432/${POSTGRES_DB:-groundwork}
+      DATABASE_URL: postgres://${POSTGRES_USER:-cribstone}:${POSTGRES_PASSWORD:-cribstone}@db:5432/${POSTGRES_DB:-cribstone}
       PORT: 4000
-    command: sh -c "pnpm db:migrate && pnpm db:seed && pnpm --filter @groundwork/api start"
+    command: sh -c "pnpm db:migrate && pnpm db:seed && pnpm --filter @cribstone/api start"
     ports:
       - "4000:4000"
     depends_on:
@@ -36,7 +36,7 @@ services:
 
   web:
     image: nginx:alpine
-    container_name: groundwork-web
+    container_name: cribstone-web
     restart: unless-stopped
     depends_on:
       - api
@@ -48,7 +48,7 @@ services:
 
   admin:
     image: nginx:alpine
-    container_name: groundwork-admin
+    container_name: cribstone-admin
     restart: unless-stopped
     depends_on:
       - api

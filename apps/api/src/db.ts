@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
 import pg from 'pg'
 import { env } from './env'
-import * as schema from '@groundwork/db'
+import * as schema from '@cribstone/db'
 
 const { Pool } = pg
 
