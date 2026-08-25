@@ -10,20 +10,15 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { cn } from '@/lib/utils'
 import { springMicro } from '@/lib/motion'
 
-function isNavActive(href: string, pathname: string, hash: string): boolean {
-  if (href === '/#top') {
-    return pathname === '/' && (hash === '' || hash === '#top')
-  }
-  if (href.startsWith('/#')) {
-    return pathname === '/' && hash === href.slice(1)
-  }
+function isNavActive(href: string, pathname: string): boolean {
+  if (href === '/') return pathname === '/'
   return pathname === href
 }
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
   const count = useCart((s) => cartCount(s.lines))
-  const { pathname, hash } = useLocation()
+  const { pathname } = useLocation()
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur-[10px]">
@@ -44,7 +39,7 @@ export function Navbar() {
 
         <nav className="hidden h-full items-center gap-8 md:flex">
           {NAV_LINKS.map((link) => {
-            const active = isNavActive(link.href, pathname, hash)
+            const active = isNavActive(link.href, pathname)
             return (
               <Link
                 key={link.href}
@@ -116,7 +111,7 @@ export function Navbar() {
       >
         <nav className="container-site flex flex-col gap-1 py-4">
           {NAV_LINKS.map((link) => {
-            const active = isNavActive(link.href, pathname, hash)
+            const active = isNavActive(link.href, pathname)
             return (
               <Link
                 key={link.href}

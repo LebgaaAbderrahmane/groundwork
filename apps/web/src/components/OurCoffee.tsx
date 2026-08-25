@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { ArrowRight } from 'lucide-react'
 import { COFFEE_CHIPS, OUR_COFFEE_IMAGES } from '@/data/content'
@@ -24,19 +25,13 @@ export function OurCoffee() {
           </h2>
 
           <blockquote className="mt-8 border-l-2 border-accent/50 pl-6 font-display text-2xl font-light italic leading-snug text-foreground/80">
-            “Every bag tells the story of the farmer who grew it.”
+            "Every bag tells the story of the farmer who grew it."
           </blockquote>
 
           <p className="mt-8 text-base font-light leading-relaxed text-foreground/70">
             We source our beans directly from farms we've visited and trust —
             buying single-origin lots at above fair-trade prices, so the people
-            who grow our coffee get paid properly for it. Three rotating
-            seasonal origins keep the menu interesting all year round.
-          </p>
-          <p className="mt-4 text-base font-light leading-relaxed text-foreground/70">
-            Everything is roasted in small batches in East London, no more than
-            a week before it hits the bar. What you taste in your cup is exactly
-            how the farmer intended it.
+            who grow our coffee get paid properly for it.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-2.5">
@@ -45,11 +40,19 @@ export function OurCoffee() {
             ))}
           </div>
 
-          <Button asChild variant="outline" size="lg" className="mt-10">
-            <a href="/menu">
-              Shop our beans <ArrowRight className="size-4" aria-hidden />
-            </a>
-          </Button>
+          <div className="mt-10 flex flex-wrap items-center gap-4">
+            <Button asChild variant="outline" size="lg">
+              <Link to="/menu">
+                Shop our beans <ArrowRight className="size-4" aria-hidden />
+              </Link>
+            </Button>
+            <Link
+              to="/our-coffee"
+              className="inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors hover:text-primary"
+            >
+              Learn more about our sourcing <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          </div>
         </motion.div>
 
         <motion.div variants={fadeUpScale} className="relative mx-auto w-full max-w-lg lg:max-w-none">
