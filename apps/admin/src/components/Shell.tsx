@@ -17,6 +17,7 @@ import { trpc } from '@/lib/trpc'
 import { useSession } from '@/store/session'
 import { LoginPage } from '@/pages/LoginPage'
 import { Button } from '@/components/ui'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { cn } from '@/lib/utils'
 
 const NAV = [
@@ -99,11 +100,12 @@ function Layout() {
           <p className="truncate text-xs text-muted-foreground">{user.email}</p>
           <Button
             variant="ghost"
-            className="mt-3 w-full justify-start px-3 text-muted-foreground hover:text-red-700"
+            className="mt-3 w-full justify-start px-3 text-muted-foreground hover:text-danger"
             onClick={() => logout.mutate()}
           >
             <LogOut className="size-4" aria-hidden /> Sign out
           </Button>
+          <ThemeToggle />
         </div>
       </aside>
 

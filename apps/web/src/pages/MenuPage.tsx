@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Plus, Search, X } from 'lucide-react'
 import { BRAND } from '@cribstone/shared'
+import { useDocumentTitle } from '@/lib/hooks'
 import { trpc } from '@/lib/trpc'
 import { pounds } from '@/lib/format'
 import { useCart, type SelectedOption } from '@/store/cart'
@@ -8,6 +9,7 @@ import { ProductModal, type MenuProduct } from '@/components/ProductModal'
 import { cn } from '@/lib/utils'
 
 export function MenuPage() {
+  useDocumentTitle('Menu')
   const menu = trpc.menu.publicMenu.useQuery()
   const addToCart = useCart((s) => s.add)
   const [activeCategory, setActiveCategory] = useState<number | 'all'>('all')

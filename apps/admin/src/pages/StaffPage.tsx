@@ -4,6 +4,7 @@ import { trpc } from '@/lib/trpc'
 import { useSession } from '@/store/session'
 import { Badge, Button, Card, Field, Input, Select } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { useDocumentTitle } from '@/lib/hooks'
 
 const ROLE_LABELS: Record<string, string> = {
   owner: 'Owner',
@@ -12,6 +13,7 @@ const ROLE_LABELS: Record<string, string> = {
 }
 
 export function StaffPage() {
+  useDocumentTitle('Staff')
   const utils = trpc.useUtils()
   const me = useSession((s) => s.user)
   const list = trpc.staff.list.useQuery()

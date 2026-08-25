@@ -3,8 +3,10 @@ import { trpc } from '@/lib/trpc'
 import { pounds } from '@/lib/format'
 import { Badge, Card } from '@/components/ui'
 import { Link } from 'react-router-dom'
+import { useDocumentTitle } from '@/lib/hooks'
 
 export function DashboardPage() {
+  useDocumentTitle('Dashboard')
   const dashboard = trpc.analytics.dashboard.useQuery(undefined, {
     refetchInterval: 30_000,
   })

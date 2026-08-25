@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
+import { useDocumentTitle } from '@/lib/hooks'
 import { cartSubtotal, useCart } from '@/store/cart'
 import { pounds } from '@/lib/format'
 import { Button } from '@/components/ui/button'
@@ -13,6 +14,7 @@ export const PICKUP_OPTIONS = [
 ]
 
 export function CartPage() {
+  useDocumentTitle('Your Bag')
   const lines = useCart((s) => s.lines)
   const setQuantity = useCart((s) => s.setQuantity)
   const remove = useCart((s) => s.remove)

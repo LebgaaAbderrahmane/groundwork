@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Loader2 } from 'lucide-react'
+import { useDocumentTitle } from '@/lib/hooks'
 import { cartSubtotal, useCart } from '@/store/cart'
 import { trpc } from '@/lib/trpc'
 import { pounds } from '@/lib/format'
@@ -11,6 +12,7 @@ import { cn } from '@/lib/utils'
 type LocationState = { pickupIndex?: number; notes?: string }
 
 export function CheckoutPage() {
+  useDocumentTitle('Checkout')
   const navigate = useNavigate()
   const location = useLocation()
   const state = (location.state ?? {}) as LocationState

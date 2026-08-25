@@ -4,6 +4,7 @@ import { trpc } from '@/lib/trpc'
 import { clockTime } from '@/lib/format'
 import { Badge, Button, Card, Field, Input, Select } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { useDocumentTitle } from '@/lib/hooks'
 
 const REASONS = [
   { value: 'receipt', label: 'Stock receipt' },
@@ -12,6 +13,7 @@ const REASONS = [
 ] as const
 
 export function InventoryPage() {
+  useDocumentTitle('Inventory')
   const utils = trpc.useUtils()
   const list = trpc.inventory.list.useQuery()
   const movements = trpc.inventory.movements.useQuery()
@@ -175,10 +177,10 @@ export function InventoryPage() {
                       {i.name}
                       <span className="ml-1.5 text-xs font-normal text-muted-foreground">{i.unit}</span>
                       {i.low && (
-                        <Badge className="ml-2 bg-red-800/15 text-red-700">Low</Badge>
+                        <Badge className="ml-2 bg-danger/15 text-danger">Low</Badge>
                       )}
                     </td>
-                    <td className={cn('py-2.5 pr-3 tabular-nums', i.low ? 'font-semibold text-red-700' : 'text-foreground')}>
+                    <td className={cn('py-2.5 pr-3 tabular-nums', i.low ? 'font-semibold text-danger' : 'text-foreground')}>
                       {i.stockQty}
                     </td>
                     <td className="py-2.5 pr-3 text-muted-foreground">{i.lowStockThreshold}</td>
@@ -231,7 +233,7 @@ export function InventoryPage() {
                   </span>
                 </div>
                 <div className="flex shrink-0 items-center gap-3">
-                  <span className={cn('font-semibold tabular-nums', Number(m.change) < 0 ? 'text-red-700' : 'text-primary')}>
+                  <span className={cn('font-semibold tabular-nums', Number(m.change) < 0 ? 'text-danger' : 'text-primary')}>
                     {Number(m.change) > 0 ? '+' : ''}
                     {m.change}
                   </span>
@@ -334,7 +336,7 @@ function RecipesCard({
               <Button
                 variant="ghost"
                
-                className="size-9 shrink-0 p-0 text-muted-foreground hover:text-red-700"
+                className="size-9 shrink-0 p-0 text-muted-foreground hover:text-danger"
                 type="button"
                 onClick={() => setRows(rows.filter((_, i) => i !== idx))}
                 disabled={rows.length === 1}

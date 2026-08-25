@@ -4,8 +4,10 @@ import { trpc } from '@/lib/trpc'
 import { pounds } from '@/lib/format'
 import { Badge, Button, Card, Field, Input, Textarea } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { useDocumentTitle } from '@/lib/hooks'
 
 export function MenuPage() {
+  useDocumentTitle('Menu')
   const utils = trpc.useUtils()
   const list = trpc.menu.admin.list.useQuery()
   const [newCategory, setNewCategory] = useState('')
@@ -219,7 +221,7 @@ function ProductRow({
             Live
           </span>
         </label>
-        <Button variant="ghost" className="size-9 p-0 text-muted-foreground hover:text-red-700" onClick={onDelete} title="Delete product">
+        <Button variant="ghost" className="size-9 p-0 text-muted-foreground hover:text-danger" onClick={onDelete} title="Delete product">
           <Trash2 className="size-4" aria-hidden />
         </Button>
       </div>
@@ -282,7 +284,7 @@ function ProductDetail({ product }: { product: Product }) {
                 <Button
                   variant="ghost"
                  
-                  className="size-8 p-0 text-muted-foreground hover:text-red-700"
+                  className="size-8 p-0 text-muted-foreground hover:text-danger"
                   onClick={() => deleteGroup.mutate({ id: g.id })}
                   title="Delete group"
                   type="button"
@@ -306,7 +308,7 @@ function ProductDetail({ product }: { product: Product }) {
                       <Button
                         variant="ghost"
                        
-                        className="size-7 p-0 text-muted-foreground hover:text-red-700"
+                        className="size-7 p-0 text-muted-foreground hover:text-danger"
                         onClick={() => deleteOption.mutate({ id: o.id })}
                         title="Delete option"
                         type="button"
