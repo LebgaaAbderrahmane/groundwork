@@ -3,11 +3,11 @@ import { BRAND } from '@cribstone/shared'
 export type NavLink = { label: string; href: string }
 
 export const NAV_LINKS: NavLink[] = [
-  { label: 'Home', href: '/#top' },
+  { label: 'Home', href: '/' },
   { label: 'Menu', href: '/menu' },
-  { label: 'Our Coffee', href: '/#coffee' },
-  { label: 'About', href: '/#about' },
-  { label: 'Find Us', href: '/#find' },
+  { label: 'Our Coffee', href: '/our-coffee' },
+  { label: 'About', href: '/about' },
+  { label: 'Find Us', href: '/find-us' },
 ]
 
 const unsplash = (id: string, w = 1200) =>
@@ -98,13 +98,77 @@ export const OUR_COFFEE_IMAGES = {
 
 export const COFFEE_CHIPS = ['Direct Trade', 'Single Origin', 'Seasonal Rotating']
 
+export const COFFEE_ORIGIN = [
+  {
+    region: 'Ethiopia Yirgacheffe',
+    notes: 'Bright citrus, jasmine florals, clean finish',
+    altitude: '1,800–2,200m',
+  },
+  {
+    region: 'Colombia Huila',
+    notes: 'Caramel sweetness, red apple, balanced acidity',
+    altitude: '1,500–1,900m',
+  },
+  {
+    region: 'Guatemala Antigua',
+    notes: 'Dark chocolate, toasted almond, smoky body',
+    altitude: '1,500–1,700m',
+  },
+]
+
+export const COFFEE_PROCESS = {
+  title: 'How We Roast',
+  paragraphs: [
+    'Every batch is roasted on a vintage Probat UG-22 in East London — a small drum roaster that gives us precise control over first crack development. We keep profiles light to medium, preserving the origin character rather than burying it under roast.',
+    'We roast once a week, on Tuesdays. Orders ship within 48 hours so you always get coffee at its peak — between 7 and 21 days off roast, when the flavours are most vivid.',
+  ],
+}
+
 export const ABOUT_IMAGE = unsplash('photo-1509042239860-f550ce710b93', 1000)
 
 export const ABOUT_CHIPS = ['Est. 2025', 'Family-Run', 'Community Hub']
 
+export const ABOUT_TIMELINE = [
+  { year: '2025', event: 'Converted a horse trailer into a mobile coffee cart on Orr\'s Island' },
+  { year: '2025', event: 'First permanent location opens on Harpswell Islands Road' },
+  { year: '2026', event: 'Added full brunch menu and in-house bakery' },
+  { year: '2026', event: 'Launched wholesale partnerships with local restaurants' },
+]
+
+export const ABOUT_VALUES = [
+  {
+    title: 'Honest Drinks',
+    description: 'No syrups, no shortcuts. Just good beans, good milk, and people who care about the pour.',
+  },
+  {
+    title: 'Community First',
+    description: 'We host book clubs, neighbourhood meetings, and anything that brings people together over a cup.',
+  },
+  {
+    title: 'Sustainable by Default',
+    description: 'Compostable cups, oat milk as default, and a bean bag return programme that actually works.',
+  },
+]
+
 export type GalleryImage = { src: string; alt: string }
 
 export const FIND_US_IMAGE = unsplash('photo-1525610553991-2bede1a236e2', 1600)
+
+export const FIND_US_DETAILS = {
+  parking: 'Free street parking along Harpswell Islands Road. Small gravel lot behind the shop.',
+  accessibility: 'Ground-floor entrance, wide doorway, accessible restroom available.',
+  pets: 'Dogs welcome on the patio. Water bowls provided.',
+  transit: 'Island trolley runs seasonal loops past the shop. Bicycle rack at the entrance.',
+}
+
+export const HIRE_INFO = {
+  title: 'Hire the Space',
+  paragraphs: [
+    'Our shop transforms into a private venue on evenings and weekends. Whether it\'s a coffee cupping for your team, a birthday brunch, or a popup market — we\'ll set the stage, you bring the people.',
+    'Capacity for seated events is 30, standing up to 50. We handle setup, coffee service, and cleanup so you can focus on your guests.',
+  ],
+  email: BRAND.email,
+}
 
 export const GALLERY: GalleryImage[] = [
   {

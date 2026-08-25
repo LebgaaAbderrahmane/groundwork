@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
+import { ArrowRight } from 'lucide-react'
 import { BRAND } from '@cribstone/shared'
 import { ABOUT_CHIPS, ABOUT_IMAGE } from '@/data/content'
 import { Chip } from '@/components/shared/chip'
@@ -28,16 +30,20 @@ export function About() {
             from a parking lot with nothing but a dream and a Bard Coffee
             subscription. The locals kept coming back. They brought friends.
           </p>
-          <p className="mt-4 text-base font-light leading-relaxed text-foreground/70">
-            Today we've traded the trailer for a proper counter, but the mission
-            hasn't changed: great beans, honest drinks, and a room where
-            everyone knows your name — or will by the time your cup is empty.
-          </p>
 
           <div className="mt-8 flex flex-wrap gap-2.5">
             {ABOUT_CHIPS.map((chip) => (
               <Chip key={chip}>{chip}</Chip>
             ))}
+          </div>
+
+          <div className="mt-10">
+            <Link
+              to="/about"
+              className="inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors hover:text-primary"
+            >
+              Read our full story <ArrowRight className="size-4" aria-hidden />
+            </Link>
           </div>
         </motion.div>
 

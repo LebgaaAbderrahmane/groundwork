@@ -16,6 +16,9 @@ import { CartPage } from '@/pages/CartPage'
 import { CheckoutPage } from '@/pages/CheckoutPage'
 import { OrderConfirmationPage } from '@/pages/OrderConfirmationPage'
 import { ReceiptPage } from '@/pages/ReceiptPage'
+import { OurCoffeePage } from '@/pages/OurCoffeePage'
+import { AboutPage } from '@/pages/AboutPage'
+import { FindUsPage } from '@/pages/FindUsPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
 function HomePage() {
@@ -34,19 +37,12 @@ function HomePage() {
   )
 }
 
-function ScrollToHash() {
-  const { pathname, hash } = useLocation()
+function ScrollToTop() {
+  const { pathname } = useLocation()
 
   useEffect(() => {
-    if (hash) {
-      requestAnimationFrame(() => {
-        const el = document.getElementById(hash.slice(1))
-        if (el) el.scrollIntoView({ behavior: 'smooth' })
-      })
-    } else {
-      window.scrollTo({ top: 0 })
-    }
-  }, [pathname, hash])
+    window.scrollTo({ top: 0 })
+  }, [pathname])
 
   return null
 }
@@ -55,7 +51,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-background">
-        <ScrollToHash />
+        <ScrollToTop />
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -64,6 +60,9 @@ function App() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/order/:orderId" element={<OrderConfirmationPage />} />
           <Route path="/receipt/:orderId" element={<ReceiptPage />} />
+          <Route path="/our-coffee" element={<OurCoffeePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/find-us" element={<FindUsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />

@@ -1,13 +1,13 @@
 import { useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'motion/react'
-import { ArrowRight, MapPin } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { BRAND } from '@cribstone/shared'
 import { FIND_US_IMAGE } from '@/data/content'
 import { Button } from '@/components/ui/button'
 import { fadeUp, revealStagger, VIEWPORT } from '@/lib/motion'
 
 const MAPS_URL = `https://maps.google.com/?q=${encodeURIComponent(BRAND.address)}`
-const MAPS_EMBED = `https://maps.google.com/maps?q=${encodeURIComponent(BRAND.address)}&output=embed&z=15`
 
 export function FindUs() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -41,9 +41,9 @@ export function FindUs() {
         initial="hidden"
         whileInView="show"
         viewport={VIEWPORT}
-        className="container-site relative z-10 grid items-center gap-12 py-28 lg:grid-cols-2"
+        className="container-site relative z-10 flex flex-col items-center text-center py-28"
       >
-        <motion.div variants={fadeUp} className="flex flex-col items-center text-center lg:items-start lg:text-left">
+        <motion.div variants={fadeUp} className="flex flex-col items-center">
           <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-white/70">
             Find us
           </span>
@@ -57,40 +57,19 @@ export function FindUs() {
           </p>
           <p className="mt-1 text-sm font-light text-white/70">{BRAND.address}</p>
 
-          <div className="mt-10">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Button asChild size="lg" variant="cream">
               <a href={MAPS_URL} target="_blank" rel="noreferrer">
                 Get directions <ArrowRight className="size-4" aria-hidden />
               </a>
             </Button>
-          </div>
-        </motion.div>
-
-        <motion.div
-          variants={fadeUp}
-          className="w-full overflow-hidden rounded-2xl border border-white/15 bg-black/20 shadow-2xl"
-        >
-          <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
-            <span className="flex items-center gap-2 text-xs text-white/85">
-              <MapPin className="size-4 shrink-0 text-accent" aria-hidden />
-              {BRAND.address}
-            </span>
-            <a
-              href={MAPS_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="shrink-0 text-[10px] font-medium uppercase tracking-[0.12em] text-accent transition-colors hover:text-white"
+            <Link
+              to="/find-us"
+              className="inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors hover:text-white"
             >
-              Open map ↗
-            </a>
+              Full details & map <ArrowRight className="size-4" aria-hidden />
+            </Link>
           </div>
-          <iframe
-            src={MAPS_EMBED}
-            title={`${BRAND.name} on the map — ${BRAND.address}`}
-            loading="lazy"
-            allowFullScreen
-            className="h-64 w-full lg:h-80"
-          />
         </motion.div>
       </motion.div>
     </section>

@@ -96,9 +96,9 @@ export function Hero() {
             variant="outline"
             className="border-white/40 text-white hover:border-white/60 hover:bg-white/10 hover:text-white"
           >
-            <a href="#find">
+            <Link to="/find-us">
               <MapPin className="size-4" aria-hidden /> Find us
-            </a>
+            </Link>
           </Button>
         </motion.div>
 
