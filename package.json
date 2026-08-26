@@ -19,9 +19,11 @@
     "db:reset": "pnpm --filter @cribstone/db reset",
     "db:studio": "pnpm --filter @cribstone/db studio",
     "test:e2e": "pnpm exec playwright test",
-    "test:e2e:ui": "pnpm exec playwright test --ui"
+    "test:e2e:ui": "pnpm exec playwright test --ui",
+    "shots": "node scripts/screenshots.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1"
+    "@playwright/test": "^1.62.1",
+    "playwright-core": "^1.62.1"
   }
 }
