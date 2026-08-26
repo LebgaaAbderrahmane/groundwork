@@ -1,0 +1,17 @@
+{
+  "name": "Cribstone Coffee",
+  "short_name": "Cribstone",
+  "description": "Specialty coffee, fresh-baked goods and community spirit on Orr's Island, Maine.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf6ef",
+  "theme_color": "#6b3a1f",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

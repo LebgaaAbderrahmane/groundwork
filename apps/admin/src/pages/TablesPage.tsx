@@ -7,7 +7,7 @@ import { BRAND } from '@cribstone/shared'
 import { Button, Card, EmptyState, Input } from '@/components/ui'
 import { useDocumentTitle } from '@/lib/hooks'
 
-export function TablesPage() {
+export default function TablesPage() {
   useDocumentTitle('Tables')
   const utils = trpc.useUtils()
   const list = trpc.tables.list.useQuery()

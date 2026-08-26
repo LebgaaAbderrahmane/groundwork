@@ -20,7 +20,7 @@ const GETTING_HERE = [
   { icon: Train, label: 'Getting here', detail: FIND_US_DETAILS.transit },
 ]
 
-export function FindUsPage() {
+export default function FindUsPage() {
   useDocumentTitle('Find Us')
 
   const heroRef = useRef<HTMLElement>(null)

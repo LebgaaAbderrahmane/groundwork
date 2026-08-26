@@ -7,7 +7,7 @@ import { Badge, Button, Card, Field, Input, Textarea } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useDocumentTitle } from '@/lib/hooks'
 
-export function MenuPage() {
+export default function MenuPage() {
   useDocumentTitle('Menu')
   const utils = trpc.useUtils()
   const list = trpc.menu.admin.list.useQuery()

@@ -31,16 +31,16 @@ const TABLES = [
 ] as const
 
 async function main() {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..')
+
+  console.log('Running migrations…')
+  execSync('pnpm db:migrate', { cwd: root, stdio: 'inherit' })
+
   const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
   console.log('Truncating all tables…')
   await pool.query(`TRUNCATE ${TABLES.join(', ')} RESTART IDENTITY CASCADE`)
   await pool.end()
-
-  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..')
-
-  console.log('Running migrations…')
-  execSync('pnpm db:migrate', { cwd: root, stdio: 'inherit' })
 
   console.log('Seeding…')
   execSync('pnpm db:seed', { cwd: root, stdio: 'inherit' })

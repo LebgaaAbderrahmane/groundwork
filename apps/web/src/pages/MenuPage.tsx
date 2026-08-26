@@ -9,7 +9,7 @@ import { useCart, type SelectedOption } from '@/store/cart'
 import { ProductModal, type MenuProduct } from '@/components/ProductModal'
 import { cn } from '@/lib/utils'
 
-export function MenuPage() {
+export default function MenuPage() {
   useDocumentTitle('Menu')
   const menu = trpc.menu.publicMenu.useQuery()
   const addToCart = useCart((s) => s.add)

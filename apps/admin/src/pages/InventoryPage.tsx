@@ -13,7 +13,7 @@ const REASONS = [
   { value: 'adjustment', label: 'Manual adjustment' },
 ] as const
 
-export function InventoryPage() {
+export default function InventoryPage() {
   useDocumentTitle('Inventory')
   const utils = trpc.useUtils()
   const list = trpc.inventory.list.useQuery()

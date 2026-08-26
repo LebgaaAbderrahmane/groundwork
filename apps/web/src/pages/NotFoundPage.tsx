@@ -3,7 +3,7 @@ import { useDocumentTitle } from '@/lib/hooks'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export function NotFoundPage() {
+export default function NotFoundPage() {
   useDocumentTitle('Page Not Found')
 
   return (

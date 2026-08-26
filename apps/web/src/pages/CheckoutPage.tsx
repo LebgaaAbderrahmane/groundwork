@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { PaymentMethodSelector } from '@/components/payment'
 import { PICKUP_OPTIONS } from './CartPage'
 
-export function CheckoutPage() {
+export default function CheckoutPage() {
   useDocumentTitle('Checkout')
   const navigate = useNavigate()
 

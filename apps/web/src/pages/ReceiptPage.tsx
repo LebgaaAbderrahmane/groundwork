@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { PaymentStatusBadge } from '@/components/payment'
 import { trpc } from '@/lib/trpc'
 
-export function ReceiptPage() {
+export default function ReceiptPage() {
   useDocumentTitle('Receipt')
   const { orderId } = useParams<{ orderId: string }>()
   const order = trpc.orders.getById.useQuery(

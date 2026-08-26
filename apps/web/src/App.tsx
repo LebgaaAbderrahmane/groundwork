@@ -1,39 +1,29 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { Navbar } from '@/components/Navbar'
-import { Hero } from '@/components/Hero'
-import { MenuHighlights } from '@/components/MenuHighlights'
-import { BrewMethods } from '@/components/BrewMethods'
-import { OurCoffee } from '@/components/OurCoffee'
-import { About } from '@/components/About'
-import { Gallery } from '@/components/Gallery'
-import { Events } from '@/components/Events'
-import { Testimonials } from '@/components/Testimonials'
-import { FindUs } from '@/components/FindUs'
 import { Footer } from '@/components/Footer'
-import { MenuPage } from '@/pages/MenuPage'
-import { CartPage } from '@/pages/CartPage'
-import { CheckoutPage } from '@/pages/CheckoutPage'
-import { OrderConfirmationPage } from '@/pages/OrderConfirmationPage'
-import { ReceiptPage } from '@/pages/ReceiptPage'
-import { OurCoffeePage } from '@/pages/OurCoffeePage'
-import { AboutPage } from '@/pages/AboutPage'
-import { FindUsPage } from '@/pages/FindUsPage'
-import { NotFoundPage } from '@/pages/NotFoundPage'
 
-function HomePage() {
+const HomePage = lazy(() => import('@/pages/HomePage'))
+const MenuPage = lazy(() => import('@/pages/MenuPage'))
+const CartPage = lazy(() => import('@/pages/CartPage'))
+const CheckoutPage = lazy(() => import('@/pages/CheckoutPage'))
+const OrderConfirmationPage = lazy(() => import('@/pages/OrderConfirmationPage'))
+const ReceiptPage = lazy(() => import('@/pages/ReceiptPage'))
+const OurCoffeePage = lazy(() => import('@/pages/OurCoffeePage'))
+const AboutPage = lazy(() => import('@/pages/AboutPage'))
+const FindUsPage = lazy(() => import('@/pages/FindUsPage'))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
+
+function PageLoader() {
   return (
-    <>
-      <Hero />
-      <MenuHighlights />
-      <BrewMethods />
-      <OurCoffee />
-      <About />
-      <Gallery />
-      <Events />
-      <Testimonials />
-      <FindUs />
-    </>
+    <div className="flex min-h-[50svh] items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="size-8 animate-spin rounded-full border-2 border-border border-t-accent" />
+        <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+          Loading
+        </p>
+      </div>
+    </div>
   )
 }
 
@@ -53,18 +43,20 @@ function App() {
       <div className="min-h-screen bg-background">
         <ScrollToTop />
         <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/menu" element={<MenuPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/order/:orderId" element={<OrderConfirmationPage />} />
-          <Route path="/receipt/:orderId" element={<ReceiptPage />} />
-          <Route path="/our-coffee" element={<OurCoffeePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/find-us" element={<FindUsPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/order/:orderId" element={<OrderConfirmationPage />} />
+            <Route path="/receipt/:orderId" element={<ReceiptPage />} />
+            <Route path="/our-coffee" element={<OurCoffeePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/find-us" element={<FindUsPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
         <Footer />
       </div>
     </BrowserRouter>

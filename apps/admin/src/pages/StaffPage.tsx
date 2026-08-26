@@ -13,7 +13,7 @@ const ROLE_LABELS: Record<string, string> = {
   barista: 'Barista',
 }
 
-export function StaffPage() {
+export default function StaffPage() {
   useDocumentTitle('Staff')
   const utils = trpc.useUtils()
   const me = useSession((s) => s.user)

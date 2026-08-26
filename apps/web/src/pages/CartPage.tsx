@@ -12,7 +12,7 @@ export const PICKUP_OPTIONS = [
   { label: 'In 30 minutes', minutes: 30 },
 ]
 
-export function CartPage() {
+export default function CartPage() {
   useDocumentTitle('Your Bag')
   const lines = useCart((s) => s.lines)
   const setQuantity = useCart((s) => s.setQuantity)

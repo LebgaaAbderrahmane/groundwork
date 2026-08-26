@@ -7,7 +7,7 @@ import { Badge, Button, Card, Field, Input } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useDocumentTitle } from '@/lib/hooks'
 
-export function CustomersPage() {
+export default function CustomersPage() {
   useDocumentTitle('Customers')
   const utils = trpc.useUtils()
   const list = trpc.customers.list.useQuery()

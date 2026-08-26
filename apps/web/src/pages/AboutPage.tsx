@@ -16,7 +16,7 @@ import { SectionHeading } from '@/components/shared/section-heading'
 import { fadeUp, fadeUpScale, revealStagger, VIEWPORT } from '@/lib/motion'
 import { useDocumentTitle } from '@/lib/hooks'
 
-export function AboutPage() {
+export default function AboutPage() {
   useDocumentTitle('About')
 
   return (
