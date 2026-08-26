@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Minus, Plus, X } from 'lucide-react'
 import type { SelectedOption } from '@/store/cart'
 import { dollars } from '@/lib/format'
+import { haptic } from '@/lib/haptics'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -39,8 +40,35 @@ type ProductModalProps = {
 export function ProductModal({ product, onClose, onAdd }: ProductModalProps) {
   const [selected, setSelected] = useState<Record<number, number[]>>({})
   const [quantity, setQuantity] = useState(1)
+  const [dragY, setDragY] = useState(0)
+  const [dragging, setDragging] = useState(false)
   const modalRef = useRef<HTMLDivElement>(null)
   const previousFocus = useRef<HTMLElement | null>(null)
+  const touchStartY = useRef(0)
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (contentRef.current && contentRef.current.scrollTop > 0) return
+    touchStartY.current = e.touches[0].clientY
+    setDragging(true)
+  }, [])
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!dragging) return
+    const delta = e.touches[0].clientY - touchStartY.current
+    if (delta > 0) {
+      setDragY(delta)
+    }
+  }, [dragging])
+
+  const handleTouchEnd = useCallback(() => {
+    setDragging(false)
+    if (dragY > 120) {
+      onClose()
+    } else {
+      setDragY(0)
+    }
+  }, [dragY, onClose])
 
   useEffect(() => {
     previousFocus.current = document.activeElement as HTMLElement
@@ -115,10 +143,22 @@ export function ProductModal({ product, onClose, onAdd }: ProductModalProps) {
       aria-label={product.name}
     >
       <div
+        ref={contentRef}
         className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-2xl bg-background shadow-2xl sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{
+          transform: dragY > 0 ? `translateY(${dragY}px)` : undefined,
+          transition: dragging ? 'none' : 'transform 0.2s ease-out',
+          opacity: dragY > 0 ? Math.max(0.4, 1 - dragY / 400) : undefined,
+        }}
       >
         <div className="relative h-52 w-full overflow-hidden sm:h-60">
+          <div className="absolute left-1/2 top-2.5 z-10 -translate-x-1/2 sm:hidden">
+            <div className="h-1 w-8 rounded-full bg-foreground/20" aria-hidden />
+          </div>
           {product.imageUrl && (
             <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" />
           )}
@@ -219,6 +259,7 @@ export function ProductModal({ product, onClose, onAdd }: ProductModalProps) {
             <Button
               disabled={!valid}
               onClick={() => {
+                haptic('medium')
                 onAdd(selectedOptions, quantity)
                 onClose()
               }}

@@ -61,6 +61,10 @@ body {
   font-family: var(--font-body);
 }
 
+html {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
 /* Skip-to-content link */
 .skip-link {
   position: absolute;
@@ -86,6 +90,14 @@ body {
 :focus-visible {
   outline: 2px solid hsl(var(--accent));
   outline-offset: 2px;
+}
+
+/* Minimum touch target size: 44×44px */
+@media (pointer: coarse) {
+  button, a, input, select, textarea, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
 /* Disable animations for reduced motion preference */
