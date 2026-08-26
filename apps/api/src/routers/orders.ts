@@ -7,7 +7,6 @@ import {
   optionGroups,
   options,
   products,
-  shops,
   tables,
 } from '@cribstone/db'
 import {
@@ -24,16 +23,9 @@ import { deductInventory } from '../services/inventory'
 import { applyLoyalty } from '../services/loyalty'
 import { payments } from '../services/payments'
 import { emitOrderUpdate } from '../services/events'
+import { getShopId } from '../services/shop'
 
 const ACTIVE_STATUSES: OrderStatus[] = ['received', 'making', 'ready']
-
-async function getShopId(db: DB) {
-  const [shop] = await db.select({ id: shops.id }).from(shops).limit(1)
-  if (!shop) {
-    throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'No shop configured' })
-  }
-  return shop.id
-}
 
 function toOrderWithItems(
   order: typeof orders.$inferSelect,
@@ -219,6 +211,7 @@ export const ordersRouter = router({
         name: input.customerName,
         phone: input.customerPhone,
         orderId: order.id,
+        totalPence: order.totalPence,
       })
     }
 

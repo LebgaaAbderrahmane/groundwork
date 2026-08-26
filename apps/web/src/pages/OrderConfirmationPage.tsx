@@ -1,7 +1,8 @@
 import { useCallback, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useDocumentTitle } from '@/lib/hooks'
-import { ArrowRight, AlertTriangle, CheckCircle2, Coffee, Package, RefreshCw } from 'lucide-react'
+import { ArrowRight, AlertTriangle, CheckCircle2, Coffee, Package, RefreshCw, Star } from 'lucide-react'
+import { earnPoints } from '@cribstone/shared'
 import { dollars } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { PaymentStatusBadge } from '@/components/payment'
@@ -198,6 +199,13 @@ export default function OrderConfirmationPage() {
       {data?.paymentStatus && (
         <div className="mt-3">
           <PaymentStatusBadge status={data.paymentStatus} />
+        </div>
+      )}
+
+      {totalPence && earnPoints(totalPence) > 0 && (
+        <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-1.5 text-xs font-medium text-accent">
+          <Star className="size-3.5" aria-hidden />
+          +{earnPoints(totalPence)} loyalty {earnPoints(totalPence) === 1 ? 'point' : 'points'} earned
         </div>
       )}
 

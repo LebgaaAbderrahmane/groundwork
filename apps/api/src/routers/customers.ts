@@ -1,11 +1,17 @@
 import { TRPCError } from '@trpc/server'
 import { and, desc, eq } from 'drizzle-orm'
 import { customers, loyaltyTransactions } from '@cribstone/db'
-import { awardPointsInput, customerSearchInput } from '@cribstone/shared'
-import { protectedProcedure, router } from '../trpc'
-import { getCustomerByPhone } from '../services/loyalty'
+import { awardPointsInput, customerByPhoneInput, redeemPointsInput, customerSearchInput } from '@cribstone/shared'
+import { publicProcedure, protectedProcedure, router } from '../trpc'
+import { getCustomerByPhone, redeemLoyalty } from '../services/loyalty'
+import { getShopId } from '../services/shop'
 
 export const customersRouter = router({
+  byPhone: publicProcedure.input(customerByPhoneInput).query(async ({ ctx, input }) => {
+    const shopId = await getShopId(ctx.db)
+    return getCustomerByPhone(ctx.db, shopId, input.phone)
+  }),
+
   search: protectedProcedure.input(customerSearchInput).query(async ({ ctx, input }) => {
     return getCustomerByPhone(ctx.db, ctx.user.shopId, input.phone)
   }),
@@ -29,6 +35,14 @@ export const customersRouter = router({
         .from(loyaltyTransactions)
         .where(eq(loyaltyTransactions.customerId, customer.id))
         .orderBy(desc(loyaltyTransactions.createdAt))
+    }),
+
+  redeemPoints: publicProcedure
+    .input(redeemPointsInput)
+    .mutation(async ({ ctx, input }) => {
+      const result = await redeemLoyalty(ctx.db, input.customerId, input.points, input.rewardId, input.orderId)
+      if (!result) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Insufficient points' })
+      return result
     }),
 
   awardPoints: protectedProcedure

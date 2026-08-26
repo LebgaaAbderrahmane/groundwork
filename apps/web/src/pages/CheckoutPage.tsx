@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Loader2, ShoppingBag, UtensilsCrossed, X } from 'lucide-react'
+import { ArrowLeft, Gift, Loader2, ShoppingBag, Star, UtensilsCrossed, X } from 'lucide-react'
 import { toast } from 'sonner'
+import { LOYALTY, bestAffordableReward, earnPoints } from '@cribstone/shared'
 import { useDocumentTitle } from '@/lib/hooks'
 import { cartSubtotal, useCart } from '@/store/cart'
 import { trpc } from '@/lib/trpc'
@@ -26,9 +27,40 @@ export default function CheckoutPage() {
   const [phone, setPhone] = useState('')
   const [payment, setPayment] = useState<'in_store' | 'card'>('in_store')
   const [error, setError] = useState<string | null>(null)
+  const [selectedRewardId, setSelectedRewardId] = useState<string | null>(null)
+
+  const pickupMinutes = PICKUP_OPTIONS[pickup]?.minutes ?? 0
+  const subtotal = cartSubtotal(lines)
+
+  const customerLookup = trpc.customers.byPhone.useQuery(
+    { phone },
+    { enabled: phone.length >= 3, retry: false },
+  )
+
+  const customer = customerLookup.data
+  const pointsToEarn = earnPoints(subtotal)
+  const bestReward = customer ? bestAffordableReward(customer.loyaltyPoints) : null
+  const selectedReward = selectedRewardId
+    ? LOYALTY.rewards.find((r) => r.id === selectedRewardId) ?? null
+    : null
+  const discountPence = selectedReward?.discountPence ?? 0
+  const totalAfterDiscount = Math.max(0, subtotal - discountPence)
+
+  useEffect(() => {
+    setSelectedRewardId(null)
+  }, [phone])
 
   const createOrder = trpc.orders.create.useMutation({
     onSuccess: (data) => {
+      if (selectedReward && customer) {
+        redeemMutation.mutate({
+          customerId: customer.id,
+          points: selectedReward.points,
+          rewardId: selectedReward.id,
+          orderId: data.orderId,
+        })
+        return
+      }
       navigate(`/order/${data.orderId}`, {
         state: { totalPence: data.totalPence },
       })
@@ -42,8 +74,28 @@ export default function CheckoutPage() {
     },
   })
 
-  const pickupMinutes = PICKUP_OPTIONS[pickup]?.minutes ?? 0
-  const subtotal = cartSubtotal(lines)
+  const redeemMutation = trpc.customers.redeemPoints.useMutation({
+    onSuccess: () => {
+      const orderId = createOrder.data?.orderId
+      if (orderId) {
+        navigate(`/order/${orderId}`, {
+          state: { totalPence: createOrder.data?.totalPence },
+        })
+        clear()
+        toast.success(`Order placed! Redeemed ${selectedReward!.name}.`)
+      }
+    },
+    onError: () => {
+      const orderId = createOrder.data?.orderId
+      if (orderId) {
+        navigate(`/order/${orderId}`, {
+          state: { totalPence: createOrder.data?.totalPence },
+        })
+        clear()
+        toast.success('Order placed! See you soon.')
+      }
+    },
+  })
 
   function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -58,7 +110,7 @@ export default function CheckoutPage() {
         options: l.options,
       })),
       subtotalPence: subtotal,
-      totalPence: subtotal,
+      totalPence: totalAfterDiscount,
       paymentMethod: payment,
       customerName: name,
       customerPhone: phone.trim() || undefined,
@@ -143,15 +195,77 @@ export default function CheckoutPage() {
                   <input
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    onBlur={() => {
+                      if (phone.length >= 3) customerLookup.refetch()
+                    }}
                     placeholder="For loyalty points"
                     className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent"
                   />
                 </div>
               </div>
               <p className="mt-3 text-xs font-light text-muted-foreground">
-                Add your phone and earn a loyalty point on every order.
+                Add your phone and earn {LOYALTY.pointsPerDollar} point per dollar on every order.
               </p>
             </div>
+
+            {customer && (
+              <div className="rounded-lg border border-accent/30 bg-accent/5 p-6">
+                <div className="flex items-center gap-3">
+                  <div className="flex size-10 items-center justify-center rounded-full bg-accent/15">
+                    <Star className="size-5 text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      {customer.name || 'Returning customer'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {customer.loyaltyPoints} loyalty {customer.loyaltyPoints === 1 ? 'point' : 'points'} · {customer.visits} {customer.visits === 1 ? 'visit' : 'visits'}
+                    </p>
+                  </div>
+                </div>
+
+                {bestReward && (
+                  <div className="mt-4">
+                    <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                      Redeem a reward
+                    </p>
+                    <div className="mt-2 space-y-2">
+                      {LOYALTY.rewards.map((reward) => {
+                        const canAfford = customer.loyaltyPoints >= reward.points
+                        const isSelected = selectedRewardId === reward.id
+                        return (
+                          <button
+                            key={reward.id}
+                            type="button"
+                            disabled={!canAfford}
+                            onClick={() => setSelectedRewardId(isSelected ? null : reward.id)}
+                            className={`flex w-full items-center justify-between rounded-lg border px-4 py-2.5 text-sm transition-colors ${
+                              isSelected
+                                ? 'border-accent bg-accent/10 text-accent'
+                                : canAfford
+                                  ? 'border-border hover:border-accent/50 text-foreground'
+                                  : 'border-border text-muted-foreground/50 cursor-not-allowed'
+                            }`}
+                          >
+                            <span className="flex items-center gap-2">
+                              <Gift className="size-4" aria-hidden />
+                              {reward.name}
+                            </span>
+                            <span className="text-xs">
+                              {reward.points} pts · {dollars(reward.discountPence)}
+                            </span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <p className="mt-3 text-xs font-light text-muted-foreground">
+                  You'll earn {pointsToEarn} {pointsToEarn === 1 ? 'point' : 'points'} on this order.
+                </p>
+              </div>
+            )}
 
             <div className="rounded-lg border border-border/70 bg-background p-6">
               <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
@@ -178,9 +292,15 @@ export default function CheckoutPage() {
                   </span>
                 </div>
               ))}
+              {discountPence > 0 && (
+                <div className="flex justify-between text-accent">
+                  <span>{selectedReward!.name}</span>
+                  <span>−{dollars(discountPence)}</span>
+                </div>
+              )}
               <div className="flex justify-between border-t border-border pt-3 font-medium text-foreground">
                 <span>Total</span>
-                <span>{dollars(subtotal)}</span>
+                <span>{dollars(totalAfterDiscount)}</span>
               </div>
             </div>
 
@@ -194,12 +314,12 @@ export default function CheckoutPage() {
               type="submit"
               size="lg"
               className="mt-6 w-full"
-              disabled={createOrder.isPending}
+              disabled={createOrder.isPending || redeemMutation.isPending}
             >
-              {createOrder.isPending && (
+              {(createOrder.isPending || redeemMutation.isPending) && (
                 <Loader2 className="size-4 animate-spin" aria-hidden />
               )}
-              Place order · {dollars(subtotal)}
+              Place order · {dollars(totalAfterDiscount)}
             </Button>
           </aside>
         </form>
