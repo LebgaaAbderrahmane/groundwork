@@ -52,7 +52,7 @@ function StatusTracker({ status }: { status: string }) {
   )
 }
 
-export function OrderConfirmationPage() {
+export default function OrderConfirmationPage() {
   useDocumentTitle('Order Confirmed')
   const { orderId } = useParams<{ orderId: string }>()
   const location = useLocation()

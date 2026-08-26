@@ -21,7 +21,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 type OrderBroadcast = { type: 'order:new' | 'order:update'; orderId?: number }
 
-export function OrdersPage() {
+export default function OrdersPage() {
   useDocumentTitle('Orders')
   const utils = trpc.useUtils()
   const prevCountRef = useRef(0)

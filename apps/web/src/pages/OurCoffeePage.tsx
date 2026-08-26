@@ -22,7 +22,7 @@ const ICONS: Record<string, LucideIcon> = {
   coldbrew: CupSoda,
 }
 
-export function OurCoffeePage() {
+export default function OurCoffeePage() {
   useDocumentTitle('Our Coffee')
 
   return (

@@ -153,7 +153,7 @@ function BusinessHoursInput({
   )
 }
 
-export function SettingsPage() {
+export default function SettingsPage() {
   useDocumentTitle('Settings')
   const utils = trpc.useUtils()
   const settings = trpc.settings.get.useQuery()

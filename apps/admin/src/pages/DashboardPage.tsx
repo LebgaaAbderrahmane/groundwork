@@ -5,7 +5,7 @@ import { Badge, Card, EmptyState, StatsCard } from '@/components/ui'
 import { Link } from 'react-router-dom'
 import { useDocumentTitle } from '@/lib/hooks'
 
-export function DashboardPage() {
+export default function DashboardPage() {
   useDocumentTitle('Dashboard')
   const dashboard = trpc.analytics.dashboard.useQuery(undefined, {
     refetchInterval: 30_000,
