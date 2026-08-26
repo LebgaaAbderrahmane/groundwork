@@ -1,9 +1,9 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'motion/react'
-import { ArrowRight, Clock, Dog, MapPin, ParkingSquare, Train, Accessibility } from 'lucide-react'
+import { ArrowRight, ChevronDown, Clock, Dog, MapPin, ParkingSquare, Train, Accessibility } from 'lucide-react'
 import { BRAND } from '@cribstone/shared'
-import { FIND_US_IMAGE, FIND_US_DETAILS, HIRE_INFO } from '@/data/content'
+import { FIND_US_IMAGE, FIND_US_DETAILS, HIRE_INFO, FAQ } from '@/data/content'
 import { Button } from '@/components/ui/button'
 import { Chip } from '@/components/shared/chip'
 import { SectionHeading } from '@/components/shared/section-heading'
@@ -147,6 +147,17 @@ export function FindUsPage() {
       </section>
 
       <section className="bg-background py-24 md:py-32">
+        <div className="container-site mx-auto max-w-3xl">
+          <SectionHeading eyebrow="Common questions" title="Frequently" accent="Asked" className="mb-12" />
+          <div className="space-y-3">
+            {FAQ.map((item) => (
+              <FAQRow key={item.question} item={item} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-background py-24 md:py-32">
         <div className="container-site grid items-start gap-16 lg:grid-cols-2">
           <div>
             <SectionHeading eyebrow="Events" title={HIRE_INFO.title} className="mb-8" />
@@ -211,5 +222,41 @@ export function FindUsPage() {
         </div>
       </section>
     </main>
+  )
+}
+
+function FAQRow({ item }: { item: { question: string; answer: string } }) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <motion.div
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="show"
+      viewport={VIEWPORT}
+      className="overflow-hidden rounded-xl border border-border bg-surface"
+    >
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between gap-4 p-5 text-left"
+        aria-expanded={open}
+      >
+        <span className="text-sm font-medium text-foreground">{item.question}</span>
+        <ChevronDown
+          className={`size-4 shrink-0 text-foreground/50 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          aria-hidden
+        />
+      </button>
+      <motion.div
+        initial={false}
+        animate={{ height: open ? 'auto' : 0 }}
+        transition={{ duration: 0.25, ease: [0.05, 0.7, 0.1, 1] }}
+        className="overflow-hidden"
+      >
+        <p className="px-5 pb-5 text-sm font-light leading-relaxed text-foreground/70">
+          {item.answer}
+        </p>
+      </motion.div>
+    </motion.div>
   )
 }

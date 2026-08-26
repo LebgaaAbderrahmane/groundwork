@@ -170,6 +170,41 @@ export const HIRE_INFO = {
   email: BRAND.email,
 }
 
+export type FAQItem = { question: string; answer: string }
+
+export const FAQ: FAQItem[] = [
+  {
+    question: 'Is there Wi-Fi?',
+    answer: 'Yes — free, fast, and reliable. We know you need it for the long stay.',
+  },
+  {
+    question: 'Do you take reservations?',
+    answer: 'Walk-ins only for daily service. For private hire and events, get in touch via email and we\'ll sort you out.',
+  },
+  {
+    question: 'Where can I park?',
+    answer: 'Free street parking runs along Harpswell Islands Road. There\'s also a small gravel lot behind the shop.',
+  },
+  {
+    question: 'Is the shop dog-friendly?',
+    answer: 'Absolutely. Dogs are welcome on the patio with water bowls provided. We\'ll even have a treat behind the counter.',
+  },
+  {
+    question: 'Do you sell beans to take home?',
+    answer: 'We do — 250g bags of our house blend and seasonal single origins. Ask at the counter or order online.',
+  },
+  {
+    question: 'Are there dairy-free options?',
+    answer: 'Oat milk is our default and it\'s included at no extra charge. We also carry soy and almond milk.',
+  },
+]
+
+export const PRESS_MENTIONS = [
+  { name: 'Maine Food & Drink', quote: 'Orr\'s Island\'s best-kept secret — for now.' },
+  { name: 'Portland Press Herald', quote: 'A horse trailer turned into the island\'s favourite gathering spot.' },
+  { name: 'Bon Appétit', quote: 'Proof that great coffee doesn\'t need a city postcode.' },
+]
+
 export const GALLERY: GalleryImage[] = [
   {
     src: unsplash('photo-1553413077-190dd305871c'),
@@ -191,12 +226,25 @@ export const GALLERY: GalleryImage[] = [
     src: unsplash('photo-1517701604599-bb29b565090c'),
     alt: 'Seasonal iced filter coffee served in a glass',
   },
+  {
+    src: unsplash('photo-1442512595331-e89e73853f31'),
+    alt: 'Fresh pastries and croissants displayed on a wooden board',
+  },
+  {
+    src: unsplash('photo-1495474472287-4d71bcdd2085'),
+    alt: 'Latte art in a warm-lit café setting',
+  },
+  {
+    src: unsplash('photo-1501339847302-ac426a4a7cbb'),
+    alt: 'Barista tamping espresso with focus and precision',
+  },
 ]
 
 export type Testimonial = {
   quote: string
   name: string
   visit: string
+  rating: number
 }
 
 export const TESTIMONIALS: Testimonial[] = [
@@ -204,16 +252,37 @@ export const TESTIMONIALS: Testimonial[] = [
     quote: 'Best flat white on the island, no competition. The banana bread is dangerous.',
     name: '@coffeelover',
     visit: 'Google Review',
+    rating: 5,
   },
   {
     quote: 'The V60 is brewed with such care you can taste the love in every sip.',
     name: '@maya_bakes',
     visit: 'Google Review',
+    rating: 5,
   },
   {
     quote: 'Warmest room on Orr\'s Island. Came for a coffee, stayed three hours working.',
     name: '@tom_eats',
     visit: 'Google Review',
+    rating: 5,
+  },
+  {
+    quote: 'The avocado toast alone is worth the ferry. Generous portions, brilliant coffee.',
+    name: '@sarah.cooks',
+    visit: 'Yelp',
+    rating: 4,
+  },
+  {
+    quote: 'Finally, proper specialty coffee on the island. The cold brew is unreal in summer.',
+    name: '@daveontheroad',
+    visit: 'TripAdvisor',
+    rating: 5,
+  },
+  {
+    quote: 'Bring your dog, grab a window seat, order the cortado. That\'s it. That\'s the review.',
+    name: '@pawsandbeans',
+    visit: 'Google Review',
+    rating: 5,
   },
 ]
 

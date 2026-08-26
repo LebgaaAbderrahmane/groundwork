@@ -29,8 +29,8 @@ export function Testimonials() {
               variants={fadeUp}
               className="flex flex-col rounded-lg border border-border/70 bg-background p-8"
             >
-              <div className="flex items-center gap-1" aria-label="5 out of 5 stars">
-                {Array.from({ length: 5 }).map((_, i) => (
+              <div className="flex items-center gap-1" aria-label={`${testimonial.rating} out of 5 stars`}>
+                {Array.from({ length: testimonial.rating }).map((_, i) => (
                   <Star key={i} className="size-4 fill-accent text-accent" aria-hidden />
                 ))}
               </div>

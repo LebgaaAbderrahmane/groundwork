@@ -8,6 +8,7 @@ import {
   ABOUT_TIMELINE,
   ABOUT_VALUES,
   GALLERY,
+  PRESS_MENTIONS,
 } from '@/data/content'
 import { Button } from '@/components/ui/button'
 import { Chip } from '@/components/shared/chip'
@@ -122,6 +123,31 @@ export function AboutPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-background py-20 md:py-28">
+        <div className="container-site">
+          <SectionHeading eyebrow="As seen in" title="What They" accent="Said" className="mb-12" />
+          <div className="grid gap-8 md:grid-cols-3">
+            {PRESS_MENTIONS.map((mention) => (
+              <motion.div
+                key={mention.name}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="show"
+                viewport={VIEWPORT}
+                className="flex flex-col rounded-xl border border-border bg-surface p-6"
+              >
+                <p className="font-display text-base font-normal italic leading-relaxed text-foreground/85">
+                  "{mention.quote}"
+                </p>
+                <span className="mt-4 text-[10px] font-medium uppercase tracking-[0.12em] text-accent">
+                  {mention.name}
+                </span>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
