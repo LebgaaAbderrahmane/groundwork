@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { BRAND } from '@cribstone/shared'
 import { useDocumentTitle } from '@/lib/hooks'
 import { trpc } from '@/lib/trpc'
-import { pounds } from '@/lib/format'
+import { dollars } from '@/lib/format'
 import { useCart, type SelectedOption } from '@/store/cart'
 import { ProductModal, type MenuProduct } from '@/components/ProductModal'
 import { cn } from '@/lib/utils'
@@ -193,7 +193,7 @@ export function MenuPage() {
                             {product.name}
                           </h3>
                           <span className="shrink-0 text-sm font-medium text-accent">
-                            {pounds(product.pricePence)}
+                            {dollars(product.pricePence)}
                           </span>
                         </div>
                         {product.description && (

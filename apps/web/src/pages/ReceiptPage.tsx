@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useDocumentTitle } from '@/lib/hooks'
 import { ArrowRight, Printer } from 'lucide-react'
 import { BRAND } from '@cribstone/shared'
-import { pounds } from '@/lib/format'
+import { dollars } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { PaymentStatusBadge } from '@/components/payment'
 import { trpc } from '@/lib/trpc'
@@ -36,8 +36,8 @@ export function ReceiptPage() {
 
   const o = order.data
   const createdAt = new Date(o.createdAt)
-  const dateStr = createdAt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-  const timeStr = createdAt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+  const dateStr = createdAt.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
+  const timeStr = createdAt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
 
   return (
     <main className="min-h-screen bg-surface pb-24 pt-24">
@@ -85,7 +85,7 @@ export function ReceiptPage() {
                   )}
                 </div>
                 <span className="shrink-0 tabular-nums text-foreground">
-                  {pounds(item.lineTotalPence)}
+                  {dollars(item.lineTotalPence)}
                 </span>
               </div>
             ))}
@@ -95,7 +95,7 @@ export function ReceiptPage() {
 
           <div className="flex items-center justify-between text-sm font-semibold text-foreground">
             <span>Total</span>
-            <span>{pounds(o.totalPence)}</span>
+            <span>{dollars(o.totalPence)}</span>
           </div>
 
           <div className="mt-2 flex items-center justify-between text-sm">

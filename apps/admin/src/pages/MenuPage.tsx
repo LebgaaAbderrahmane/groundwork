@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
-import { pounds } from '@/lib/format'
+import { dollars } from '@/lib/format'
 import { Badge, Button, Card, Field, Input, Textarea } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useDocumentTitle } from '@/lib/hooks'
@@ -216,7 +216,7 @@ function ProductRow({
           onClick={onToggleExpand}
           className="flex flex-1 items-center gap-3 text-left"
           aria-expanded={expanded}
-          aria-label={`${product.name} — ${pounds(product.pricePence)} — ${active ? 'visible' : 'hidden'}`}
+          aria-label={`${product.name} — ${dollars(product.pricePence)} — ${active ? 'visible' : 'hidden'}`}
         >
           <span
             className={cn(
@@ -234,7 +234,7 @@ function ProductRow({
           )}
         </button>
         <span className="text-sm font-semibold text-foreground">
-          {pounds(product.pricePence)}
+          {dollars(product.pricePence)}
         </span>
         <label className="flex cursor-pointer items-center gap-2" title="Visible to customers">
           <input
@@ -332,7 +332,7 @@ function ProductDetail({ product }: { product: Product }) {
                         {o.label}
                         {o.priceDeltaPence > 0 && (
                           <span className="ml-1 text-xs text-accent">
-                            +{pounds(o.priceDeltaPence)}
+                            +{dollars(o.priceDeltaPence)}
                           </span>
                         )}
                       </span>
@@ -376,7 +376,7 @@ function ProductDetail({ product }: { product: Product }) {
                   onChange={(e) =>
                     setNewOption({ groupId: g.id, label: newOption.groupId === g.id ? newOption.label : '', price: e.target.value })
                   }
-                  placeholder="+£0.30"
+                  placeholder="+$0.30"
                   className="w-24"
                   aria-label={`Price delta for new ${g.name} option`}
                 />
@@ -478,7 +478,7 @@ function AddProduct({ categoryId }: { categoryId: number }) {
           required
         />
       </Field>
-      <Field label="Price (£)" htmlFor={`p-price-${categoryId}`}>
+      <Field label="Price ($)" htmlFor={`p-price-${categoryId}`}>
         <Input
           id={`p-price-${categoryId}`}
           type="number"

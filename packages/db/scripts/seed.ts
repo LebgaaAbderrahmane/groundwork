@@ -503,7 +503,7 @@ export default async function seed() {
   console.log('  Menu: %d products across %d categories', productRows.length, 4)
   console.log('  Customers: %d', 6)
   const revenue = (totalRevenue / 100).toFixed(2)
-  console.log('  Orders today: %d completed, 3 live, 1 pending · revenue £%s', orderCount, revenue)
+  console.log('  Orders today: %d completed, 3 live, 1 pending · revenue $%s', orderCount, revenue)
   console.log('  Tables: 5')
   await pool.end()
 }

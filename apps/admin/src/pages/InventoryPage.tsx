@@ -116,7 +116,7 @@ export function InventoryPage() {
                 <Field label="Low stock at" htmlFor="ing-low">
                   <Input id="ing-low" type="number" step="any" value={form.lowStockThreshold} onChange={(e) => setForm({ ...form, lowStockThreshold: e.target.value })} placeholder="0" />
                 </Field>
-                <Field label="Cost / unit (£)" htmlFor="ing-cost">
+                <Field label="Cost / unit ($)" htmlFor="ing-cost">
                   <Input id="ing-cost" type="number" step="any" value={form.costPerUnit} onChange={(e) => setForm({ ...form, costPerUnit: e.target.value })} placeholder="0.00" />
                 </Field>
               </div>
@@ -210,7 +210,7 @@ export function InventoryPage() {
                       {i.stockQty}
                     </td>
                     <td className="py-2.5 pr-3 text-muted-foreground">{i.lowStockThreshold}</td>
-                    <td className="py-2.5 pr-3 text-muted-foreground">£{Number(i.costPerUnit).toFixed(2)}</td>
+                    <td className="py-2.5 pr-3 text-muted-foreground">${Number(i.costPerUnit).toFixed(2)}</td>
                     <td className="py-2.5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <Button variant="outline" className="size-8 p-0" title="−1" onClick={() => adjust.mutate({ ingredientId: i.id, change: -1, reason: 'adjustment' })} type="button">

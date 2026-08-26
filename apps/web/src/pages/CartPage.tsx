@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import { useDocumentTitle } from '@/lib/hooks'
 import { cartSubtotal, useCart } from '@/store/cart'
-import { pounds } from '@/lib/format'
+import { dollars } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 
 export const PICKUP_OPTIONS = [
@@ -68,7 +68,7 @@ export function CartPage() {
                       {line.name}
                     </h3>
                     <span className="text-sm font-medium text-accent">
-                      {pounds(line.unitPricePence)}
+                      {dollars(line.unitPricePence)}
                     </span>
                   </div>
                   {line.options.length > 0 && (
@@ -101,7 +101,7 @@ export function CartPage() {
                     </button>
                   </div>
                   <span className="w-20 text-right text-sm font-medium text-foreground">
-                    {pounds(line.unitPricePence * line.quantity)}
+                    {dollars(line.unitPricePence * line.quantity)}
                   </span>
                   <button
                     type="button"
@@ -151,11 +151,11 @@ export function CartPage() {
             <div className="mt-6 space-y-2 border-t border-border pt-4 text-sm">
               <div className="flex justify-between text-foreground/70">
                 <span>Subtotal</span>
-                <span>{pounds(subtotal)}</span>
+                <span>{dollars(subtotal)}</span>
               </div>
               <div className="flex justify-between font-medium text-foreground">
                 <span>Total</span>
-                <span>{pounds(subtotal)}</span>
+                <span>{dollars(subtotal)}</span>
               </div>
               <p className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
                 Paid when you pick up

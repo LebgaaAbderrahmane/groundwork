@@ -1,7 +1,7 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useDocumentTitle } from '@/lib/hooks'
 import { ArrowRight, AlertTriangle, CheckCircle2, Coffee, Package } from 'lucide-react'
-import { pounds } from '@/lib/format'
+import { dollars } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { PaymentStatusBadge } from '@/components/payment'
 import { trpc } from '@/lib/trpc'
@@ -137,7 +137,7 @@ export function OrderConfirmationPage() {
         {totalPence !== undefined && (
           <>
             {' '}
-            for <span className="font-medium text-foreground">{pounds(totalPence)}</span>
+            for <span className="font-medium text-foreground">{dollars(totalPence)}</span>
           </>
         )}{' '}
         on the ticket and we'll have it ready for pickup.

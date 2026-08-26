@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { ChevronRight, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
-import { pounds } from '@/lib/format'
+import { dollars } from '@/lib/format'
 import { Badge, Button, Card, EmptyState, LiveBadge, PaymentStatusBadge, TimeAgo } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useDocumentTitle, useBroadcastChannel } from '@/lib/hooks'
@@ -39,7 +39,7 @@ export function OrdersPage() {
     if (prevCountRef.current > 0 && orders.length > prevCountRef.current) {
       const newest = orders[0]
       toast.info(`New order #${newest.id}`, {
-        description: `${newest.customerName || 'Guest'} — ${pounds(newest.totalPence)}`,
+        description: `${newest.customerName || 'Guest'} — ${dollars(newest.totalPence)}`,
       })
       post({ type: 'order:new', orderId: newest.id })
     }
@@ -149,7 +149,7 @@ export function OrdersPage() {
 
               <div className="flex shrink-0 flex-col items-stretch gap-2 sm:items-end">
                 <span className="text-lg font-semibold text-foreground">
-                  {pounds(order.totalPence)}
+                  {dollars(order.totalPence)}
                 </span>
                 <div className="flex gap-2">
                   {order.status !== 'collected' && (
