@@ -396,11 +396,13 @@ export function StatsCard({
   label,
   value,
   sub,
+  delta,
 }: {
   icon: ReactNode
   label: string
   value: string | number
   sub?: string
+  delta?: ReactNode
 }) {
   return (
     <Card>
@@ -419,6 +421,7 @@ export function StatsCard({
                 {sub}
               </span>
             )}
+            {delta && <span className="ml-2">{delta}</span>}
           </p>
         </div>
       </div>

@@ -16,11 +16,13 @@
     "@tanstack/react-query": "^5.101.4",
     "@trpc/client": "^11.18.0",
     "@trpc/react-query": "^11.18.0",
+    "date-fns": "^4.4.0",
     "lucide-react": "^1.28.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2",
+    "recharts": "^3.10.1",
     "sonner": "^2.0.8",
     "tailwindcss": "^4.3.3",
     "zustand": "^5.0.14"
