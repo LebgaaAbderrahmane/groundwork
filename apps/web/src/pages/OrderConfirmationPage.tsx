@@ -1,6 +1,7 @@
+import { useCallback, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useDocumentTitle } from '@/lib/hooks'
-import { ArrowRight, AlertTriangle, CheckCircle2, Coffee, Package } from 'lucide-react'
+import { ArrowRight, AlertTriangle, CheckCircle2, Coffee, Package, RefreshCw } from 'lucide-react'
 import { dollars } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { PaymentStatusBadge } from '@/components/payment'
@@ -57,6 +58,9 @@ export default function OrderConfirmationPage() {
   const { orderId } = useParams<{ orderId: string }>()
   const location = useLocation()
   const state = (location.state ?? {}) as LocationState
+  const [pullDistance, setPullDistance] = useState(0)
+  const [refreshing, setRefreshing] = useState(false)
+  const touchStartY = useRef(0)
   const order = trpc.orders.getById.useQuery(
     { orderId: Number(orderId) },
     {
@@ -68,6 +72,33 @@ export default function OrderConfirmationPage() {
       },
     },
   )
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (window.scrollY === 0) {
+      touchStartY.current = e.touches[0].clientY
+    }
+  }, [])
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (touchStartY.current === 0) return
+    const delta = e.touches[0].clientY - touchStartY.current
+    if (delta > 0 && window.scrollY === 0) {
+      setPullDistance(Math.min(delta, 120))
+    }
+  }, [])
+
+  const handleTouchEnd = useCallback(() => {
+    if (pullDistance > 80) {
+      setRefreshing(true)
+      order.refetch().finally(() => {
+        setRefreshing(false)
+        setPullDistance(0)
+      })
+    } else {
+      setPullDistance(0)
+    }
+    touchStartY.current = 0
+  }, [pullDistance, order])
 
   const totalPence = order.data?.totalPence ?? state.totalPence
 
@@ -111,7 +142,24 @@ export default function OrderConfirmationPage() {
   const isLive = data && data.status !== 'collected' && data.status !== 'cancelled'
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 pt-24 text-center">
+    <main
+      className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 pt-24 text-center"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {(pullDistance > 0 || refreshing) && (
+        <div
+          className="mb-4 flex items-center gap-2 text-xs text-muted-foreground"
+          style={{ opacity: Math.min(1, pullDistance / 80) }}
+        >
+          <RefreshCw
+            className={cn('size-4', refreshing && 'animate-spin')}
+            style={{ transform: refreshing ? undefined : `rotate(${pullDistance * 3}deg)` }}
+          />
+          {refreshing ? 'Refreshing…' : pullDistance > 80 ? 'Release to refresh' : 'Pull to refresh'}
+        </div>
+      )}
       {data?.status === 'collected' ? (
         <CheckCircle2 className="size-14 text-primary" strokeWidth={1.2} aria-hidden />
       ) : data?.status === 'cancelled' ? (

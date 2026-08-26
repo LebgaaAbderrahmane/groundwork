@@ -7,6 +7,7 @@ import { NAV_LINKS } from '@/data/content'
 import { Button } from '@/components/ui/button'
 import { cartCount, useCart } from '@/store/cart'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { CartDrawer } from '@/components/CartDrawer'
 import { cn } from '@/lib/utils'
 import { springMicro } from '@/lib/motion'
 
@@ -17,6 +18,7 @@ function isNavActive(href: string, pathname: string): boolean {
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
+  const [cartOpen, setCartOpen] = useState(false)
   const count = useCart((s) => cartCount(s.lines))
   const { pathname } = useLocation()
 
@@ -129,9 +131,12 @@ export function Navbar() {
             )
           })}
           <ThemeToggle layout="full" />
-          <Link
-            to="/cart"
-            onClick={() => setOpen(false)}
+          <button
+            type="button"
+            onClick={() => {
+              setOpen(false)
+              setCartOpen(true)
+            }}
             className="flex items-center justify-between rounded-lg px-3 py-3 text-[11px] font-medium uppercase tracking-[0.12em] text-foreground/80 transition-colors hover:bg-surface hover:text-primary"
           >
             <span className="flex items-center gap-2">
@@ -151,7 +156,7 @@ export function Navbar() {
                 </motion.span>
               </AnimatePresence>
             )}
-          </Link>
+          </button>
           <Button asChild className="mt-2 w-full">
             <Link to="/menu" onClick={() => setOpen(false)}>
               Order ahead <span aria-hidden>→</span>
@@ -159,6 +164,7 @@ export function Navbar() {
           </Button>
         </nav>
       </div>
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </header>
   )
 }

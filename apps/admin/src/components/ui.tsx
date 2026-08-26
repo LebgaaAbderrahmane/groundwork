@@ -1,5 +1,5 @@
 import type { ReactNode, ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
 import { Loader2, X } from 'lucide-react'
@@ -175,6 +175,26 @@ export function Dialog({
 }) {
   const dialogRef = useRef<HTMLDivElement>(null)
   const previousFocus = useRef<HTMLElement | null>(null)
+  const [dragY, setDragY] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const touchStartY = useRef(0)
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY
+    setIsDragging(true)
+  }, [])
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isDragging) return
+    const delta = e.touches[0].clientY - touchStartY.current
+    if (delta > 0) setDragY(delta)
+  }, [isDragging])
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false)
+    if (dragY > 120) onClose()
+    else setDragY(0)
+  }, [dragY, onClose])
 
   useEffect(() => {
     if (!open) return
@@ -226,7 +246,16 @@ export function Dialog({
         tabIndex={-1}
         className="w-full max-w-lg rounded-xl border border-border bg-background p-6 shadow-2xl outline-none"
         onClick={(e) => e.stopPropagation()}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{
+          transform: dragY > 0 ? `translateY(${dragY}px)` : undefined,
+          transition: isDragging ? 'none' : 'transform 0.2s ease-out',
+          opacity: dragY > 0 ? Math.max(0.4, 1 - dragY / 400) : undefined,
+        }}
       >
+        <div className="mx-auto mb-4 h-1 w-8 rounded-full bg-muted-foreground/30 sm:hidden" aria-hidden />
         <div className="flex items-center justify-between">
           <h2 className="font-display text-lg font-semibold text-foreground">{title}</h2>
           <button
