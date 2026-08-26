@@ -1,5 +1,5 @@
 import type { ReactNode, ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
 import { Loader2, X } from 'lucide-react'
@@ -29,7 +29,7 @@ export function Button({
   return (
     <button
       className={cn(
-        'inline-flex h-9 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+        'inline-flex h-9 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50',
         buttonVariants[variant],
         className,
       )}
@@ -173,16 +173,41 @@ export function Dialog({
   title: string
   children: ReactNode
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const previousFocus = useRef<HTMLElement | null>(null)
+
   useEffect(() => {
     if (!open) return
+    previousFocus.current = document.activeElement as HTMLElement
+    dialogRef.current?.focus()
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      )
+      if (!focusable?.length) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
     }
+
     window.addEventListener('keydown', onKey)
     document.body.style.overflow = 'hidden'
     return () => {
       window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
+      previousFocus.current?.focus()
     }
   }, [open, onClose])
 
@@ -197,7 +222,9 @@ export function Dialog({
       aria-label={title}
     >
       <div
-        className="w-full max-w-lg rounded-xl border border-border bg-background p-6 shadow-2xl"
+        ref={dialogRef}
+        tabIndex={-1}
+        className="w-full max-w-lg rounded-xl border border-border bg-background p-6 shadow-2xl outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">

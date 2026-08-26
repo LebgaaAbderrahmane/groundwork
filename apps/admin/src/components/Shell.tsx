@@ -103,6 +103,9 @@ function Layout() {
 
   return (
     <div className="flex min-h-screen bg-surface">
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-56 flex-col border-r border-border bg-background md:flex">
         <div className="flex items-center gap-2.5 px-5 py-5">
           <Coffee className="size-5 text-accent" strokeWidth={1.8} />
@@ -148,7 +151,7 @@ function Layout() {
 
       <div className="flex min-h-screen flex-1 flex-col md:pl-56">
         <MobileNav user={user} onLogout={() => logout.mutate()} />
-        <main className="flex-1 px-6 py-8 md:px-10 md:py-10">
+        <main id="main-content" className="flex-1 px-6 py-8 md:px-10 md:py-10">
           <Outlet />
         </main>
       </div>

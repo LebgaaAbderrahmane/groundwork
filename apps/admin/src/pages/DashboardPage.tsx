@@ -95,6 +95,8 @@ export default function DashboardPage() {
                     <div
                       className="h-full rounded bg-accent/70"
                       style={{ width: `${Math.max(4, (h.count / maxHour) * 100)}%` }}
+                      role="img"
+                      aria-label={`${h.count} orders at ${String(h.hour).padStart(2, '0')}:00`}
                     />
                   </div>
                   <span className="w-6 shrink-0 text-right text-xs text-muted-foreground">

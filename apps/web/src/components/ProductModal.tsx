@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Minus, Plus, X } from 'lucide-react'
 import type { SelectedOption } from '@/store/cart'
 import { dollars } from '@/lib/format'
@@ -39,16 +39,40 @@ type ProductModalProps = {
 export function ProductModal({ product, onClose, onAdd }: ProductModalProps) {
   const [selected, setSelected] = useState<Record<number, number[]>>({})
   const [quantity, setQuantity] = useState(1)
+  const modalRef = useRef<HTMLDivElement>(null)
+  const previousFocus = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
+    previousFocus.current = document.activeElement as HTMLElement
+    modalRef.current?.focus()
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const focusable = modalRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      )
+      if (!focusable?.length) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
     }
+
     window.addEventListener('keydown', onKey)
     document.body.style.overflow = 'hidden'
     return () => {
       window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
+      previousFocus.current?.focus()
     }
   }, [onClose])
 
@@ -82,6 +106,8 @@ export function ProductModal({ product, onClose, onAdd }: ProductModalProps) {
 
   return (
     <div
+      ref={modalRef}
+      tabIndex={-1}
       className="fixed inset-0 z-[60] flex items-end justify-center bg-foreground/40 p-0 sm:items-center sm:p-6"
       onClick={onClose}
       role="dialog"
