@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/schema.ts","./scripts/migrate.ts","./scripts/seed.ts","./drizzle.config.ts"],"version":"6.0.3"}
+{"root":["./src/index.ts","./src/schema.ts","./scripts/migrate.ts","./scripts/reset.ts","./scripts/seed.ts","./drizzle.config.ts"],"version":"6.0.3"}

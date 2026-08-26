@@ -12,6 +12,7 @@
     "generate": "drizzle-kit generate",
     "migrate": "tsx scripts/migrate.ts",
     "seed": "tsx scripts/seed.ts",
+    "reset": "tsx scripts/reset.ts",
     "studio": "drizzle-kit studio",
     "lint": "oxlint src scripts"
   },

@@ -16,6 +16,7 @@
     "db:migrate": "pnpm --filter @cribstone/db migrate",
     "db:generate": "pnpm --filter @cribstone/db generate",
     "db:seed": "pnpm --filter @cribstone/db seed",
+    "db:reset": "pnpm --filter @cribstone/db reset",
     "db:studio": "pnpm --filter @cribstone/db studio"
   }
 }
