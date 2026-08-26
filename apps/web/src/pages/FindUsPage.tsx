@@ -9,6 +9,8 @@ import { Chip } from '@/components/shared/chip'
 import { SectionHeading } from '@/components/shared/section-heading'
 import { fadeUp, VIEWPORT } from '@/lib/motion'
 import { useDocumentTitle } from '@/lib/hooks'
+import { Head } from '@/components/Head'
+import { JsonLd } from '@/components/JsonLd'
 
 const MAPS_URL = `https://maps.google.com/?q=${encodeURIComponent(BRAND.address)}`
 const MAPS_EMBED = `https://maps.google.com/maps?q=${encodeURIComponent(BRAND.address)}&output=embed&z=15`
@@ -33,6 +35,44 @@ export default function FindUsPage() {
 
   return (
     <main className="pt-16">
+      <Head title="Find Us" description="Visit Cribstone Coffee on Orr's Island — hours, directions, parking, and accessibility info." path="/find-us" />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'CafeOrCoffeeShop',
+          name: BRAND.name,
+          url: BRAND.url,
+          logo: BRAND.logo,
+          description: 'Specialty coffee, fresh-baked goods and community spirit on Orr\'s Island, Maine.',
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: '1845 Harpswell Islands Road',
+            addressLocality: 'Orr\'s Island',
+            addressRegion: 'ME',
+            postalCode: '04066',
+            addressCountry: 'US',
+          },
+          telephone: BRAND.phone,
+          email: BRAND.email,
+          openingHours: ['Mo-Fr 07:00-17:00', 'Sa-Su 08:00-17:00'],
+          geo: { '@type': 'GeoCoordinates', latitude: BRAND.geo.lat, longitude: BRAND.geo.lng },
+          sameAs: [BRAND.social.instagram, BRAND.social.facebook],
+        }}
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: FAQ.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: item.answer,
+            },
+          })),
+        }}
+      />
       <section ref={heroRef} className="relative flex min-h-[50svh] items-center overflow-hidden">
         <motion.div style={{ y: parallaxY, scale: parallaxScale }} className="absolute inset-0">
           <img

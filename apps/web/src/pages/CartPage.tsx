@@ -4,6 +4,7 @@ import { useDocumentTitle } from '@/lib/hooks'
 import { cartSubtotal, useCart } from '@/store/cart'
 import { dollars } from '@/lib/format'
 import { Button } from '@/components/ui/button'
+import { Head } from '@/components/Head'
 
 export const PICKUP_OPTIONS = [
   { label: 'As soon as possible', minutes: 0 },
@@ -27,6 +28,7 @@ export default function CartPage() {
   if (lines.length === 0) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 pt-24 text-center">
+        <Head title="Your Bag" description="Your Cribstone Coffee bag is empty — head to the menu to find something great." path="/cart" />
         <ShoppingBag className="size-12 text-accent" strokeWidth={1.2} aria-hidden />
         <h1 className="mt-6 font-display text-4xl font-bold text-foreground">
           Your bag is <em className="italic text-accent">empty</em>
@@ -45,6 +47,7 @@ export default function CartPage() {
 
   return (
     <main className="min-h-screen bg-surface pb-24 pt-24">
+      <Head title="Your Bag" description="Review your Cribstone Coffee order — adjust items, quantities, and pickup time before checkout." path="/cart" />
       <div className="container-site max-w-4xl">
         <header>
           <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">

@@ -15,12 +15,14 @@ import { Chip } from '@/components/shared/chip'
 import { SectionHeading } from '@/components/shared/section-heading'
 import { fadeUp, fadeUpScale, revealStagger, VIEWPORT } from '@/lib/motion'
 import { useDocumentTitle } from '@/lib/hooks'
+import { Head } from '@/components/Head'
 
 export default function AboutPage() {
   useDocumentTitle('About')
 
   return (
     <main className="pt-20">
+      <Head title="About" description="The story behind Cribstone Coffee — from a horse trailer on Orr's Island to your favourite local café." path="/about" />
       <section className="bg-surface py-24 md:py-32">
         <motion.div
           variants={revealStagger(0.14)}

@@ -8,6 +8,7 @@ import { dollars } from '@/lib/format'
 import { useCart, type SelectedOption } from '@/store/cart'
 import { ProductModal, type MenuProduct } from '@/components/ProductModal'
 import { cn } from '@/lib/utils'
+import { Head } from '@/components/Head'
 
 export default function MenuPage() {
   useDocumentTitle('Menu')
@@ -54,6 +55,7 @@ export default function MenuPage() {
 
   return (
     <main className="min-h-screen bg-surface pb-24 pt-24">
+      <Head title="Menu" description="Browse the full Cribstone Coffee menu on Orr's Island — espresso, pastries, bowls, and more." path="/menu" />
       <div className="container-site">
         <header className="text-center">
           <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">

@@ -9,6 +9,7 @@ import { dollars } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { PaymentMethodSelector } from '@/components/payment'
 import { PICKUP_OPTIONS } from './CartPage'
+import { Head } from '@/components/Head'
 
 export default function CheckoutPage() {
   useDocumentTitle('Checkout')
@@ -73,6 +74,7 @@ export default function CheckoutPage() {
   if (lines.length === 0) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 pt-24 text-center">
+        <Head title="Checkout" description="Complete your Cribstone Coffee order — enter details and choose a payment method." path="/checkout" />
         <ShoppingBag className="size-12 text-accent" strokeWidth={1.2} aria-hidden />
         <h1 className="mt-6 font-display text-4xl font-bold text-foreground">
           Nothing to check out
@@ -86,6 +88,7 @@ export default function CheckoutPage() {
 
   return (
     <main className="min-h-screen bg-surface pb-24 pt-24">
+      <Head title="Checkout" description="Complete your Cribstone Coffee order — enter details and choose a payment method." path="/checkout" />
       <div className="container-site max-w-3xl">
         <button
           type="button"
