@@ -25,6 +25,11 @@ export const createOrderInput = z.object({
   customerPhone: z.string().max(20).optional(),
   notes: z.string().max(500).optional(),
   pickupAt: z.string().datetime().optional(),
+  tableToken: z.string().uuid().optional(),
+})
+
+export const tableByTokenInput = z.object({
+  token: z.string().uuid(),
 })
 
 export const advanceOrderInput = z.object({

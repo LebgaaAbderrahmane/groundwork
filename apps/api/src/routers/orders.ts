@@ -8,6 +8,7 @@ import {
   options,
   products,
   shops,
+  tables,
 } from '@cribstone/db'
 import {
   ORDER_STATUS_FLOW,
@@ -34,9 +35,14 @@ async function getShopId(db: DB) {
   return shop.id
 }
 
-function toOrderWithItems(order: typeof orders.$inferSelect, items: typeof orderItems.$inferSelect[]) {
+function toOrderWithItems(
+  order: typeof orders.$inferSelect,
+  items: typeof orderItems.$inferSelect[],
+  tableLabel?: string | null,
+) {
   return {
     ...order,
+    tableLabel: tableLabel ?? null,
     items: items.map((i) => ({
       id: i.id,
       productId: i.productId,
@@ -49,9 +55,30 @@ function toOrderWithItems(order: typeof orders.$inferSelect, items: typeof order
   }
 }
 
+async function tableLabelsFor(db: DB, orderRows: Array<{ tableId: number | null }>) {
+  const ids = [...new Set(orderRows.map((o) => o.tableId).filter((id): id is number => id != null))]
+  if (ids.length === 0) return new Map<number, string>()
+  const rows = await db.select({ id: tables.id, label: tables.label }).from(tables).where(inArray(tables.id, ids))
+  return new Map(rows.map((t) => [t.id, t.label]))
+}
+
 export const ordersRouter = router({
   create: publicProcedure.input(createOrderInput).mutation(async ({ ctx, input }) => {
     const shopId = await getShopId(ctx.db)
+
+    let tableId: number | null = null
+    let type = input.type
+    if (input.tableToken) {
+      const [table] = await ctx.db
+        .select({ id: tables.id })
+        .from(tables)
+        .where(eq(tables.qrToken, input.tableToken))
+      if (!table) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid table token' })
+      }
+      tableId = table.id
+      type = 'dine_in'
+    }
 
     const productIds = [...new Set(input.items.map((i) => i.productId))]
     const prods = await ctx.db
@@ -162,7 +189,7 @@ export const ordersRouter = router({
       .insert(orders)
       .values({
         shopId,
-        type: input.type,
+        type,
         status: 'received',
         customerName: input.customerName,
         customerPhone: input.customerPhone,
@@ -172,6 +199,7 @@ export const ordersRouter = router({
         paymentMethod: input.paymentMethod,
         paymentStatus,
         pickupAt: input.pickupAt ? new Date(input.pickupAt) : null,
+        tableId,
       })
       .returning()
 
@@ -217,7 +245,8 @@ export const ordersRouter = router({
       list.push(item)
       itemsByOrder.set(item.orderId, list)
     }
-    return rows.map((o) => toOrderWithItems(o, itemsByOrder.get(o.id) ?? []))
+    const labels = await tableLabelsFor(ctx.db, rows)
+    return rows.map((o) => toOrderWithItems(o, itemsByOrder.get(o.id) ?? [], labels.get(o.tableId ?? -1)))
   }),
 
   queue: protectedProcedure.query(async ({ ctx }) => {
@@ -244,14 +273,16 @@ export const ordersRouter = router({
       list.push(item)
       itemsByOrder.set(item.orderId, list)
     }
-    return rows.map((o) => toOrderWithItems(o, itemsByOrder.get(o.id) ?? []))
+    const labels = await tableLabelsFor(ctx.db, rows)
+    return rows.map((o) => toOrderWithItems(o, itemsByOrder.get(o.id) ?? [], labels.get(o.tableId ?? -1)))
   }),
 
   getById: publicProcedure.input(cancelOrderInput).query(async ({ ctx, input }) => {
     const [order] = await ctx.db.select().from(orders).where(eq(orders.id, input.orderId))
     if (!order) throw new TRPCError({ code: 'NOT_FOUND' })
     const items = await ctx.db.select().from(orderItems).where(eq(orderItems.orderId, order.id))
-    return toOrderWithItems(order, items)
+    const labels = await tableLabelsFor(ctx.db, [order])
+    return toOrderWithItems(order, items, labels.get(order.tableId ?? -1))
   }),
 
   byId: protectedProcedure
@@ -266,7 +297,8 @@ export const ordersRouter = router({
         .select()
         .from(orderItems)
         .where(eq(orderItems.orderId, order.id))
-      return toOrderWithItems(order, items)
+      const labels = await tableLabelsFor(ctx.db, [order])
+      return toOrderWithItems(order, items, labels.get(order.tableId ?? -1))
     }),
 
   advanceStatus: protectedProcedure

@@ -16,6 +16,12 @@ export type CartLine = {
   options: SelectedOption[]
 }
 
+export type CartTable = {
+  id: number
+  label: string
+  token: string
+}
+
 type AddInput = {
   productId: number
   name: string
@@ -28,11 +34,13 @@ type CartState = {
   lines: CartLine[]
   pickupIndex: number
   notes: string
+  table: CartTable | null
   add: (input: AddInput) => void
   remove: (key: string) => void
   setQuantity: (key: string, quantity: number) => void
   setPickupIndex: (index: number) => void
   setNotes: (notes: string) => void
+  setTable: (table: CartTable | null) => void
   clear: () => void
 }
 
@@ -57,6 +65,7 @@ export const useCart = create<CartState>()(
       lines: [],
       pickupIndex: 0,
       notes: '',
+      table: null,
       add: (input) =>
         set((state) => {
           const key = lineKey(input.productId, input.options)
@@ -96,7 +105,8 @@ export const useCart = create<CartState>()(
         })),
       setPickupIndex: (pickupIndex) => set({ pickupIndex }),
       setNotes: (notes) => set({ notes }),
-      clear: () => set({ lines: [], pickupIndex: 0, notes: '' }),
+      setTable: (table) => set({ table }),
+      clear: () => set({ lines: [], pickupIndex: 0, notes: '', table: null }),
     }),
     { name: 'cribstone-cart' },
   ),

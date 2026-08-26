@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Loader2, ShoppingBag } from 'lucide-react'
+import { ArrowLeft, Loader2, ShoppingBag, UtensilsCrossed, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { useDocumentTitle } from '@/lib/hooks'
 import { cartSubtotal, useCart } from '@/store/cart'
@@ -18,6 +18,8 @@ export default function CheckoutPage() {
   const clear = useCart((s) => s.clear)
   const pickup = useCart((s) => s.pickupIndex)
   const notes = useCart((s) => s.notes)
+  const table = useCart((s) => s.table)
+  const setTable = useCart((s) => s.setTable)
 
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
@@ -46,7 +48,7 @@ export default function CheckoutPage() {
     e.preventDefault()
     setError(null)
     createOrder.mutate({
-      type: 'pickup',
+      type: table ? 'dine_in' : 'pickup',
       items: lines.map((l) => ({
         productId: l.productId,
         name: l.name,
@@ -60,7 +62,11 @@ export default function CheckoutPage() {
       customerName: name,
       customerPhone: phone.trim() || undefined,
       notes: notes || undefined,
-      pickupAt: new Date(Date.now() + pickupMinutes * 60_000).toISOString(),
+      pickupAt:
+        table || !pickupMinutes
+          ? undefined
+          : new Date(Date.now() + pickupMinutes * 60_000).toISOString(),
+      tableToken: table?.token,
     })
   }
 
@@ -92,6 +98,21 @@ export default function CheckoutPage() {
         <h1 className="mt-4 font-display text-5xl font-bold text-foreground">
           Checkout
         </h1>
+
+        {table && (
+          <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground">
+            <UtensilsCrossed className="size-3.5" aria-hidden />
+            Dine-in · {table.label}
+            <button
+              type="button"
+              aria-label={`Switch to pickup (remove ${table.label})`}
+              onClick={() => setTable(null)}
+              className="ml-1 flex size-4 items-center justify-center rounded-full text-primary-foreground/70 transition-colors hover:text-primary-foreground"
+            >
+              <X className="size-3" />
+            </button>
+          </p>
+        )}
 
         <form onSubmit={submit} className="mt-10 grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="space-y-6">

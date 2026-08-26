@@ -180,6 +180,7 @@ export const orders = pgTable('orders', {
   paymentMethod: paymentMethodEnum('payment_method').notNull().default('in_store'),
   paymentStatus: paymentStatusEnum('payment_status').notNull().default('pending'),
   pickupAt: timestamp('pickup_at'),
+  tableId: integer('table_id').references(() => tables.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at').notNull().default(now()),
 })
 

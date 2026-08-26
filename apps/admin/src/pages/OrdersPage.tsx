@@ -106,7 +106,11 @@ export default function OrdersPage() {
                     {STATUS_LABELS[order.status] ?? order.status}
                   </Badge>
                   <Badge className="bg-background text-muted-foreground ring-1 ring-border">
-                    {order.type === 'dine_in' ? 'Dine in' : 'Pickup'}
+                    {order.type === 'dine_in'
+                      ? order.tableLabel
+                        ? `Table · ${order.tableLabel}`
+                        : 'Dine in'
+                      : 'Pickup'}
                   </Badge>
                   {order.paymentMethod === 'in_store' && order.paymentStatus === 'pending' && (
                     <PaymentStatusBadge status="pending" />
