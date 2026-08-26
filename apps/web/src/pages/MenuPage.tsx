@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Search, X } from 'lucide-react'
+import { Plus, Search, UtensilsCrossed, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { BRAND } from '@cribstone/shared'
 import { useDocumentTitle } from '@/lib/hooks'
@@ -13,6 +13,7 @@ export default function MenuPage() {
   useDocumentTitle('Menu')
   const menu = trpc.menu.publicMenu.useQuery()
   const addToCart = useCart((s) => s.add)
+  const table = useCart((s) => s.table)
   const [activeCategory, setActiveCategory] = useState<number | 'all'>('all')
   const [activeProduct, setActiveProduct] = useState<MenuProduct | null>(null)
   const [query, setQuery] = useState('')
@@ -61,6 +62,12 @@ export default function MenuPage() {
           <h1 className="mt-3 font-display text-5xl font-bold text-foreground md:text-6xl">
             The <em className="italic text-accent">Menu</em>
           </h1>
+          {table && (
+            <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground">
+              <UtensilsCrossed className="size-3.5" aria-hidden />
+              Ordering for {table.label} — dine-in
+            </p>
+          )}
           {menu.data?.shop?.hours && (
             <p className="mt-3 text-sm font-light text-foreground/60">
               {menu.data.shop.hours}

@@ -2,12 +2,21 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 import { and, asc, eq } from 'drizzle-orm'
 import { tables } from '@cribstone/db'
-import { tableInput } from '@cribstone/shared'
-import { protectedProcedure, ownerProcedure, router } from '../trpc'
+import { tableByTokenInput, tableInput } from '@cribstone/shared'
+import { publicProcedure, protectedProcedure, ownerProcedure, router } from '../trpc'
 
 const tableIdInput = z.object({ id: z.number().int().positive() })
 
 export const tablesRouter = router({
+  byToken: publicProcedure.input(tableByTokenInput).query(async ({ ctx, input }) => {
+    const [table] = await ctx.db
+      .select({ id: tables.id, label: tables.label })
+      .from(tables)
+      .where(eq(tables.qrToken, input.token))
+    if (!table) throw new TRPCError({ code: 'NOT_FOUND', message: 'Table not found' })
+    return table
+  }),
+
   list: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db
       .select()

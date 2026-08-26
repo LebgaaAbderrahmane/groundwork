@@ -253,8 +253,9 @@ export default async function seed() {
   ])
 
   // ── TABLES ───────────────────────────────────────────────────────
+  // 'Counter' keeps a deterministic token so E2E and dev QR flows can target it.
   await db.insert(tables).values([
-    { shopId: shop.id, label: 'Counter', qrToken: crypto.randomUUID() },
+    { shopId: shop.id, label: 'Counter', qrToken: '00000000-0000-4000-8000-000000000001' },
     { shopId: shop.id, label: 'Window 1', qrToken: crypto.randomUUID() },
     { shopId: shop.id, label: 'Window 2', qrToken: crypto.randomUUID() },
     { shopId: shop.id, label: 'Patio 1', qrToken: crypto.randomUUID() },
