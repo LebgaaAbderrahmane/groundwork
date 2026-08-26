@@ -20,6 +20,8 @@ import { Button, ConfirmDialog } from '@/components/ui'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { cn } from '@/lib/utils'
 import { isUnsavedDirty, subscribeUnsaved, setUnsavedDirty } from '@/lib/unsaved'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { OfflineBanner } from '@/components/OfflineBanner'
 
 const NAV = [
   { to: '/', label: 'Dashboard', icon: Home, end: true },
@@ -152,7 +154,9 @@ function Layout() {
       <div className="flex min-h-screen flex-1 flex-col md:pl-56">
         <MobileNav user={user} onLogout={() => logout.mutate()} />
         <main id="main-content" className="flex-1 px-6 py-8 md:px-10 md:py-10">
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </div>
 
@@ -164,6 +168,7 @@ function Layout() {
         description="You have unsaved changes. Leave without saving?"
         confirmLabel="Leave"
       />
+      <OfflineBanner />
     </div>
   )
 }

@@ -2,6 +2,8 @@ import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { OfflineBanner } from '@/components/OfflineBanner'
 
 const HomePage = lazy(() => import('@/pages/HomePage'))
 const MenuPage = lazy(() => import('@/pages/MenuPage'))
@@ -47,22 +49,25 @@ function App() {
         <ScrollToTop />
         <Navbar />
         <Suspense fallback={<PageLoader />}>
-          <div id="main-content">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/menu" element={<MenuPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/order/:orderId" element={<OrderConfirmationPage />} />
-              <Route path="/receipt/:orderId" element={<ReceiptPage />} />
-              <Route path="/our-coffee" element={<OurCoffeePage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/find-us" element={<FindUsPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </div>
+          <ErrorBoundary>
+            <div id="main-content">
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/menu" element={<MenuPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/order/:orderId" element={<OrderConfirmationPage />} />
+                <Route path="/receipt/:orderId" element={<ReceiptPage />} />
+                <Route path="/our-coffee" element={<OurCoffeePage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/find-us" element={<FindUsPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </div>
+          </ErrorBoundary>
         </Suspense>
         <Footer />
+        <OfflineBanner />
       </div>
     </BrowserRouter>
   )
