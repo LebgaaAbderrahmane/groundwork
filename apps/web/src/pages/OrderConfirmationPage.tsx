@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { PaymentStatusBadge } from '@/components/payment'
 import { trpc } from '@/lib/trpc'
 import { cn } from '@/lib/utils'
+import { Head } from '@/components/Head'
 
 type LocationState = { totalPence?: number }
 
@@ -105,6 +106,7 @@ export default function OrderConfirmationPage() {
   if (order.isLoading) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 pt-24 text-center">
+        <Head title="Order Confirmed" description="Your Cribstone Coffee order is being prepared — track its status here." path="/order" />
         <div className="size-14 animate-pulse rounded-full bg-surface" />
         <div className="mt-6 h-10 w-64 animate-pulse rounded bg-surface" />
         <div className="mt-4 h-4 w-80 animate-pulse rounded bg-surface/60" />
@@ -116,6 +118,7 @@ export default function OrderConfirmationPage() {
   if (order.isError || (!order.data && !state.totalPence)) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 pt-24 text-center">
+        <Head title="Order Confirmed" description="Your Cribstone Coffee order is being prepared — track its status here." path="/order" />
         <AlertTriangle className="size-14 text-accent" strokeWidth={1.2} aria-hidden />
         <h1 className="mt-6 font-display text-4xl font-bold text-foreground">
           Order not found
@@ -148,6 +151,7 @@ export default function OrderConfirmationPage() {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      <Head title="Order Confirmed" description="Your Cribstone Coffee order is confirmed — track status and pickup details." path="/order" />
       {(pullDistance > 0 || refreshing) && (
         <div
           className="mb-4 flex items-center gap-2 text-xs text-muted-foreground"

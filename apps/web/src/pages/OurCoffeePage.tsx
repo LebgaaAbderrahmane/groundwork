@@ -14,6 +14,7 @@ import { Chip } from '@/components/shared/chip'
 import { SectionHeading } from '@/components/shared/section-heading'
 import { fadeUp, fadeUpScale, revealStagger, VIEWPORT } from '@/lib/motion'
 import { useDocumentTitle } from '@/lib/hooks'
+import { Head } from '@/components/Head'
 
 const ICONS: Record<string, LucideIcon> = {
   espresso: Coffee,
@@ -27,6 +28,7 @@ export default function OurCoffeePage() {
 
   return (
     <main className="pt-20">
+      <Head title="Our Coffee" description="Discover single-origin coffee sourced from trusted farms and roasted in small batches at Cribstone Coffee." path="/our-coffee" />
       <section className="bg-background py-24 md:py-32">
         <motion.div
           variants={revealStagger(0.14)}

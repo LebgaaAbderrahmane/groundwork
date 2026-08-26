@@ -6,6 +6,7 @@ import { dollars } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { PaymentStatusBadge } from '@/components/payment'
 import { trpc } from '@/lib/trpc'
+import { Head } from '@/components/Head'
 
 export default function ReceiptPage() {
   useDocumentTitle('Receipt')
@@ -18,6 +19,7 @@ export default function ReceiptPage() {
   if (order.isLoading) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 pt-24">
+        <Head title="Receipt" description="View your Cribstone Coffee order receipt — itemized totals and payment status." path="/receipt" />
         <div className="h-96 w-72 animate-pulse rounded-lg border border-border bg-background" />
       </main>
     )
@@ -26,6 +28,7 @@ export default function ReceiptPage() {
   if (order.isError || !order.data) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 pt-24 text-center">
+        <Head title="Receipt" description="View your Cribstone Coffee order receipt — itemized totals and payment status." path="/receipt" />
         <p className="font-display text-2xl font-bold text-foreground">Order not found</p>
         <Button asChild size="lg" className="mt-6">
           <Link to="/menu">See the menu</Link>
@@ -41,6 +44,7 @@ export default function ReceiptPage() {
 
   return (
     <main className="min-h-screen bg-surface pb-24 pt-24">
+      <Head title="Receipt" description="View your Cribstone Coffee order receipt — itemized totals and payment status." path="/receipt" />
       <div className="mx-auto max-w-sm">
         <div className="rounded-lg border border-border/70 bg-background p-6 shadow-sm print:shadow-none">
           <div className="text-center">
