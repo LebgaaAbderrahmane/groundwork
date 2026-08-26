@@ -1,10 +1,10 @@
-const formatter = new Intl.NumberFormat('en-GB', {
+const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
-  currency: 'GBP',
+  currency: 'USD',
 })
 
-export function pounds(pence: number): string {
-  return formatter.format(pence / 100)
+export function dollars(cents: number): string {
+  return formatter.format(cents / 100)
 }
 
 export function timeAgo(date: Date | string): string {
@@ -17,7 +17,7 @@ export function timeAgo(date: Date | string): string {
 }
 
 export function clockTime(date: Date | string): string {
-  return new Date(date).toLocaleTimeString('en-GB', {
+  return new Date(date).toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
   })

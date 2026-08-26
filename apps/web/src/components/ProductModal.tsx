@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Minus, Plus, X } from 'lucide-react'
 import type { SelectedOption } from '@/store/cart'
-import { pounds } from '@/lib/format'
+import { dollars } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -112,7 +112,7 @@ export function ProductModal({ product, onClose, onAdd }: ProductModalProps) {
               {product.name}
             </h3>
             <span className="shrink-0 text-sm font-medium text-accent">
-              {pounds(product.pricePence)}
+              {dollars(product.pricePence)}
             </span>
           </div>
           {product.description && (
@@ -150,7 +150,7 @@ export function ProductModal({ product, onClose, onAdd }: ProductModalProps) {
                           <span>{option.label}</span>
                           {option.priceDeltaPence > 0 && (
                             <span className="text-muted-foreground">
-                              +{pounds(option.priceDeltaPence)}
+                              +{dollars(option.priceDeltaPence)}
                             </span>
                           )}
                         </button>
@@ -197,7 +197,7 @@ export function ProductModal({ product, onClose, onAdd }: ProductModalProps) {
                 onClose()
               }}
             >
-              Add · {pounds(unitPrice * quantity)}
+              Add · {dollars(unitPrice * quantity)}
             </Button>
           </div>
         </div>

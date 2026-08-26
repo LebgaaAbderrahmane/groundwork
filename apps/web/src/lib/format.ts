@@ -1,8 +1,8 @@
-const formatter = new Intl.NumberFormat('en-GB', {
+const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
-  currency: 'GBP',
+  currency: 'USD',
 })
 
-export function pounds(pence: number): string {
-  return formatter.format(pence / 100)
+export function dollars(cents: number): string {
+  return formatter.format(cents / 100)
 }

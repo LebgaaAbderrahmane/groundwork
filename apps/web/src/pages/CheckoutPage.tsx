@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { useDocumentTitle } from '@/lib/hooks'
 import { cartSubtotal, useCart } from '@/store/cart'
 import { trpc } from '@/lib/trpc'
-import { pounds } from '@/lib/format'
+import { dollars } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { PaymentMethodSelector } from '@/components/payment'
 import { PICKUP_OPTIONS } from './CartPage'
@@ -156,13 +156,13 @@ export function CheckoutPage() {
                     {line.quantity} × {line.name}
                   </span>
                   <span className="shrink-0">
-                    {pounds(line.unitPricePence * line.quantity)}
+                    {dollars(line.unitPricePence * line.quantity)}
                   </span>
                 </div>
               ))}
               <div className="flex justify-between border-t border-border pt-3 font-medium text-foreground">
                 <span>Total</span>
-                <span>{pounds(subtotal)}</span>
+                <span>{dollars(subtotal)}</span>
               </div>
             </div>
 
@@ -181,7 +181,7 @@ export function CheckoutPage() {
               {createOrder.isPending && (
                 <Loader2 className="size-4 animate-spin" aria-hidden />
               )}
-              Place order · {pounds(subtotal)}
+              Place order · {dollars(subtotal)}
             </Button>
           </aside>
         </form>

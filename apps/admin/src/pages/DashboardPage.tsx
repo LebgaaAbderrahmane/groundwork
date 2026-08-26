@@ -1,6 +1,6 @@
 import { LayoutList, PackageX, Receipt, TrendingUp } from 'lucide-react'
 import { trpc } from '@/lib/trpc'
-import { pounds } from '@/lib/format'
+import { dollars } from '@/lib/format'
 import { Badge, Card, EmptyState, StatsCard } from '@/components/ui'
 import { Link } from 'react-router-dom'
 import { useDocumentTitle } from '@/lib/hooks'
@@ -37,13 +37,13 @@ export function DashboardPage() {
         <StatsCard
           icon={<TrendingUp className="size-5" strokeWidth={1.7} />}
           label="Revenue"
-          value={pounds(d?.summary.revenuePence ?? 0)}
+          value={dollars(d?.summary.revenuePence ?? 0)}
         />
         <StatsCard
           icon={<Receipt className="size-5" strokeWidth={1.7} />}
           label="Orders"
           value={d?.summary.orderCount ?? 0}
-          sub={`· avg ${pounds(d?.summary.averageOrderPence ?? 0)}`}
+          sub={`· avg ${dollars(d?.summary.averageOrderPence ?? 0)}`}
         />
         <StatsCard
           icon={<PackageX className="size-5" strokeWidth={1.7} />}
@@ -70,7 +70,7 @@ export function DashboardPage() {
                 <li key={p.name} className="flex items-center justify-between gap-3">
                   <span className="truncate text-sm text-foreground">{p.name}</span>
                   <span className="shrink-0 text-sm text-muted-foreground">
-                    {p.quantity} × {pounds(p.revenuePence)}
+                    {p.quantity} × {dollars(p.revenuePence)}
                   </span>
                 </li>
               ))}
