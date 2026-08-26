@@ -41,21 +41,26 @@ function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-background">
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
         <ScrollToTop />
         <Navbar />
         <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/menu" element={<MenuPage />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/order/:orderId" element={<OrderConfirmationPage />} />
-            <Route path="/receipt/:orderId" element={<ReceiptPage />} />
-            <Route path="/our-coffee" element={<OurCoffeePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/find-us" element={<FindUsPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+          <div id="main-content">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/menu" element={<MenuPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/order/:orderId" element={<OrderConfirmationPage />} />
+              <Route path="/receipt/:orderId" element={<ReceiptPage />} />
+              <Route path="/our-coffee" element={<OurCoffeePage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/find-us" element={<FindUsPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </div>
         </Suspense>
         <Footer />
       </div>
