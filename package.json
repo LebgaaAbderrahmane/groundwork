@@ -17,6 +17,11 @@
     "db:generate": "pnpm --filter @cribstone/db generate",
     "db:seed": "pnpm --filter @cribstone/db seed",
     "db:reset": "pnpm --filter @cribstone/db reset",
-    "db:studio": "pnpm --filter @cribstone/db studio"
+    "db:studio": "pnpm --filter @cribstone/db studio",
+    "test:e2e": "pnpm exec playwright test",
+    "test:e2e:ui": "pnpm exec playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
   }
 }

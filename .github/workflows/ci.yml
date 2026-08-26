@@ -28,3 +28,98 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: verify
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: cribstone
+          POSTGRES_PASSWORD: cribstone
+          POSTGRES_DB: cribstone
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U cribstone -d cribstone"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgres://cribstone:cribstone@localhost:5432/cribstone
+      JWT_SECRET: e2e-test-secret-key-for-ci-only
+      PORT: 4000
+      WEB_ORIGIN: http://localhost:5173
+      ADMIN_ORIGIN: http://localhost:5174
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Reset DB
+        run: pnpm db:reset
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install chromium
+
+      - name: Start API
+        run: pnpm --filter @cribstone/api dev &
+        env:
+          DATABASE_URL: postgres://cribstone:cribstone@localhost:5432/cribstone
+          JWT_SECRET: e2e-test-secret-key-for-ci-only
+          PORT: 4000
+
+      - name: Wait for API
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:4000/api/health > /dev/null 2>&1; then
+              echo "API ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "API failed to start"
+          exit 1
+
+      - name: Start web
+        run: pnpm --filter @cribstone/web dev &
+        env:
+          PORT: 5173
+
+      - name: Start admin
+        run: pnpm --filter @cribstone/admin dev &
+        env:
+          PORT: 5174
+
+      - name: Wait for apps
+        run: |
+          for port in 5173 5174; do
+            for i in $(seq 1 30); do
+              if curl -sf http://localhost:$port > /dev/null 2>&1; then
+                echo "App on :$port ready"
+                break
+              fi
+              sleep 1
+            done
+          done
+
+      - name: Run E2E tests
+        run: pnpm test:e2e
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

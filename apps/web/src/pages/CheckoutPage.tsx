@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Loader2, ShoppingBag } from 'lucide-react'
 import { toast } from 'sonner'
@@ -24,19 +24,13 @@ export function CheckoutPage() {
   const [payment, setPayment] = useState<'in_store' | 'card'>('in_store')
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (lines.length === 0) {
-      navigate('/menu', { replace: true })
-    }
-  }, [lines.length, navigate])
-
   const createOrder = trpc.orders.create.useMutation({
     onSuccess: (data) => {
-      clear()
-      toast.success('Order placed! See you soon.')
       navigate(`/order/${data.orderId}`, {
         state: { totalPence: data.totalPence },
       })
+      clear()
+      toast.success('Order placed! See you soon.')
     },
     onError: (err) => {
       const msg = err.message ?? 'Something went wrong placing your order.'
