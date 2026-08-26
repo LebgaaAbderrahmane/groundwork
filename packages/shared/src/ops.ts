@@ -4,10 +4,21 @@ export const customerSearchInput = z.object({
   phone: z.string().min(3).max(20),
 })
 
+export const customerByPhoneInput = z.object({
+  phone: z.string().min(3).max(20),
+})
+
 export const awardPointsInput = z.object({
   customerId: z.number().int().positive(),
   points: z.number().int(),
   reason: z.string().max(200).optional(),
+})
+
+export const redeemPointsInput = z.object({
+  customerId: z.number().int().positive(),
+  points: z.number().int().positive(),
+  rewardId: z.string().max(40),
+  orderId: z.number().int().positive(),
 })
 
 export const settingsInput = z.object({

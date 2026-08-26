@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { useDocumentTitle } from '@/lib/hooks'
-import { ArrowRight, Printer } from 'lucide-react'
-import { BRAND } from '@cribstone/shared'
+import { ArrowRight, Printer, Star } from 'lucide-react'
+import { BRAND, earnPoints } from '@cribstone/shared'
 import { dollars } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { PaymentStatusBadge } from '@/components/payment'
@@ -106,6 +106,16 @@ export default function ReceiptPage() {
             <span className="text-muted-foreground">Payment</span>
             <PaymentStatusBadge status={o.paymentStatus} />
           </div>
+
+          {o.customerPhone && earnPoints(o.totalPence) > 0 && (
+            <div className="mt-2 flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Points earned</span>
+              <span className="flex items-center gap-1 font-medium text-accent">
+                <Star className="size-3.5" aria-hidden />
+                +{earnPoints(o.totalPence)}
+              </span>
+            </div>
+          )}
 
           {o.notes && (
             <>
