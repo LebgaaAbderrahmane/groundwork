@@ -11,6 +11,7 @@ const StaffPage = lazy(() => import('@/pages/StaffPage'))
 const CustomersPage = lazy(() => import('@/pages/CustomersPage'))
 const TablesPage = lazy(() => import('@/pages/TablesPage'))
 const SettingsPage = lazy(() => import('@/pages/SettingsPage'))
+const KitchenDisplayPage = lazy(() => import('@/pages/KitchenDisplayPage'))
 
 function PageLoader() {
   return (
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+  },
+  {
+    path: '/kitchen',
+    element: <LazyPage><KitchenDisplayPage /></LazyPage>,
   },
   {
     element: <AppShell />,
