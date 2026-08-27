@@ -8,9 +8,9 @@ import {
   Users,
   Boxes,
   Settings,
-  Menu as MenuIcon,
   UserRound,
   Table2,
+  ChevronDown,
 } from 'lucide-react'
 import { BRAND } from '@cribstone/shared'
 import { trpc } from '@/lib/trpc'
@@ -26,7 +26,7 @@ import { OfflineBanner } from '@/components/OfflineBanner'
 const NAV = [
   { to: '/', label: 'Dashboard', icon: Home, end: true },
   { to: '/orders', label: 'Orders', icon: LayoutList },
-  { to: '/menu', label: 'Menu', icon: MenuIcon },
+  { to: '/menu', label: 'Menu', icon: Coffee },
   { to: '/inventory', label: 'Inventory', icon: Boxes },
   { to: '/customers', label: 'Customers', icon: UserRound },
   { to: '/tables', label: 'Tables', icon: Table2 },
@@ -136,24 +136,12 @@ function Layout() {
             </NavLink>
           ))}
         </nav>
-
-        <div className="border-t border-border px-4 py-4">
-          <p className="truncate text-sm font-medium text-foreground">{user.name}</p>
-          <p className="truncate text-xs text-muted-foreground">{user.email}</p>
-          <Button
-            variant="ghost"
-            className="mt-3 w-full justify-start px-3 text-muted-foreground hover:text-danger"
-            onClick={() => logout.mutate()}
-          >
-            <LogOut className="size-4" aria-hidden /> Sign out
-          </Button>
-          <ThemeToggle />
-        </div>
       </aside>
 
       <div className="flex min-h-screen flex-1 flex-col md:pl-56">
         <MobileNav user={user} onLogout={() => logout.mutate()} />
-        <main id="main-content" className="flex-1 px-6 py-8 md:px-10 md:py-10">
+        <TopBar user={user} onLogout={() => logout.mutate()} />
+        <main id="main-content" className="flex-1 px-6 py-8 md:px-16 md:py-10">
           <ErrorBoundary>
             <Outlet />
           </ErrorBoundary>
@@ -170,6 +158,73 @@ function Layout() {
       />
       <OfflineBanner />
     </div>
+  )
+}
+
+function TopBar({
+  user,
+  onLogout,
+}: {
+  user: NonNullable<ReturnType<typeof useSession.getState>['user']>
+  onLogout: () => void
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [open])
+
+  const initials = user.name
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+
+  return (
+    <header className="sticky top-0 z-20 hidden border-b border-border bg-background/90 backdrop-blur md:block">
+      <div className="flex h-14 items-center justify-end gap-3 px-6 md:px-16">
+        <ThemeToggle />
+        <div className="relative" ref={ref}>
+          <button
+            type="button"
+            onClick={() => setOpen(!open)}
+            className="flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-medium text-foreground transition-colors hover:bg-surface"
+          >
+            <span className="flex size-7 items-center justify-center rounded-full bg-accent/15 text-[10px] font-semibold text-accent">
+              {initials}
+            </span>
+            <span className="hidden lg:inline">{user.name}</span>
+            <ChevronDown className="size-3.5 text-muted-foreground" />
+          </button>
+          {open && (
+            <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-border bg-background py-1 shadow-lg">
+              <div className="px-3 py-2">
+                <p className="text-sm font-medium text-foreground">{user.name}</p>
+                <p className="text-xs text-muted-foreground">{user.email}</p>
+              </div>
+              <div className="border-t border-border" />
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false)
+                  onLogout()
+                }}
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-danger"
+              >
+                <LogOut className="size-4" aria-hidden /> Sign out
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </header>
   )
 }
 
@@ -190,6 +245,7 @@ function MobileNav({
           </span>
         </div>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <span className="text-sm font-medium text-foreground">{user.name}</span>
           <Button variant="ghost" className="size-9 p-0" onClick={onLogout}>
             <LogOut className="size-4" aria-label="Sign out" />

@@ -7,6 +7,10 @@ export function dollars(cents: number): string {
   return formatter.format(cents / 100)
 }
 
+export function formatNumber(value: number, decimals = 4): string {
+  return Number(value).toFixed(decimals).replace(/\.?0+$/, '') || '0'
+}
+
 export function timeAgo(date: Date | string): string {
   const ms = Date.now() - new Date(date).getTime()
   const mins = Math.max(0, Math.round(ms / 60_000))

@@ -1,6 +1,5 @@
 import { Monitor, Moon, Sun } from 'lucide-react'
 import { useThemeStore, type ThemeOption } from '@/store/theme'
-import { cn } from '@/lib/utils'
 
 const OPTIONS: ThemeOption[] = ['light', 'dark', 'system']
 
@@ -8,6 +7,12 @@ const ICONS: Record<ThemeOption, typeof Sun> = {
   light: Sun,
   dark: Moon,
   system: Monitor,
+}
+
+const LABELS: Record<ThemeOption, string> = {
+  light: 'Light theme',
+  dark: 'Dark theme',
+  system: 'System theme',
 }
 
 export function ThemeToggle() {
@@ -25,14 +30,10 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={() => setTheme(next())}
-      aria-label={`Theme: ${theme}. Click to cycle.`}
-      className={cn(
-        'flex items-center gap-2 rounded-lg px-3 py-2 text-xs transition-colors',
-        'text-muted-foreground hover:bg-surface hover:text-foreground',
-      )}
+      aria-label={`${LABELS[theme]}. Click to cycle.`}
+      className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface hover:text-foreground"
     >
       <Icon className="size-4" strokeWidth={1.7} />
-      <span className="capitalize">{theme}</span>
     </button>
   )
 }
