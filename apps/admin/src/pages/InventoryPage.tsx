@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Minus, Plus, Save, Search, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
@@ -6,6 +6,7 @@ import { clockTime, formatNumber } from '@/lib/format'
 import { Badge, Button, Card, Field, Input, Select } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useDocumentTitle, useDebounce } from '@/lib/hooks'
+import { notify } from '@/lib/notifications'
 
 const REASONS = [
   { value: 'receipt', label: 'Stock receipt' },
@@ -53,6 +54,23 @@ export default function InventoryPage() {
 
   const ingredients = list.data ?? []
   const ingredientMap = new Map(ingredients.map((i) => [i.id, i]))
+
+  const prevLowRef = useRef<Set<number>>(new Set())
+  useEffect(() => {
+    if (!list.data) return
+    const currentLow = new Set(ingredients.filter((i) => i.low).map((i) => i.id))
+    if (prevLowRef.current.size > 0) {
+      for (const id of currentLow) {
+        if (!prevLowRef.current.has(id)) {
+          const ing = ingredientMap.get(id)
+          if (ing) {
+            notify('Low stock', `${ing.name} is low (${formatNumber(Number(ing.stockQty), 4)} ${ing.unit} left)`)
+          }
+        }
+      }
+    }
+    prevLowRef.current = currentLow
+  }, [list.data, ingredients, ingredientMap])
 
   const [stockSearch, setStockSearch] = useState('')
   const debouncedSearch = useDebounce(stockSearch, 200)

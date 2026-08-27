@@ -4,6 +4,7 @@ import { trpc } from '@/lib/trpc'
 import { dollars } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { useDocumentTitle, useBroadcastChannel } from '@/lib/hooks'
+import { notify } from '@/lib/notifications'
 
 type OrderBroadcast = { type: 'order:new' | 'order:update'; orderId?: number }
 
@@ -75,6 +76,7 @@ export default function KitchenDisplayPage() {
     if (!orders) return
     if (prevCountRef.current > 0 && orders.length > prevCountRef.current) {
       playBeep()
+      notify(`New order #${orders[0].id}`, `New order received — ${orders[0].items.length} item(s)`)
       post({ type: 'order:new', orderId: orders[0].id })
     }
     prevCountRef.current = orders.length
