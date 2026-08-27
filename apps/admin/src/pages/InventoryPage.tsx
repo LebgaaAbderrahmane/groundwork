@@ -338,7 +338,7 @@ function RecipesCard({
 
         <div className="space-y-2">
           {rows.map((row, idx) => (
-            <div key={idx} className="flex gap-2">
+            <div key={idx} className="flex items-center gap-2">
               <Select
                 value={row.ingredientId}
                 onChange={(e) => setRows(rows.map((r, i) => (i === idx ? { ...r, ingredientId: e.target.value } : r)))}

@@ -85,7 +85,7 @@ export function Input({
   return (
     <input
       className={cn(
-        'mt-1.5 h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent',
+        'h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent',
         className,
       )}
       {...props}
@@ -101,7 +101,7 @@ export function Select({
   return (
     <select
       className={cn(
-        'mt-1.5 h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent',
+        'h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent',
         className,
       )}
       {...props}
@@ -118,7 +118,7 @@ export function Textarea({
   return (
     <textarea
       className={cn(
-        'mt-1.5 w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent',
+        'w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent',
         className,
       )}
       {...props}
@@ -155,7 +155,7 @@ export function Field({
   children: ReactNode
 }) {
   return (
-    <div>
+    <div className="space-y-1.5">
       <Label htmlFor={htmlFor}>{label}</Label>
       {children}
     </div>
