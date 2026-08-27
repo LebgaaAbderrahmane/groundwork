@@ -350,4 +350,53 @@ export const ordersRouter = router({
       emitOrderUpdate({ type: 'order.cancelled', orderId: order.id, status: 'cancelled' })
       return updated
     }),
+
+  kitchenActive: publicProcedure.query(async ({ ctx }) => {
+    const shopId = await getShopId(ctx.db)
+    const rows = await ctx.db
+      .select()
+      .from(orders)
+      .where(and(eq(orders.shopId, shopId), inArray(orders.status, ACTIVE_STATUSES)))
+      .orderBy(asc(orders.createdAt))
+    const itemRows = await ctx.db
+      .select()
+      .from(orderItems)
+      .where(inArray(orderItems.orderId, rows.map((r) => r.id)))
+    const itemsByOrder = new Map<number, typeof itemRows>()
+    for (const item of itemRows) {
+      const list = itemsByOrder.get(item.orderId) ?? []
+      list.push(item)
+      itemsByOrder.set(item.orderId, list)
+    }
+    const labels = await tableLabelsFor(ctx.db, rows)
+    return rows.map((o) => toOrderWithItems(o, itemsByOrder.get(o.id) ?? [], labels.get(o.tableId ?? -1)))
+  }),
+
+  kitchenAdvance: publicProcedure.input(advanceOrderInput).mutation(async ({ ctx, input }) => {
+    const shopId = await getShopId(ctx.db)
+    const [order] = await ctx.db
+      .select()
+      .from(orders)
+      .where(and(eq(orders.id, input.orderId), eq(orders.shopId, shopId)))
+    if (!order) throw new TRPCError({ code: 'NOT_FOUND' })
+
+    const next = ORDER_STATUS_FLOW[order.status]
+    if (!next) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Order is already final' })
+
+    const [updated] = await ctx.db
+      .update(orders)
+      .set({ status: next, paymentStatus: order.paymentMethod === 'in_store' && next === 'collected' ? 'paid' : order.paymentStatus })
+      .where(eq(orders.id, order.id))
+      .returning()
+
+    await ctx.db.insert(orderStatusEvents).values({
+      orderId: order.id,
+      fromStatus: order.status,
+      toStatus: next,
+      byUserId: null,
+    })
+
+    emitOrderUpdate({ type: 'order.updated', orderId: order.id, status: updated.status })
+    return updated
+  }),
 })
