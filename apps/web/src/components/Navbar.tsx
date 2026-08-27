@@ -68,7 +68,7 @@ export function Navbar() {
               aria-label={`Shopping bag, ${count} ${count === 1 ? 'item' : 'items'}`}
               className="relative flex size-10 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-surface hover:text-primary"
             >
-              <ShoppingBag className="size-5" strokeWidth={1.7} />
+              <ShoppingBag className="size-4" strokeWidth={1.7} />
               <AnimatePresence initial={false}>
               {count > 0 && (
                 <motion.span
@@ -101,7 +101,7 @@ export function Navbar() {
           onClick={() => setOpen((v) => !v)}
           className="flex size-10 items-center justify-center rounded-full text-primary transition-colors hover:bg-surface md:hidden"
         >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          {open ? <X className="size-4" /> : <Menu className="size-4" />}
         </button>
       </div>
 

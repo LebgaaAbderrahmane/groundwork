@@ -106,7 +106,7 @@ export default function TablesPage() {
                     <div className="flex items-center gap-1.5">
                       <Button
                         variant="outline"
-                        className="size-9 p-0"
+                        className="size-9 p-0 !px-0"
                         title="Regenerate QR"
                         onClick={() => regenerate.mutate({ id: t.id })}
                       >
@@ -114,7 +114,7 @@ export default function TablesPage() {
                       </Button>
                       <Button
                         variant="ghost"
-                        className="size-9 p-0 text-muted-foreground hover:text-danger"
+                        className="size-9 p-0 !px-0 text-muted-foreground hover:text-danger"
                         title="Remove table"
                         onClick={() => remove.mutate({ id: t.id })}
                       >

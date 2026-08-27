@@ -248,7 +248,7 @@ function ProductRow({
             Live
           </span>
         </label>
-        <Button variant="ghost" className="size-9 p-0 text-muted-foreground hover:text-danger" onClick={onDelete} title="Delete product" aria-label={`Delete ${product.name}`}>
+        <Button variant="ghost" className="size-9 p-0 !px-0 text-muted-foreground hover:text-danger" onClick={onDelete} title="Delete product" aria-label={`Delete ${product.name}`}>
           <Trash2 className="size-4" aria-hidden />
         </Button>
       </div>
@@ -314,7 +314,7 @@ function ProductDetail({ product }: { product: Product }) {
                 </p>
                 <Button
                   variant="ghost"
-                  className="size-9 p-0 text-muted-foreground hover:text-danger"
+                  className="size-9 p-0 !px-0 text-muted-foreground hover:text-danger"
                   onClick={() => deleteGroup.mutate({ id: g.id })}
                   title="Delete group"
                   type="button"
@@ -338,7 +338,7 @@ function ProductDetail({ product }: { product: Product }) {
                       </span>
                       <Button
                         variant="ghost"
-                         className="size-9 p-0 text-muted-foreground hover:text-danger"
+                         className="size-9 p-0 !px-0 text-muted-foreground hover:text-danger"
                         onClick={() => deleteOption.mutate({ id: o.id })}
                         title="Delete option"
                         type="button"
@@ -377,10 +377,10 @@ function ProductDetail({ product }: { product: Product }) {
                     setNewOption({ groupId: g.id, label: newOption.groupId === g.id ? newOption.label : '', price: e.target.value })
                   }
                   placeholder="+$0.30"
-                  className="w-24"
+                  className="w-20 shrink-0"
                   aria-label={`Price delta for new ${g.name} option`}
                 />
-                <Button type="submit" className="size-9 px-2" aria-label={`Add option to ${g.name}`}>
+                <Button type="submit" className="size-9 !px-0" aria-label={`Add option to ${g.name}`}>
                   <Plus className="size-4" aria-hidden />
                 </Button>
               </form>

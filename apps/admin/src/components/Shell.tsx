@@ -247,7 +247,7 @@ function MobileNav({
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <span className="text-sm font-medium text-foreground">{user.name}</span>
-          <Button variant="ghost" className="size-9 p-0" onClick={onLogout}>
+          <Button variant="ghost" className="size-9 p-0 !px-0" onClick={onLogout}>
             <LogOut className="size-4" aria-label="Sign out" />
           </Button>
         </div>

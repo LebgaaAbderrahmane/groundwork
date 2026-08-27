@@ -8,11 +8,11 @@ type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'danger'
 
 const buttonVariants: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm',
+    'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm px-4',
   outline:
-    'border border-border bg-background text-foreground hover:bg-surface',
-  ghost: 'text-foreground/80 hover:bg-surface hover:text-foreground',
-  danger: 'bg-danger/90 text-danger-foreground hover:bg-danger',
+    'border border-border bg-background text-foreground hover:bg-surface px-4',
+  ghost: 'text-foreground/80 hover:bg-surface hover:text-foreground px-4',
+  danger: 'bg-danger/90 text-danger-foreground hover:bg-danger px-4',
 }
 
 export function Button({
@@ -29,7 +29,7 @@ export function Button({
   return (
     <button
       className={cn(
-        'inline-flex h-9 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50',
+        'inline-flex h-9 items-center justify-center gap-2 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50',
         buttonVariants[variant],
         className,
       )}
@@ -85,7 +85,7 @@ export function Input({
   return (
     <input
       className={cn(
-        'mt-1.5 h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent',
+        'h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent',
         className,
       )}
       {...props}
@@ -101,7 +101,7 @@ export function Select({
   return (
     <select
       className={cn(
-        'mt-1.5 h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent',
+        'h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent',
         className,
       )}
       {...props}
@@ -118,7 +118,7 @@ export function Textarea({
   return (
     <textarea
       className={cn(
-        'mt-1.5 w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent',
+        'w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent',
         className,
       )}
       {...props}
@@ -155,7 +155,7 @@ export function Field({
   children: ReactNode
 }) {
   return (
-    <div>
+    <div className="space-y-1.5">
       <Label htmlFor={htmlFor}>{label}</Label>
       {children}
     </div>
