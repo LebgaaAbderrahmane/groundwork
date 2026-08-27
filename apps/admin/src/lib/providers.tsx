@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { httpBatchLink } from '@trpc/client'
 import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
+import { useApiUrlStore } from '@/store/apiUrl'
 
 export function Providers({ children }: { children: React.ReactNode }) {
+  const apiUrl = useApiUrlStore((s) => s.apiUrl)
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -25,10 +27,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
         },
       }),
   )
-  const [trpcClient] = useState(() =>
-    trpc.createClient({
-      links: [httpBatchLink({ url: '/api/trpc' })],
-    }),
+  const trpcClient = useMemo(
+    () =>
+      trpc.createClient({
+        links: [httpBatchLink({ url: apiUrl })],
+      }),
+    [apiUrl],
   )
 
   return (

@@ -10,7 +10,27 @@ import { orderEvents } from './services/events'
 export function createApp() {
   const app = express()
 
-  app.use(cors({ origin: [env.WEB_ORIGIN, env.ADMIN_ORIGIN], credentials: true }))
+  const additional = env.ADDITIONAL_ORIGINS.split(',')
+    .map((o) => o.trim())
+    .filter(Boolean)
+
+  const allowedOrigins = [
+    env.WEB_ORIGIN,
+    env.ADMIN_ORIGIN,
+    'tauri://localhost',
+    'http://tauri.localhost',
+    ...additional,
+  ]
+
+  app.use(
+    cors({
+      origin(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) return callback(null, true)
+        return callback(null, false)
+      },
+      credentials: true,
+    }),
+  )
   app.use(express.json())
   app.use(cookieParser())
 

@@ -16,6 +16,7 @@ const envSchema = z.object({
     .default('development'),
   WEB_ORIGIN: z.string().default('http://localhost:5173'),
   ADMIN_ORIGIN: z.string().default('http://localhost:5174'),
+  ADDITIONAL_ORIGINS: z.string().default(''),
 })
 
 const parsed = envSchema.safeParse(process.env)
