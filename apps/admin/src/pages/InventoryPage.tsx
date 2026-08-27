@@ -94,9 +94,9 @@ export default function InventoryPage() {
         <h1 className="mt-1 font-display text-4xl font-bold text-foreground">Inventory</h1>
       </header>
 
-      <div className="mt-8 grid gap-4 lg:grid-cols-3">
+      <div className="mt-8 grid items-stretch gap-4 lg:grid-cols-3">
         <form onSubmit={submitCreate} className="lg:col-span-1">
-          <Card>
+          <Card className="h-full">
             <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
               Add ingredient
             </h2>
@@ -128,7 +128,7 @@ export default function InventoryPage() {
         </form>
 
         <form onSubmit={submitAdjust} className="lg:col-span-2">
-          <Card>
+          <Card className="h-full">
             <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
               Adjust stock
             </h2>
@@ -180,7 +180,7 @@ export default function InventoryPage() {
                 value={stockSearch}
                 onChange={(e) => setStockSearch(e.target.value)}
                 placeholder="Filter ingredients…"
-                className="h-9 max-w-xs pl-9"
+                className="mt-0 h-9 max-w-xs pl-9"
               />
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             </div>

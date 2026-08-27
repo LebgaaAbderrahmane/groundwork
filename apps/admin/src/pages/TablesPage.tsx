@@ -64,7 +64,7 @@ export default function TablesPage() {
           <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
             Add a table
           </h2>
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex items-center gap-2">
             <Input
               value={label}
               onChange={(e) => setLabel(e.target.value)}

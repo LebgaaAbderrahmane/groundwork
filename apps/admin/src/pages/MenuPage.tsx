@@ -65,7 +65,7 @@ export default function MenuPage() {
           <h1 className="mt-1 font-display text-4xl font-bold text-foreground">Menu</h1>
         </div>
         <form
-          className="flex gap-2"
+          className="flex items-center gap-2"
           onSubmit={(e) => {
             e.preventDefault()
             if (newCategory.trim()) createCategory.mutate({ name: newCategory.trim() })
@@ -350,7 +350,7 @@ function ProductDetail({ product }: { product: Product }) {
                   ))}
               </ul>
               <form
-                className="mt-2 flex gap-2"
+                className="mt-2 flex items-center gap-2"
                 onSubmit={(e) => {
                   e.preventDefault()
                   if (!newOption.label.trim()) return

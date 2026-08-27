@@ -88,7 +88,7 @@ export function CartDrawer({
                             type="button"
                             aria-label="Decrease quantity"
                             onClick={() => setQuantity(line.key, line.quantity - 1)}
-                            className="flex size-7 items-center justify-center rounded-full border border-border text-foreground/60 hover:border-primary hover:text-primary"
+                            className="flex size-8 items-center justify-center rounded-full border border-border text-foreground/60 hover:border-primary hover:text-primary"
                           >
                             <Minus className="size-4" />
                           </button>
@@ -99,7 +99,7 @@ export function CartDrawer({
                             type="button"
                             aria-label="Increase quantity"
                             onClick={() => setQuantity(line.key, line.quantity + 1)}
-                            className="flex size-7 items-center justify-center rounded-full border border-border text-foreground/60 hover:border-primary hover:text-primary"
+                            className="flex size-8 items-center justify-center rounded-full border border-border text-foreground/60 hover:border-primary hover:text-primary"
                           >
                             <Plus className="size-4" />
                           </button>
@@ -110,7 +110,7 @@ export function CartDrawer({
                           type="button"
                           aria-label={`Remove ${line.name}`}
                           onClick={() => remove(line.key)}
-                          className="flex size-6 items-center justify-center rounded text-muted-foreground hover:text-danger"
+                          className="flex size-7 items-center justify-center rounded text-muted-foreground hover:text-danger"
                         >
                           <Trash2 className="size-4" />
                         </button>
