@@ -165,7 +165,7 @@ export default function CheckoutPage() {
               onClick={() => setTable(null)}
               className="ml-1 flex size-4 items-center justify-center rounded-full text-primary-foreground/70 transition-colors hover:text-primary-foreground"
             >
-              <X className="size-3" />
+              <X className="size-4" />
             </button>
           </p>
         )}

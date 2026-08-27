@@ -57,15 +57,15 @@ export default function CustomersPage() {
           <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
             Look up a customer
           </h2>
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex items-center gap-2">
             <div className="relative max-w-sm">
               <Input
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Search by phone…"
-                className="h-9 pr-9"
+                className="h-9 pl-9"
               />
-              <Search className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             </div>
             <Button type="submit">
               Search

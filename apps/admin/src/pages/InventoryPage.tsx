@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Minus, Plus, Save, Search, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
-import { clockTime } from '@/lib/format'
+import { clockTime, formatNumber } from '@/lib/format'
 import { Badge, Button, Card, Field, Input, Select } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useDocumentTitle, useDebounce } from '@/lib/hooks'
@@ -180,9 +180,9 @@ export default function InventoryPage() {
                 value={stockSearch}
                 onChange={(e) => setStockSearch(e.target.value)}
                 placeholder="Filter ingredients…"
-                className="h-9 max-w-xs pr-9"
+                className="h-9 max-w-xs pl-9"
               />
-              <Search className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             </div>
           </div>
           <div className="mt-4 overflow-x-auto">
@@ -207,17 +207,17 @@ export default function InventoryPage() {
                       )}
                     </td>
                     <td className={cn('py-2.5 pr-3 tabular-nums', i.low ? 'font-semibold text-danger' : 'text-foreground')}>
-                      {i.stockQty}
+                      {formatNumber(Number(i.stockQty), 4)}
                     </td>
                     <td className="py-2.5 pr-3 text-muted-foreground">{i.lowStockThreshold}</td>
                     <td className="py-2.5 pr-3 text-muted-foreground">${Number(i.costPerUnit).toFixed(2)}</td>
                     <td className="py-2.5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <Button variant="outline" className="size-9 p-0" title="−1" onClick={() => adjust.mutate({ ingredientId: i.id, change: -1, reason: 'adjustment' })} type="button">
-                          <Minus className="size-3.5" aria-hidden />
+                          <Minus className="size-4" aria-hidden />
                         </Button>
                         <Button variant="outline" className="size-9 p-0" title="+1" onClick={() => adjust.mutate({ ingredientId: i.id, change: 1, reason: 'receipt' })} type="button">
-                          <Plus className="size-3.5" aria-hidden />
+                          <Plus className="size-4" aria-hidden />
                         </Button>
                       </div>
                     </td>

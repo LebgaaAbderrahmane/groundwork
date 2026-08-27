@@ -90,7 +90,7 @@ export function CartDrawer({
                             onClick={() => setQuantity(line.key, line.quantity - 1)}
                             className="flex size-7 items-center justify-center rounded-full border border-border text-foreground/60 hover:border-primary hover:text-primary"
                           >
-                            <Minus className="size-3" />
+                            <Minus className="size-4" />
                           </button>
                           <span className="w-6 text-center text-sm font-medium">
                             {line.quantity}
@@ -101,7 +101,7 @@ export function CartDrawer({
                             onClick={() => setQuantity(line.key, line.quantity + 1)}
                             className="flex size-7 items-center justify-center rounded-full border border-border text-foreground/60 hover:border-primary hover:text-primary"
                           >
-                            <Plus className="size-3" />
+                            <Plus className="size-4" />
                           </button>
                         </div>
                       </div>
@@ -112,7 +112,7 @@ export function CartDrawer({
                           onClick={() => remove(line.key)}
                           className="flex size-6 items-center justify-center rounded text-muted-foreground hover:text-danger"
                         >
-                          <Trash2 className="size-3.5" />
+                          <Trash2 className="size-4" />
                         </button>
                         <span className="text-sm font-medium text-foreground">
                           {dollars(line.unitPricePence * line.quantity)}

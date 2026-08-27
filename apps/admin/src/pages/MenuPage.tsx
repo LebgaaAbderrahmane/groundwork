@@ -344,7 +344,7 @@ function ProductDetail({ product }: { product: Product }) {
                         type="button"
                         aria-label={`Delete ${o.label} option`}
                       >
-                        <Trash2 className="size-3.5" aria-hidden />
+                        <Trash2 className="size-4" aria-hidden />
                       </Button>
                     </li>
                   ))}

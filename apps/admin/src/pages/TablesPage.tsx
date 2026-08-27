@@ -110,7 +110,7 @@ export default function TablesPage() {
                         title="Regenerate QR"
                         onClick={() => regenerate.mutate({ id: t.id })}
                       >
-                        <RefreshCw className="size-3.5" aria-hidden />
+                        <RefreshCw className="size-4" aria-hidden />
                       </Button>
                       <Button
                         variant="ghost"
@@ -118,7 +118,7 @@ export default function TablesPage() {
                         title="Remove table"
                         onClick={() => remove.mutate({ id: t.id })}
                       >
-                        <Trash2 className="size-3.5" aria-hidden />
+                        <Trash2 className="size-4" aria-hidden />
                       </Button>
                     </div>
                   </div>
