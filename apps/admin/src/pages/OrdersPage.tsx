@@ -6,6 +6,7 @@ import { dollars } from '@/lib/format'
 import { Badge, Button, Card, EmptyState, LiveBadge, PaymentStatusBadge, TimeAgo } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useDocumentTitle, useBroadcastChannel } from '@/lib/hooks'
+import { notify } from '@/lib/notifications'
 
 const STATUS_STYLES: Record<string, string> = {
   received: 'bg-surface text-foreground',
@@ -41,6 +42,7 @@ export default function OrdersPage() {
       toast.info(`New order #${newest.id}`, {
         description: `${newest.customerName || 'Guest'} — ${dollars(newest.totalPence)}`,
       })
+      notify(`New order #${newest.id}`, `${newest.customerName || 'Guest'} — ${dollars(newest.totalPence)}`)
       post({ type: 'order:new', orderId: newest.id })
     }
     prevCountRef.current = orders.length
