@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Save } from 'lucide-react'
+import { Save, Server } from 'lucide-react'
 import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
 import { Button, Card, Field, Input, Select } from '@/components/ui'
 import { useDocumentTitle } from '@/lib/hooks'
 import { setUnsavedDirty } from '@/lib/unsaved'
+import { useApiUrlStore } from '@/store/apiUrl'
 import {
   DAYS,
   DAY_ABBREVS,
@@ -158,6 +159,10 @@ export default function SettingsPage() {
   const utils = trpc.useUtils()
   const settings = trpc.settings.get.useQuery()
 
+  const apiUrl = useApiUrlStore((s) => s.apiUrl)
+  const setApiUrl = useApiUrlStore((s) => s.setApiUrl)
+  const [serverInput, setServerInput] = useState('')
+
   const [form, setForm] = useState({
     shopName: '',
     address: '',
@@ -181,6 +186,12 @@ export default function SettingsPage() {
       setLoaded(true)
     }
   }, [settings.data, loaded])
+
+  useEffect(() => {
+    if (apiUrl && apiUrl !== '/api/trpc') {
+      setServerInput(apiUrl.replace(/\/trpc$/, ''))
+    }
+  }, [apiUrl])
 
   useEffect(() => {
     setUnsavedDirty(loaded && settings.data ? serializeHours(hoursForm) !== (settings.data.hours ?? '') || form.shopName !== settings.data.name : false)
@@ -232,6 +243,40 @@ export default function SettingsPage() {
                 </Select>
               </Field>
             </div>
+          </div>
+        </Card>
+
+        <Card>
+          <h2 className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            Server
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Address of the shop server the app connects to. In the browser this default /api is
+            proxied automatically. In the desktop app, enter the server URL e.g.{" "}
+            <code className="rounded bg-surface px-1 py-0.5 text-xs">http://192.168.1.10:4000</code>.
+          </p>
+          <div className="mt-4 flex items-end gap-2">
+            <div className="flex-1">
+              <Field label="Server address" htmlFor="st-server">
+                <Input
+                  id="st-server"
+                  value={serverInput}
+                  onChange={(e) => setServerInput(e.target.value)}
+                  placeholder="/api (auto) or http://host:4000"
+                  aria-label="Server address"
+                />
+              </Field>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setApiUrl(serverInput)
+                toast.success('Server address updated')
+              }}
+            >
+              <Server className="size-4" aria-hidden /> Connect
+            </Button>
           </div>
         </Card>
 

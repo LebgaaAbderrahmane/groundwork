@@ -13,6 +13,9 @@ export default defineConfig({
   },
   server: {
     port: 5174,
+    watch: {
+      ignored: ['**/src-tauri/**'],
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:4000',
