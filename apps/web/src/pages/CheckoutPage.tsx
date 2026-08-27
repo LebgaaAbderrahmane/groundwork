@@ -20,6 +20,7 @@ export default function CheckoutPage() {
   const clear = useCart((s) => s.clear)
   const pickup = useCart((s) => s.pickupIndex)
   const notes = useCart((s) => s.notes)
+  const setNotes = useCart((s) => s.setNotes)
   const table = useCart((s) => s.table)
   const setTable = useCart((s) => s.setTable)
 
@@ -206,6 +207,19 @@ export default function CheckoutPage() {
               <p className="mt-3 text-xs font-light text-muted-foreground">
                 Add your phone and earn {LOYALTY.pointsPerDollar} point per dollar on every order.
               </p>
+            </div>
+
+            <div>
+              <label className="text-[10px] font-medium uppercase tracking-[0.12em] text-foreground/70">
+                Special instructions (optional)
+              </label>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Any allergies or preferences?"
+                rows={2}
+                className="mt-2 w-full resize-none rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent"
+              />
             </div>
 
             {customer && (

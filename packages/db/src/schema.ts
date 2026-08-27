@@ -197,6 +197,7 @@ export const orderItems = pgTable('order_items', {
     .$type<Array<{ id: number; label: string; priceDeltaPence: number }>>()
     .notNull()
     .default([]),
+  note: text('note'),
   lineTotalPence: integer('line_total_pence').notNull(),
 })
 
