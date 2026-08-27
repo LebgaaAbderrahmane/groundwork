@@ -213,10 +213,10 @@ export default function InventoryPage() {
                     <td className="py-2.5 pr-3 text-muted-foreground">${Number(i.costPerUnit).toFixed(2)}</td>
                     <td className="py-2.5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        <Button variant="outline" className="size-9 p-0" title="−1" onClick={() => adjust.mutate({ ingredientId: i.id, change: -1, reason: 'adjustment' })} type="button">
+                        <Button variant="outline" className="size-9 p-0 !px-0" title="−1" onClick={() => adjust.mutate({ ingredientId: i.id, change: -1, reason: 'adjustment' })} type="button">
                           <Minus className="size-4" aria-hidden />
                         </Button>
-                        <Button variant="outline" className="size-9 p-0" title="+1" onClick={() => adjust.mutate({ ingredientId: i.id, change: 1, reason: 'receipt' })} type="button">
+                        <Button variant="outline" className="size-9 p-0 !px-0" title="+1" onClick={() => adjust.mutate({ ingredientId: i.id, change: 1, reason: 'receipt' })} type="button">
                           <Plus className="size-4" aria-hidden />
                         </Button>
                       </div>
@@ -362,7 +362,7 @@ function RecipesCard({
               <Button
                 variant="ghost"
                
-                className="size-9 shrink-0 p-0 text-muted-foreground hover:text-danger"
+                className="size-9 shrink-0 p-0 !px-0 text-muted-foreground hover:text-danger"
                 type="button"
                 onClick={() => setRows(rows.filter((_, i) => i !== idx))}
                 disabled={rows.length === 1}
@@ -379,7 +379,7 @@ function RecipesCard({
             type="button"
             variant="outline"
            
-            className="size-9 p-0"
+            className="size-9 p-0 !px-0"
             onClick={() => setRows([...rows, { ingredientId: '', qty: '' }])}
             title="Add row"
           >

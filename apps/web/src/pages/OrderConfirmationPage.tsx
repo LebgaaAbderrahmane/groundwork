@@ -39,7 +39,7 @@ function StatusTracker({ status }: { status: string }) {
                   current && 'ring-2 ring-primary/30 ring-offset-2 ring-offset-background',
                 )}
               >
-                <Icon className="size-5" strokeWidth={1.6} />
+                <Icon className="size-4" strokeWidth={1.6} />
               </div>
               <span className={cn('text-[10px] font-medium uppercase tracking-[0.1em]', active ? 'text-foreground' : 'text-muted-foreground')}>
                 {step.label}

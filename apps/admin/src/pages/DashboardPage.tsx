@@ -102,20 +102,20 @@ export default function DashboardPage() {
 
       <section className="mt-8 grid gap-4 sm:grid-cols-3">
         <StatsCard
-          icon={<TrendingUp className="size-5" strokeWidth={1.7} />}
+          icon={<TrendingUp className="size-4" strokeWidth={1.7} />}
           label="Revenue"
           value={dollars(d?.summary.revenuePence ?? 0)}
           delta={c ? <DeltaBadge value={c.deltas.revenue} /> : undefined}
         />
         <StatsCard
-          icon={<Receipt className="size-5" strokeWidth={1.7} />}
+          icon={<Receipt className="size-4" strokeWidth={1.7} />}
           label="Orders"
           value={d?.summary.orderCount ?? 0}
           sub={`· avg ${dollars(d?.summary.averageOrderPence ?? 0)}`}
           delta={c ? <DeltaBadge value={c.deltas.orders} /> : undefined}
         />
         <StatsCard
-          icon={<PackageX className="size-5" strokeWidth={1.7} />}
+          icon={<PackageX className="size-4" strokeWidth={1.7} />}
           label="Low stock"
           value={d?.lowStock.length ?? 0}
         />

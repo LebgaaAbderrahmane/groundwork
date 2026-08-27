@@ -74,7 +74,7 @@ export function ThemeToggle({ layout = 'icon' }: { layout?: 'icon' | 'full' }) {
           transition={{ type: 'spring', stiffness: 320, damping: 22 }}
           className="flex"
         >
-          <ActiveIcon className="size-5" strokeWidth={1.7} />
+          <ActiveIcon className="size-4" strokeWidth={1.7} />
         </motion.span>
       </motion.button>
 
