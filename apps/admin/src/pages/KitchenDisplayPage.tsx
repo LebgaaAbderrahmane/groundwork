@@ -182,6 +182,12 @@ export default function KitchenDisplayPage() {
                       ))}
                     </div>
 
+                    {order.notes && (
+                      <div className="mb-2 rounded bg-amber-50 px-2 py-1 text-xs font-medium text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                        Note: {order.notes}
+                      </div>
+                    )}
+
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-muted-foreground">
                         {order.customerName || 'Guest'} · {dollars(order.totalPence)}
