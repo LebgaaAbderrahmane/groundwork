@@ -65,7 +65,7 @@ export default function MenuPage() {
           <h1 className="mt-1 font-display text-4xl font-bold text-foreground">Menu</h1>
         </div>
         <form
-          className="flex gap-2"
+          className="flex items-center gap-2"
           onSubmit={(e) => {
             e.preventDefault()
             if (newCategory.trim()) createCategory.mutate({ name: newCategory.trim() })
@@ -344,13 +344,13 @@ function ProductDetail({ product }: { product: Product }) {
                         type="button"
                         aria-label={`Delete ${o.label} option`}
                       >
-                        <Trash2 className="size-3.5" aria-hidden />
+                        <Trash2 className="size-4" aria-hidden />
                       </Button>
                     </li>
                   ))}
               </ul>
               <form
-                className="mt-2 flex gap-2"
+                className="mt-2 flex items-center gap-2"
                 onSubmit={(e) => {
                   e.preventDefault()
                   if (!newOption.label.trim()) return

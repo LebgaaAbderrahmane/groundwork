@@ -96,7 +96,7 @@ export default function MenuPage() {
               aria-label="Clear search"
               className="absolute right-3 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface hover:text-primary"
             >
-              <X className="size-3.5" />
+              <X className="size-4" />
             </button>
           )}
         </div>
