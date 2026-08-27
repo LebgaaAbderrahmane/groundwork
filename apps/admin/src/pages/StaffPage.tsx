@@ -59,7 +59,7 @@ export default function StaffPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="mx-auto max-w-6xl">
       <header>
         <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
           Team

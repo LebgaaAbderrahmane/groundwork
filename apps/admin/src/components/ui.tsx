@@ -85,7 +85,7 @@ export function Input({
   return (
     <input
       className={cn(
-        'mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent',
+        'mt-1.5 h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent',
         className,
       )}
       {...props}
@@ -101,7 +101,7 @@ export function Select({
   return (
     <select
       className={cn(
-        'mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent',
+        'mt-1.5 h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent',
         className,
       )}
       {...props}
@@ -262,7 +262,7 @@ export function Dialog({
             type="button"
             aria-label="Close"
             onClick={onClose}
-            className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface hover:text-foreground"
+            className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface hover:text-foreground"
           >
             <X className="size-4" />
           </button>

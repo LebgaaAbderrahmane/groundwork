@@ -70,7 +70,7 @@ export default function OrdersPage() {
   const orders = queue.data ?? []
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="mx-auto max-w-6xl">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">

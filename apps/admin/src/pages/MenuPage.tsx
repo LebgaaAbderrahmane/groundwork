@@ -56,7 +56,7 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="mx-auto max-w-6xl">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
@@ -314,7 +314,7 @@ function ProductDetail({ product }: { product: Product }) {
                 </p>
                 <Button
                   variant="ghost"
-                  className="size-8 p-0 text-muted-foreground hover:text-danger"
+                  className="size-9 p-0 text-muted-foreground hover:text-danger"
                   onClick={() => deleteGroup.mutate({ id: g.id })}
                   title="Delete group"
                   type="button"
@@ -338,7 +338,7 @@ function ProductDetail({ product }: { product: Product }) {
                       </span>
                       <Button
                         variant="ghost"
-                        className="size-7 p-0 text-muted-foreground hover:text-danger"
+                         className="size-9 p-0 text-muted-foreground hover:text-danger"
                         onClick={() => deleteOption.mutate({ id: o.id })}
                         title="Delete option"
                         type="button"

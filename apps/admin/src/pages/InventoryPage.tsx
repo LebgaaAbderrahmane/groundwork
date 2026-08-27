@@ -175,14 +175,14 @@ export default function InventoryPage() {
               Stock levels
             </h2>
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" aria-hidden />
-              <input
+              <Input
                 type="search"
                 value={stockSearch}
                 onChange={(e) => setStockSearch(e.target.value)}
                 placeholder="Filter ingredients…"
-                className="w-48 rounded-lg border border-border bg-background py-1.5 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent"
+                className="h-9 max-w-xs pr-9"
               />
+              <Search className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
             </div>
           </div>
           <div className="mt-4 overflow-x-auto">
@@ -213,10 +213,10 @@ export default function InventoryPage() {
                     <td className="py-2.5 pr-3 text-muted-foreground">${Number(i.costPerUnit).toFixed(2)}</td>
                     <td className="py-2.5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        <Button variant="outline" className="size-8 p-0" title="−1" onClick={() => adjust.mutate({ ingredientId: i.id, change: -1, reason: 'adjustment' })} type="button">
+                        <Button variant="outline" className="size-9 p-0" title="−1" onClick={() => adjust.mutate({ ingredientId: i.id, change: -1, reason: 'adjustment' })} type="button">
                           <Minus className="size-3.5" aria-hidden />
                         </Button>
-                        <Button variant="outline" className="size-8 p-0" title="+1" onClick={() => adjust.mutate({ ingredientId: i.id, change: 1, reason: 'receipt' })} type="button">
+                        <Button variant="outline" className="size-9 p-0" title="+1" onClick={() => adjust.mutate({ ingredientId: i.id, change: 1, reason: 'receipt' })} type="button">
                           <Plus className="size-3.5" aria-hidden />
                         </Button>
                       </div>

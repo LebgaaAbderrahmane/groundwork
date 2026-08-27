@@ -64,7 +64,7 @@ export default function DashboardPage() {
   const trendData = trend.data ?? []
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="mx-auto max-w-6xl">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
@@ -81,7 +81,7 @@ export default function DashboardPage() {
                 key={p}
                 type="button"
                 onClick={() => setPeriod(p)}
-                className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`h-9 rounded-md px-3 text-xs font-medium transition-colors ${
                   period === p
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:text-foreground'
