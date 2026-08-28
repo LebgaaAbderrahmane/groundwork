@@ -18,11 +18,11 @@ export const inviteStaffInput = z.object({
 })
 
 export const updateRoleInput = z.object({
-  userId: z.number().int().positive(),
+  userId: z.string().min(1),
   role: z.enum(USER_ROLE),
 })
 
 export const setActiveInput = z.object({
-  userId: z.number().int().positive(),
+  userId: z.string().min(1),
   active: z.boolean(),
 })

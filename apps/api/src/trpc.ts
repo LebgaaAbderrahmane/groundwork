@@ -1,7 +1,8 @@
 import { initTRPC, TRPCError } from '@trpc/server'
 import type { CreateExpressContextOptions } from '@trpc/server/adapters/express'
 import { db } from './db'
-import { ACCESS_COOKIE, verifyAccessToken, type AuthUser } from './lib/auth'
+import type { AuthUser } from './lib/auth'
+import { getStaffUser } from './lib/staffAuth'
 import { getCustomerUser, type CustomerSessionUser } from './lib/customerAuth'
 
 export type Context = {
@@ -13,12 +14,16 @@ export type Context = {
 }
 
 export async function createContext(opts: CreateExpressContextOptions): Promise<Context> {
-  const customer = await getCustomerUser(opts.req)
+  const cookies = opts.req.cookies as Record<string, string> | undefined
+  const [customer, user] = await Promise.all([
+    getCustomerUser(opts.req),
+    getStaffUser(opts.req, cookies),
+  ])
   return {
     db,
     req: opts.req,
     res: opts.res,
-    user: null,
+    user,
     customer,
   }
 }
@@ -34,25 +39,24 @@ export const customerProcedure = t.procedure.use(({ ctx, next }) => {
   return next({ ctx })
 })
 
-const resolveUser = t.middleware(async ({ ctx, next }) => {
-  const token = ctx.req.cookies?.[ACCESS_COOKIE]
-  if (!token) {
+export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+  if (!ctx.user) {
     throw new TRPCError({ code: 'UNAUTHORIZED' })
   }
-  const user = await verifyAccessToken(token)
-  if (!user) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' })
-  }
-  return next({ ctx: { ...ctx, user } })
+  return next({ ctx: { ...ctx, user: ctx.user } })
 })
 
-export const protectedProcedure = t.procedure.use(resolveUser)
-
-const resolveOwner = t.middleware(({ ctx, next }) => {
-  if (ctx.user?.role !== 'owner') {
+export const ownerProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.user.role !== 'owner') {
     throw new TRPCError({ code: 'FORBIDDEN' })
   }
   return next({ ctx: { ...ctx, user: ctx.user } })
 })
 
-export const ownerProcedure = protectedProcedure.use(resolveOwner)
+/** Owner and Manager only (Barista is restricted to order/kitchen ops). */
+export const managerProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.user.role === 'barista') {
+    throw new TRPCError({ code: 'FORBIDDEN' })
+  }
+  return next({ ctx: { ...ctx, user: ctx.user } })
+})
