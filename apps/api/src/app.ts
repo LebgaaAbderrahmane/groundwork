@@ -1,10 +1,12 @@
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express from 'express'
+import { toNodeHandler } from 'better-auth/node'
 import { createExpressMiddleware } from '@trpc/server/adapters/express'
 import { env } from './env'
 import { createContext } from './trpc'
 import { appRouter } from './routers'
+import { customerAuth } from './lib/customerAuth'
 import { orderEvents } from './services/events'
 
 export function createApp() {
@@ -31,6 +33,10 @@ export function createApp() {
       credentials: true,
     }),
   )
+
+  // Better Auth must be mounted before body-parsing middleware.
+  app.all('/api/auth/*splat', toNodeHandler(customerAuth))
+
   app.use(express.json())
   app.use(cookieParser())
 

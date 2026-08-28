@@ -17,6 +17,13 @@ const envSchema = z.object({
   WEB_ORIGIN: z.string().default('http://localhost:5173'),
   ADMIN_ORIGIN: z.string().default('http://localhost:5174'),
   ADDITIONAL_ORIGINS: z.string().default(''),
+  BETTER_AUTH_SECRET: z.string().min(16),
+  BETTER_AUTH_URL: z.string().url().default('http://localhost:4000'),
+  BETTER_AUTH_TRUSTED_ORIGINS: z.string().default(''),
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  APPLE_CLIENT_ID: z.string().optional(),
+  APPLE_CLIENT_SECRET: z.string().optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)

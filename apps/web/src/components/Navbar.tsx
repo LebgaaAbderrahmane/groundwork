@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Link, useLocation } from 'react-router-dom'
-import { Coffee, Menu, ShoppingBag, X } from 'lucide-react'
+import { Coffee, Menu, ShoppingBag, User, X } from 'lucide-react'
 import { BRAND } from '@cribstone/shared'
 import { NAV_LINKS } from '@/data/content'
 import { Button } from '@/components/ui/button'
 import { cartCount, useCart } from '@/store/cart'
+import { useAuth } from '@/store/auth'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { CartDrawer } from '@/components/CartDrawer'
 import { cn } from '@/lib/utils'
@@ -20,6 +21,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
   const count = useCart((s) => cartCount(s.lines))
+  const user = useAuth((s) => s.user)
   const { pathname } = useLocation()
 
   return (
@@ -84,6 +86,20 @@ export function Navbar() {
               )}
             </AnimatePresence>
             </Link>
+            <Link
+              to={user ? '/my-orders' : '/login'}
+              aria-label={user ? `Account: ${user.name}` : 'Sign in'}
+              title={user ? `Signed in as ${user.email}` : 'Sign in'}
+              className="relative flex size-10 items-center justify-center rounded-full text-foreground/80 transition-colors hover:bg-surface hover:text-primary"
+            >
+              {user ? (
+                <span className="flex size-7 items-center justify-center rounded-full bg-accent/15 text-[11px] font-semibold uppercase text-accent">
+                  {user.name.charAt(0)}
+                </span>
+              ) : (
+                <User className="size-4" strokeWidth={1.7} />
+              )}
+            </Link>
             <ThemeToggle />
           </div>
           <Button asChild>
@@ -130,6 +146,13 @@ export function Navbar() {
               </Link>
             )
           })}
+          <Link
+            to={user ? '/my-orders' : '/login'}
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 rounded-lg px-3 py-3 text-[11px] font-medium uppercase tracking-[0.12em] text-foreground/80 transition-colors hover:bg-surface hover:text-primary"
+          >
+            <User className="size-4" /> {user ? 'My orders' : 'Sign in'}
+          </Link>
           <ThemeToggle layout="full" />
           <button
             type="button"
