@@ -3,47 +3,57 @@ import { describe, expect, it } from 'vitest'
 import { createApp } from '../src/app'
 
 const app = createApp()
+const ORIGIN = 'http://localhost:5174'
+const OWNER_EMAIL = 'braxton@cribstonecoffee.com'
+const OWNER_PASSWORD = 'cribstone2026'
 
-describe('auth', () => {
-  it('logs in with seeded owner credentials and returns a session', async () => {
-    const agent = request.agent(app)
-    const res = await agent
-      .post('/api/trpc/auth.login')
-      .send({
-        email: 'braxton@cribstonecoffee.com',
-        password: 'cribstone2026',
-      })
+async function signIn(email: string, password: string) {
+  return request(app)
+    .post('/api/staff-auth/sign-in/email')
+    .set('Origin', ORIGIN)
+    .send({ email, password })
+}
 
+function authedAgent() {
+  return request.agent(app).set('Origin', ORIGIN)
+}
+
+describe('staff auth', () => {
+  it('signs in with seeded owner credentials and resolves a staff session', async () => {
+    const agent = authedAgent()
+    const res = await signIn(OWNER_EMAIL, OWNER_PASSWORD)
     expect(res.status).toBe(200)
-    expect(res.body.result.data.user.email).toBe('braxton@cribstonecoffee.com')
-    expect(res.body.result.data.user.role).toBe('owner')
+    expect(res.body.user.email).toBe(OWNER_EMAIL)
+    expect(res.body.user.role).toBe('owner')
+    expect(res.body.token).toBeTruthy()
 
-    const me = await agent.get('/api/trpc/auth.me')
-    expect(me.status).toBe(200)
-    expect(me.body.result.data.user.name).toBe('Braxton Jarratt')
+    agent.set('Authorization', `Bearer ${res.body.token}`)
+    const list = await agent.get('/api/trpc/staff.list')
+    expect(list.status).toBe(200)
+    const emails = list.body.result.data.map((s: { email: string }) => s.email)
+    expect(emails).toContain(OWNER_EMAIL)
   })
 
   it('rejects invalid credentials', async () => {
-    const res = await request(app).post('/api/trpc/auth.login').send({
-      email: 'braxton@cribstonecoffee.com',
-      password: 'wrong-password',
-    })
+    const res = await signIn(OWNER_EMAIL, 'wrong-password')
     expect(res.status).toBe(401)
   })
 
-  it('rejects me without a session', async () => {
-    const res = await request(app).get('/api/trpc/auth.me')
+  it('rejects a protected procedure without a session', async () => {
+    const res = await request(app).get('/api/trpc/staff.list')
     expect(res.status).toBe(401)
   })
 
-  it('logs out and invalidates the session', async () => {
-    const agent = request.agent(app)
-    await agent
-      .post('/api/trpc/auth.login')
-      .send({ email: 'braxton@cribstonecoffee.com', password: 'cribstone2026' })
-    const logout = await agent.post('/api/trpc/auth.logout').send({})
-    expect(logout.status).toBe(200)
-    const me = await agent.get('/api/trpc/auth.me')
-    expect(me.status).toBe(401)
+  it('signs out and invalidates the session token', async () => {
+    const agent = authedAgent()
+    const signInRes = await signIn(OWNER_EMAIL, OWNER_PASSWORD)
+    const token = signInRes.body.token
+    agent.set('Authorization', `Bearer ${token}`)
+
+    const out = await agent.post('/api/staff-auth/sign-out').send({})
+    expect(out.status).toBe(200)
+
+    const list = await agent.get('/api/trpc/staff.list')
+    expect(list.status).toBe(401)
   })
 })

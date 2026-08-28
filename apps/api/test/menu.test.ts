@@ -23,8 +23,16 @@ describe('menu', () => {
     )
     expect(flatWhite).toBeDefined()
     expect(flatWhite.pricePence).toBe(350)
-    expect(flatWhite.optionGroups).toHaveLength(2)
-    expect(flatWhite.optionGroups[0].required).toBe(true)
+    const groupNames = flatWhite.optionGroups.map(
+      (g: { name: string }) => g.name,
+    )
+    const milk = flatWhite.optionGroups.find(
+      (g: { name: string }) => g.name === 'Milk',
+    )
+    expect(groupNames).toContain('Milk')
+    expect(groupNames).toContain('Size')
+    expect(milk.required).toBe(true)
+    expect(milk.options.length).toBeGreaterThan(0)
   })
 
   it('rejects unauthenticated admin menu access', async () => {

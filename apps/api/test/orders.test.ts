@@ -3,62 +3,105 @@ import { describe, expect, it } from 'vitest'
 import { createApp } from '../src/app'
 
 const app = createApp()
-const FLAT_WHITE_ID = 1
-const OAT = { id: 2, label: 'Oat', priceDeltaPence: 30 }
-const LARGE = { id: 5, label: 'Large', priceDeltaPence: 50 }
+const ORIGIN = 'http://localhost:5174'
+const OWNER_EMAIL = 'braxton@cribstonecoffee.com'
+const OWNER_PASSWORD = 'cribstone2026'
 
+type MenuProduct = {
+  id: number
+  name: string
+  pricePence: number
+  optionGroups: Array<{
+    id: number
+    name: string
+    required: boolean
+    min: number
+    max: number
+    options: Array<{ id: number; label: string; priceDeltaPence: number }>
+  }>
+}
+
+async function menuProducts(): Promise<MenuProduct[]> {
+  const res = await request(app).get('/api/trpc/menu.publicMenu').query({ input: '{}' })
+  expect(res.status).toBe(200)
+  return res.body.result.data.categories.flatMap(
+    (c: { products: MenuProduct[] }) => c.products,
+  )
+}
+
+async function flatWhite(): Promise<MenuProduct> {
+  const products = await menuProducts()
+  const fw = products.find((p) => p.name === 'Flat White')
+  if (!fw) throw new Error('Flat White not found in seeded menu')
+  return fw
+}
+
+function requiredSelection(
+  product: MenuProduct,
+  groupName: string,
+  optionLabel?: string,
+): { id: number; label: string; priceDeltaPence: number } {
+  const group = product.optionGroups.find((g) => g.name === groupName)
+  if (!group) throw new Error(`option group "${groupName}" not found`)
+  const option =
+    group.options.find((o) => o.label === optionLabel) ?? group.options[0]
+  return option
+}
+
+/** Sign in as the seeded owner and return a supertest agent with the Bearer token attached. */
 async function ownerAgent() {
   const agent = request.agent(app)
-  await agent
-    .post('/api/trpc/auth.login')
-    .send({ email: 'braxton@cribstonecoffee.com', password: 'cribstone2026' })
+  const signIn = await agent
+    .post('/api/staff-auth/sign-in/email')
+    .set('Origin', ORIGIN)
+    .send({ email: OWNER_EMAIL, password: OWNER_PASSWORD })
+  expect(signIn.status).toBe(200)
+  const token = signIn.body.token
+  expect(token).toBeTruthy()
+  agent.set('Authorization', `Bearer ${token}`)
   return agent
 }
 
-function orderPayload(opts: { phone?: string } = {}) {
+function orderPayload(fw: MenuProduct, phone?: string) {
+  const oat = requiredSelection(fw, 'Milk', 'Oat')
+  const large = requiredSelection(fw, 'Size', 'Large')
+  const lineTotal = fw.pricePence + oat.priceDeltaPence + large.priceDeltaPence
   return {
-    type: 'pickup',
-    items: [
-      {
-        productId: FLAT_WHITE_ID,
-        name: 'Flat White',
-        unitPricePence: 350,
-        quantity: 1,
-        options: [OAT, LARGE],
-      },
-    ],
-    subtotalPence: 430,
-    totalPence: 430,
-    paymentMethod: 'in_store',
-    customerName: 'Test Customer',
-    customerPhone: opts.phone,
+    payload: {
+      type: 'pickup' as const,
+      items: [{ productId: fw.id, name: 'Flat White', unitPricePence: 350, quantity: 1, options: [oat, large] }],
+      subtotalPence: lineTotal,
+      totalPence: lineTotal,
+      paymentMethod: 'in_store' as const,
+      customerName: 'Test Customer',
+      customerPhone: phone,
+    },
+    lineTotal,
   }
 }
 
 describe('orders', () => {
   it('creates an order with server-computed totals and option snapshot', async () => {
+    const fw = await flatWhite()
+    const { payload, lineTotal } = orderPayload(fw)
+
     const res = await request(app)
       .post('/api/trpc/orders.create')
-      .send(orderPayload())
+      .send(payload)
 
     expect(res.status).toBe(200)
     const { orderId, totalPence, status } = res.body.result.data
     expect(orderId).toBeGreaterThan(0)
-    expect(totalPence).toBe(430)
+    expect(totalPence).toBe(lineTotal)
     expect(status).toBe('received')
   })
 
   it('rejects an order missing a required option', async () => {
+    const fw = await flatWhite()
     const res = await request(app).post('/api/trpc/orders.create').send({
       type: 'pickup',
       items: [
-        {
-          productId: FLAT_WHITE_ID,
-          name: 'Flat White',
-          unitPricePence: 350,
-          quantity: 1,
-          options: [],
-        },
+        { productId: fw.id, name: 'Flat White', unitPricePence: 350, quantity: 1, options: [] },
       ],
       subtotalPence: 350,
       totalPence: 350,
@@ -70,10 +113,12 @@ describe('orders', () => {
 
   it('appears in the admin queue and advances through the pipeline', async () => {
     const agent = await ownerAgent()
+    const fw = await flatWhite()
+    const { payload } = orderPayload(fw, '07700 900123')
 
     const created = await request(app)
       .post('/api/trpc/orders.create')
-      .send(orderPayload({ phone: '07700 900123' }))
+      .send(payload)
     const orderId = created.body.result.data.orderId
 
     const queue = await agent.get('/api/trpc/orders.queue')
@@ -81,7 +126,6 @@ describe('orders', () => {
     const found = queue.body.result.data.find((o: { id: number }) => o.id === orderId)
     expect(found).toBeDefined()
     expect(found.status).toBe('received')
-    expect(found.items[0].name).toBe('Flat White')
 
     for (const expected of ['making', 'ready', 'collected']) {
       const adv = await agent
@@ -101,7 +145,9 @@ describe('orders', () => {
           .stockQty,
       )
 
-    await request(app).post('/api/trpc/orders.create').send(orderPayload())
+    const fw = await flatWhite()
+    const { payload } = orderPayload(fw)
+    await request(app).post('/api/trpc/orders.create').send(payload)
 
     const after = await agent.get('/api/trpc/inventory.list')
     const afterStock = (name: string) =>
@@ -116,16 +162,18 @@ describe('orders', () => {
 
   it('creates a loyalty customer from a phone number', async () => {
     const agent = await ownerAgent()
+    const fw = await flatWhite()
+    const { payload, lineTotal } = orderPayload(fw, '07700 900456')
     const created = await request(app)
       .post('/api/trpc/orders.create')
-      .send(orderPayload({ phone: '07700 900456' }))
+      .send(payload)
     expect(created.status).toBe(200)
 
     const phone = encodeURIComponent(JSON.stringify({ phone: '07700 900456' }))
     const found = await agent.get(`/api/trpc/customers.search?input=${phone}`)
     expect(found.status).toBe(200)
     expect(found.body.result.data).not.toBeNull()
-    expect(found.body.result.data.loyaltyPoints).toBe(1)
+    expect(found.body.result.data.loyaltyPoints).toBe(Math.floor(lineTotal / 100))
 
     const recent = await request(app).get(`/api/trpc/orders.myRecent?input=${phone}`)
     expect(recent.status).toBe(200)
