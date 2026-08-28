@@ -16,6 +16,9 @@ const AboutPage = lazy(() => import('@/pages/AboutPage'))
 const FindUsPage = lazy(() => import('@/pages/FindUsPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const TableLandingPage = lazy(() => import('@/pages/TableLandingPage'))
+const LoginPage = lazy(() => import('@/pages/LoginPage'))
+const RegisterPage = lazy(() => import('@/pages/RegisterPage'))
+const MyOrdersPage = lazy(() => import('@/pages/MyOrdersPage'))
 
 function PageLoader() {
   return (
@@ -57,6 +60,9 @@ function App() {
                 <Route path="/menu" element={<MenuPage />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/my-orders" element={<MyOrdersPage />} />
                 <Route path="/order/:orderId" element={<OrderConfirmationPage />} />
                 <Route path="/receipt/:orderId" element={<ReceiptPage />} />
                 <Route path="/our-coffee" element={<OurCoffeePage />} />

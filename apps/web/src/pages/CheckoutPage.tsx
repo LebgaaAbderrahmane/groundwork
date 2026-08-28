@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { LOYALTY, bestAffordableReward, earnPoints } from '@cribstone/shared'
 import { useDocumentTitle } from '@/lib/hooks'
 import { cartSubtotal, useCart } from '@/store/cart'
+import { useAuth } from '@/store/auth'
 import { trpc } from '@/lib/trpc'
 import { dollars } from '@/lib/format'
 import { Button } from '@/components/ui/button'
@@ -16,6 +17,8 @@ export default function CheckoutPage() {
   useDocumentTitle('Checkout')
   const navigate = useNavigate()
 
+  const authUser = useAuth((s) => s.user)
+
   const lines = useCart((s) => s.lines)
   const clear = useCart((s) => s.clear)
   const pickup = useCart((s) => s.pickupIndex)
@@ -24,8 +27,13 @@ export default function CheckoutPage() {
   const table = useCart((s) => s.table)
   const setTable = useCart((s) => s.setTable)
 
-  const [name, setName] = useState('')
+    const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
+
+  useEffect(() => {
+    if (authUser?.name) setName(authUser.name)
+  }, [authUser?.name])
+
   const [payment, setPayment] = useState<'in_store' | 'card'>('in_store')
   const [error, setError] = useState<string | null>(null)
   const [selectedRewardId, setSelectedRewardId] = useState<string | null>(null)

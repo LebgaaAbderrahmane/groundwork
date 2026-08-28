@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { PaymentStatusBadge } from '@/components/payment'
 import { trpc } from '@/lib/trpc'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/store/auth'
 import { Head } from '@/components/Head'
 
 type LocationState = { totalPence?: number }
@@ -63,6 +64,7 @@ export default function OrderConfirmationPage() {
   const [pullDistance, setPullDistance] = useState(0)
   const [refreshing, setRefreshing] = useState(false)
   const touchStartY = useRef(0)
+  const user = useAuth((s) => s.user)
   const order = trpc.orders.getById.useQuery(
     { orderId: Number(orderId) },
     {
@@ -239,6 +241,13 @@ export default function OrderConfirmationPage() {
         <Button asChild size="lg" variant="outline">
           <Link to="/">Back to the site</Link>
         </Button>
+        {user && (
+          <Button asChild size="lg" variant="outline">
+            <Link to="/my-orders">
+              Track all orders <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          </Button>
+        )}
       </div>
     </main>
   )
