@@ -12,7 +12,7 @@ CREATE TABLE "audit_log" (
 	"entity" text NOT NULL,
 	"entity_id" integer,
 	"details" jsonb DEFAULT '{}'::jsonb NOT NULL,
-	"at" timestamp DEFAULT '2026-08-06 19:59:22.150' NOT NULL
+	"at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "categories" (
@@ -31,7 +31,7 @@ CREATE TABLE "customers" (
 	"loyalty_points" integer DEFAULT 0 NOT NULL,
 	"visits" integer DEFAULT 0 NOT NULL,
 	"last_visit_at" timestamp,
-	"created_at" timestamp DEFAULT '2026-08-06 19:59:22.150' NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "ingredients" (
@@ -52,7 +52,7 @@ CREATE TABLE "inventory_movements" (
 	"reason" "inventory_reason" NOT NULL,
 	"ref_id" integer,
 	"note" text,
-	"created_at" timestamp DEFAULT '2026-08-06 19:59:22.149' NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "loyalty_transactions" (
@@ -61,7 +61,7 @@ CREATE TABLE "loyalty_transactions" (
 	"points" integer NOT NULL,
 	"reason" text,
 	"ref_order_id" integer,
-	"created_at" timestamp DEFAULT '2026-08-06 19:59:22.150' NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "option_groups" (
@@ -101,7 +101,7 @@ CREATE TABLE "order_status_events" (
 	"from_status" "order_status",
 	"to_status" "order_status" NOT NULL,
 	"by_user_id" integer,
-	"at" timestamp DEFAULT '2026-08-06 19:59:22.149' NOT NULL
+	"at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "orders" (
@@ -117,7 +117,7 @@ CREATE TABLE "orders" (
 	"payment_method" "payment_method" DEFAULT 'in_store' NOT NULL,
 	"payment_status" "payment_status" DEFAULT 'pending' NOT NULL,
 	"pickup_at" timestamp,
-	"created_at" timestamp DEFAULT '2026-08-06 19:59:22.149' NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "products" (
@@ -146,7 +146,7 @@ CREATE TABLE "refresh_tokens" (
 	"user_id" integer NOT NULL,
 	"token_hash" text NOT NULL,
 	"expires_at" timestamp NOT NULL,
-	"created_at" timestamp DEFAULT '2026-08-06 19:59:22.148' NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "shops" (
@@ -158,7 +158,7 @@ CREATE TABLE "shops" (
 	"hours" text,
 	"payment_mode" text DEFAULT 'in_store' NOT NULL,
 	"settings" jsonb DEFAULT '{}'::jsonb NOT NULL,
-	"created_at" timestamp DEFAULT '2026-08-06 19:59:22.147' NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "tables" (
@@ -176,7 +176,7 @@ CREATE TABLE "users" (
 	"password_hash" text NOT NULL,
 	"role" "user_role" DEFAULT 'barista' NOT NULL,
 	"active" integer DEFAULT 1 NOT NULL,
-	"created_at" timestamp DEFAULT '2026-08-06 19:59:22.148' NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "audit_log" ADD CONSTRAINT "audit_log_shop_id_shops_id_fk" FOREIGN KEY ("shop_id") REFERENCES "public"."shops"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
