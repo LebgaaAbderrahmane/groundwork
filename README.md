@@ -79,8 +79,11 @@ docker compose up -d --build     # db + api + web(8080) + admin(8081)
 
 - **Brand config:** All brand constants (name, address, email, founder) live in
   `packages/shared/src/brand.ts`. Update once, reflected everywhere.
-- **Auth**: httpOnly JWT access (15 min) + rotating refresh cookie. `protectedProcedure` resolves
-  the user from the access cookie; `ownerProcedure` requires the `owner` role.
+- **Auth**: [Better Auth](https://better-auth.com) for both customers and staff. Staff sign in via
+  `/api/staff-auth/*` (email/password, seeded admin `braxton@cribstonecoffee.com`); `protectedProcedure`
+  resolves staff from the `Authorization: Bearer` token (or staff cookie), `ownerProcedure` requires the
+  `owner` role, and `managerProcedure` excludes `barista`. Customers use Better Auth sessions
+  (`customerProcedure`).
 - **Orders**: server re-prices every line from the DB (client prices are ignored), validates
   option-group `min`/`max`, deducts inventory from product recipes, awards a loyalty point for a
   phone number, and emits SSE updates. Status pipeline: `received → making → ready → collected`.
@@ -96,7 +99,7 @@ docker compose up -d --build     # db + api + web(8080) + admin(8081)
 ```
 apps/
   api/src/
-    routers/     # auth, menu, orders, inventory, staff, customers, analytics, tables, settings
+    routers/     # menu, orders, inventory, staff, customers, analytics, tables, settings
     services/    # events (SSE), inventory deduction, loyalty, payments
     test/        # vitest + supertest against a scratch test database
   web/src/
@@ -107,7 +110,7 @@ apps/
 packages/
   shared/src/
     brand.ts     # single source of truth for all brand constants
-  db/src/schema.ts      # 17 tables (orders, products, ingredients, recipes, customers, …)
+  db/src/schema.ts      # 23 tables (orders, products, ingredients, recipes, customers, …)
   db/migrations/        # SQL migrations
   shared/src/           # zod schemas + domain constants
 ```

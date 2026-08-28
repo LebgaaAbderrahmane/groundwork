@@ -24,10 +24,16 @@ const TABLES = [
   'option_groups',
   'products',
   'categories',
-  'refresh_tokens',
-  'users',
   'tables',
   'shops',
+  'staff_users',
+  'staff_sessions',
+  'staff_account',
+  'staff_verification',
+  'account',
+  'session',
+  'user',
+  'verification',
 ] as const
 
 async function main() {
@@ -39,7 +45,8 @@ async function main() {
   const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
   console.log('Truncating all tables…')
-  await pool.query(`TRUNCATE ${TABLES.join(', ')} RESTART IDENTITY CASCADE`)
+  const quoted = TABLES.map((t) => `"${t}"`)
+  await pool.query(`TRUNCATE ${quoted.join(', ')} RESTART IDENTITY CASCADE`)
   await pool.end()
 
   console.log('Seeding…')

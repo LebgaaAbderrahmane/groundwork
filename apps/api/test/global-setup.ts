@@ -25,7 +25,8 @@ export default async function globalSetup() {
   await migrate(db, { migrationsFolder })
   await pool.end()
 
-  await import('../../../packages/db/scripts/seed.ts')
+  const seed = await import('../../../packages/db/scripts/seed.ts')
+  await seed.default()
 
   console.log('Test database ready at', TEST_URL)
 }
