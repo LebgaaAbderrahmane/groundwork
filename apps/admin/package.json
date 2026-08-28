@@ -20,6 +20,7 @@
     "@tauri-apps/api": "^2.11.1",
     "@tauri-apps/plugin-notification": "^2.3.3",
     "@trpc/client": "^11.18.0",
+    "better-auth": "^1.7.2",
     "@trpc/react-query": "^11.18.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",

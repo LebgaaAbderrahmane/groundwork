@@ -43,31 +43,73 @@ export const shops = pgTable('shops', {
   createdAt: timestamp('created_at').notNull().default(now()),
 })
 
-export const users = pgTable(
-  'users',
+// ---- Better Auth (staff accounts) ----
+export const staffUsers = pgTable(
+  'staff_users',
   {
-    id: serial('id').primaryKey(),
+    id: text('id').primaryKey(),
+    name: text('name').notNull(),
+    email: text('email').notNull(),
+    emailVerified: boolean('email_verified').notNull().default(false),
+    image: text('image'),
     shopId: integer('shop_id')
       .notNull()
       .references(() => shops.id, { onDelete: 'cascade' }),
-    name: text('name').notNull(),
-    email: text('email').notNull(),
-    passwordHash: text('password_hash').notNull(),
     role: userRoleEnum('role').notNull().default('barista'),
-    active: integer('active').notNull().default(1),
+    active: boolean('active').notNull().default(true),
     createdAt: timestamp('created_at').notNull().default(now()),
+    updatedAt: timestamp('updated_at').notNull().default(now()),
   },
-  (t) => [uniqueIndex('users_email_unique').on(t.email)],
+  (t) => [uniqueIndex('staff_users_email_unique').on(t.email)],
 )
 
-export const refreshTokens = pgTable('refresh_tokens', {
-  id: serial('id').primaryKey(),
-  userId: integer('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  tokenHash: text('token_hash').notNull(),
+export const staffSessions = pgTable(
+  'staff_sessions',
+  {
+    id: text('id').primaryKey(),
+    expiresAt: timestamp('expires_at').notNull(),
+    token: text('token').notNull(),
+    createdAt: timestamp('created_at').notNull().default(now()),
+    updatedAt: timestamp('updated_at').notNull().default(now()),
+    ipAddress: text('ip_address'),
+    userAgent: text('user_agent'),
+    userId: text('user_id')
+      .notNull()
+      .references(() => staffUsers.id, { onDelete: 'cascade' }),
+  },
+  (t) => [uniqueIndex('staff_session_token_unique').on(t.token)],
+)
+
+export const staffAccounts = pgTable(
+  'staff_account',
+  {
+    id: text('id').primaryKey(),
+    accountId: text('account_id').notNull(),
+    providerId: text('provider_id').notNull(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => staffUsers.id, { onDelete: 'cascade' }),
+    accessToken: text('access_token'),
+    refreshToken: text('refresh_token'),
+    idToken: text('id_token'),
+    accessTokenExpiresAt: timestamp('access_token_expires_at'),
+    refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+    scope: text('scope'),
+    password: text('password'),
+    issuer: text('issuer'),
+    createdAt: timestamp('created_at').notNull().default(now()),
+    updatedAt: timestamp('updated_at').notNull().default(now()),
+  },
+  (t) => [uniqueIndex('staff_account_provider_id_account_id_unique').on(t.providerId, t.accountId)],
+)
+
+export const staffVerifications = pgTable('staff_verification', {
+  id: text('id').primaryKey(),
+  identifier: text('identifier').notNull(),
+  value: text('value').notNull(),
   expiresAt: timestamp('expires_at').notNull(),
   createdAt: timestamp('created_at').notNull().default(now()),
+  updatedAt: timestamp('updated_at').notNull().default(now()),
 })
 
 export const categories = pgTable('categories', {
@@ -212,7 +254,7 @@ export const orderStatusEvents = pgTable('order_status_events', {
     .references(() => orders.id, { onDelete: 'cascade' }),
   fromStatus: orderStatusEnum('from_status'),
   toStatus: orderStatusEnum('to_status').notNull(),
-  byUserId: integer('by_user_id').references(() => users.id),
+  byUserId: text('by_user_id').references(() => staffUsers.id),
   at: timestamp('at').notNull().default(now()),
 })
 
@@ -258,7 +300,7 @@ export const auditLog = pgTable('audit_log', {
   shopId: integer('shop_id')
     .notNull()
     .references(() => shops.id, { onDelete: 'cascade' }),
-  userId: integer('user_id').references(() => users.id),
+  userId: text('user_id').references(() => staffUsers.id),
   action: text('action').notNull(),
   entity: text('entity').notNull(),
   entityId: integer('entity_id'),

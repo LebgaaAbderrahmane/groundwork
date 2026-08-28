@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import dotenv from 'dotenv'
-import bcrypt from 'bcryptjs'
+import { hashPassword } from '@better-auth/utils/password'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import pg from 'pg'
 import {
@@ -17,8 +17,9 @@ import {
   products,
   recipes,
   shops,
+  staffAccounts,
+  staffUsers,
   tables,
-  users,
 } from '../src/schema'
 
 const { Pool } = pg
@@ -47,7 +48,7 @@ const IMG = {
   cake: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80',
 }
 
-const HASH = await bcrypt.hash('cribstone2026', 12)
+const SEED_PASSWORD = 'cribstone2026'
 
 function ts(h: number, m = 0): Date {
   const d = new Date()
@@ -73,16 +74,30 @@ export default async function seed() {
     })
     .returning()
 
-  // ── USERS ────────────────────────────────────────────────────────
+  // ── USERS (staff) ────────────────────────────────────────────────
+  const passwordHash = await hashPassword(SEED_PASSWORD)
+  const staffSeed: { id: string; name: string; email: string; role: 'owner' | 'manager' | 'barista' }[] = [
+    { id: '10000000-0000-4000-8000-000000000001', name: 'Braxton Jarratt', email: 'braxton@cribstonecoffee.com', role: 'owner' },
+    { id: '10000000-0000-4000-8000-000000000002', name: 'Julia Jarratt', email: 'julia@cribstonecoffee.com', role: 'manager' },
+    { id: '10000000-0000-4000-8000-000000000003', name: 'Quinn Jarratt', email: 'quinn@cribstonecoffee.com', role: 'barista' },
+    { id: '10000000-0000-4000-8000-000000000004', name: 'Maya Chen', email: 'maya@cribstonecoffee.com', role: 'barista' },
+  ]
+
   const [braxton, julia, quinn, maya] = await db
-    .insert(users)
-    .values([
-      { shopId: shop.id, name: 'Braxton Jarratt', email: 'braxton@cribstonecoffee.com', passwordHash: HASH, role: 'owner' },
-      { shopId: shop.id, name: 'Julia Jarratt', email: 'julia@cribstonecoffee.com', passwordHash: HASH, role: 'manager' },
-      { shopId: shop.id, name: 'Quinn Jarratt', email: 'quinn@cribstonecoffee.com', passwordHash: HASH, role: 'barista' },
-      { shopId: shop.id, name: 'Maya Chen', email: 'maya@cribstonecoffee.com', passwordHash: HASH, role: 'barista' },
-    ])
+    .insert(staffUsers)
+    .values(staffSeed.map((s) => ({ id: s.id, name: s.name, email: s.email, shopId: shop.id, role: s.role })))
     .returning()
+
+  await db.insert(staffAccounts).values(
+    staffSeed.map((s) => ({
+      id: `20000000-0000-4000-8000-${s.id.slice(-12)}`,
+      accountId: s.id,
+      providerId: 'credential',
+      userId: s.id,
+      password: passwordHash,
+      issuer: 'local:credential',
+    })),
+  )
 
   // ── CATEGORIES ───────────────────────────────────────────────────
   const [espressoCat, filterCat, brunchCat, bakedCat] = await db

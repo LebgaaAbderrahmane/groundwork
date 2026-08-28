@@ -1,5 +1,4 @@
 import { router } from '../trpc'
-import { authRouter } from './auth'
 import { menuRouter } from './menu'
 import { ordersRouter } from './orders'
 import { inventoryRouter } from './inventory'
@@ -10,7 +9,6 @@ import { tablesRouter } from './tables'
 import { settingsRouter } from './settings'
 
 export const appRouter = router({
-  auth: authRouter,
   menu: menuRouter,
   orders: ordersRouter,
   inventory: inventoryRouter,

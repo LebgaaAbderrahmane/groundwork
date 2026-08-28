@@ -2,31 +2,49 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Coffee } from 'lucide-react'
 import { BRAND } from '@cribstone/shared'
-import { trpc } from '@/lib/trpc'
-import { useSession } from '@/store/session'
+import { signIn } from '@/lib/auth'
+import { useSession, type SessionUserRecord } from '@/store/session'
 import { Button, Field, Input } from '@/components/ui'
 import { useDocumentTitle } from '@/lib/hooks'
 
 export function LoginPage() {
   useDocumentTitle('Sign In')
   const navigate = useNavigate()
-  const setUser = useSession((s) => s.setUser)
+  const setSession = useSession((s) => s.setSession)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [pending, setPending] = useState(false)
 
-  const login = trpc.auth.login.useMutation({
-    onSuccess: (data) => {
-      setUser(data.user)
-      navigate('/', { replace: true })
-    },
-    onError: (err) => setError(err.message ?? 'Could not sign in'),
-  })
-
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
-    login.mutate({ email, password })
+    setPending(true)
+    try {
+      const res = await signIn.email({ email, password })
+      if (res.error) {
+        setError(res.error.message ?? 'Could not sign in')
+        return
+      }
+      const user = res.data?.user as SessionUserRecord | undefined
+      if (user) {
+        setSession(
+          {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role as 'owner' | 'manager' | 'barista',
+            shopId: Number(user.shopId),
+          },
+          res.data?.token,
+        )
+      }
+      navigate('/', { replace: true })
+    } catch {
+      setError('Could not sign in')
+    } finally {
+      setPending(false)
+    }
   }
 
   return (
@@ -75,7 +93,7 @@ export function LoginPage() {
             </p>
           )}
 
-          <Button type="submit" loading={login.isPending} className="w-full">
+          <Button type="submit" loading={pending} className="w-full">
             Sign in
           </Button>
         </form>

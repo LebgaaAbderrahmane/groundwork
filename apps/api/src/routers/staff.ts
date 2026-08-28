@@ -1,54 +1,85 @@
 import { TRPCError } from '@trpc/server'
 import { and, asc, eq } from 'drizzle-orm'
-import bcrypt from 'bcryptjs'
-import { users } from '@cribstone/db'
+import { staffUsers } from '@cribstone/db'
+import { APIError } from 'better-auth'
 import {
   inviteStaffInput,
   setActiveInput,
   updateRoleInput,
 } from '@cribstone/shared'
-import { ownerProcedure, router } from '../trpc'
+import { ownerProcedure, router, type Context } from '../trpc'
+import { staffAuth } from '../lib/staffAuth'
 
 const publicUser = {
-  id: users.id,
-  name: users.name,
-  email: users.email,
-  role: users.role,
-  active: users.active,
-  createdAt: users.createdAt,
+  id: staffUsers.id,
+  name: staffUsers.name,
+  email: staffUsers.email,
+  role: staffUsers.role,
+  active: staffUsers.active,
+  createdAt: staffUsers.createdAt,
 }
 
 export const staffRouter = router({
   list: ownerProcedure.query(async ({ ctx }) => {
     return ctx.db
       .select(publicUser)
-      .from(users)
-      .where(eq(users.shopId, ctx.user.shopId))
-      .orderBy(asc(users.createdAt))
+      .from(staffUsers)
+      .where(eq(staffUsers.shopId, ctx.user.shopId))
+      .orderBy(asc(staffUsers.createdAt))
   }),
 
   invite: ownerProcedure.input(inviteStaffInput).mutation(async ({ ctx, input }) => {
-    const [existing] = await ctx.db
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.email, input.email.toLowerCase().trim()))
+    const existing = await ctx.db
+      .select({ id: staffUsers.id })
+      .from(staffUsers)
+      .where(eq(staffUsers.email, input.email.toLowerCase().trim()))
       .limit(1)
-    if (existing) {
+    if (existing[0]) {
       throw new TRPCError({ code: 'CONFLICT', message: 'A user with this email exists' })
     }
 
-    const [user] = await ctx.db
-      .insert(users)
-      .values({
-        shopId: ctx.user.shopId,
-        name: input.name,
-        email: input.email.toLowerCase().trim(),
-        passwordHash: await bcrypt.hash(input.password, 12),
-        role: input.role,
-        active: 1,
+    try {
+      const created = await staffAuth.api.signUpEmail({
+        body: {
+          name: input.name,
+          email: input.email.toLowerCase().trim(),
+          password: input.password,
+          role: input.role,
+          shopId: ctx.user.shopId,
+          active: true,
+        } as {
+          name: string
+          email: string
+          password: string
+          role: (typeof input)['role']
+          shopId: number
+          active: boolean
+        },
+        headers: sessionHeaders(ctx),
       })
-      .returning(publicUser)
-    return user
+      const user = created.user as {
+        id: string
+        name: string
+        email: string
+        role: string
+        createdAt?: Date | string
+      }
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role as typeof input.role,
+        active: true,
+        createdAt: new Date(user.createdAt ?? Date.now()),
+      }
+    } catch (e) {
+      const statusCode =
+        e instanceof APIError ? e.statusCode : (e as { statusCode?: number }).statusCode
+      if (statusCode === 422) {
+        throw new TRPCError({ code: 'CONFLICT', message: 'A user with this email exists' })
+      }
+      throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to create staff member' })
+    }
   }),
 
   updateRole: ownerProcedure.input(updateRoleInput).mutation(async ({ ctx, input }) => {
@@ -56,9 +87,9 @@ export const staffRouter = router({
       throw new TRPCError({ code: 'BAD_REQUEST', message: 'You cannot demote yourself' })
     }
     const [user] = await ctx.db
-      .update(users)
+      .update(staffUsers)
       .set({ role: input.role })
-      .where(and(eq(users.id, input.userId), eq(users.shopId, ctx.user.shopId)))
+      .where(and(eq(staffUsers.id, input.userId), eq(staffUsers.shopId, ctx.user.shopId)))
       .returning(publicUser)
     if (!user) throw new TRPCError({ code: 'NOT_FOUND' })
     return user
@@ -69,11 +100,21 @@ export const staffRouter = router({
       throw new TRPCError({ code: 'BAD_REQUEST', message: 'You cannot deactivate yourself' })
     }
     const [user] = await ctx.db
-      .update(users)
-      .set({ active: input.active ? 1 : 0 })
-      .where(and(eq(users.id, input.userId), eq(users.shopId, ctx.user.shopId)))
+      .update(staffUsers)
+      .set({ active: input.active })
+      .where(and(eq(staffUsers.id, input.userId), eq(staffUsers.shopId, ctx.user.shopId)))
       .returning(publicUser)
     if (!user) throw new TRPCError({ code: 'NOT_FOUND' })
     return user
   }),
 })
+
+function sessionHeaders(ctx: Context): Headers {
+  const headers = new Headers()
+  // Forward the raw Authorization header so the bearer plugin signs the bare
+  // token into a valid session cookie (consistent with getStaffUser).
+  if (ctx.req.headers.authorization) {
+    headers.set('authorization', ctx.req.headers.authorization)
+  }
+  return headers
+}

@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { and, desc, eq } from 'drizzle-orm'
 import { customers, loyaltyTransactions } from '@cribstone/db'
 import { awardPointsInput, customerByPhoneInput, redeemPointsInput, customerSearchInput } from '@cribstone/shared'
-import { publicProcedure, protectedProcedure, router } from '../trpc'
+import { publicProcedure, managerProcedure, router } from '../trpc'
 import { getCustomerByPhone, redeemLoyalty } from '../services/loyalty'
 import { getShopId } from '../services/shop'
 
@@ -12,11 +12,11 @@ export const customersRouter = router({
     return getCustomerByPhone(ctx.db, shopId, input.phone)
   }),
 
-  search: protectedProcedure.input(customerSearchInput).query(async ({ ctx, input }) => {
+  search: managerProcedure.input(customerSearchInput).query(async ({ ctx, input }) => {
     return getCustomerByPhone(ctx.db, ctx.user.shopId, input.phone)
   }),
 
-  list: protectedProcedure.query(async ({ ctx }) => {
+  list: managerProcedure.query(async ({ ctx }) => {
     return ctx.db
       .select()
       .from(customers)
@@ -25,7 +25,7 @@ export const customersRouter = router({
       .limit(100)
   }),
 
-  transactions: protectedProcedure
+  transactions: managerProcedure
     .input(customerSearchInput)
     .query(async ({ ctx, input }) => {
       const customer = await getCustomerByPhone(ctx.db, ctx.user.shopId, input.phone)
@@ -45,12 +45,9 @@ export const customersRouter = router({
       return result
     }),
 
-  awardPoints: protectedProcedure
+  awardPoints: managerProcedure
     .input(awardPointsInput)
     .mutation(async ({ ctx, input }) => {
-      if (ctx.user.role === 'barista') {
-        throw new TRPCError({ code: 'FORBIDDEN' })
-      }
       const [customer] = await ctx.db
         .select()
         .from(customers)

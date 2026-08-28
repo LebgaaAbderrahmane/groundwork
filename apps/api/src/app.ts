@@ -7,6 +7,7 @@ import { env } from './env'
 import { createContext } from './trpc'
 import { appRouter } from './routers'
 import { customerAuth } from './lib/customerAuth'
+import { staffAuth, STAFF_BASE_PATH } from './lib/staffAuth'
 import { orderEvents } from './services/events'
 
 export function createApp() {
@@ -36,6 +37,7 @@ export function createApp() {
 
   // Better Auth must be mounted before body-parsing middleware.
   app.all('/api/auth/*splat', toNodeHandler(customerAuth))
+  app.all(`${STAFF_BASE_PATH}/*splat`, toNodeHandler(staffAuth))
 
   app.use(express.json())
   app.use(cookieParser())

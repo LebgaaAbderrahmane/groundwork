@@ -7,10 +7,10 @@ import {
   ingredientInput,
   recipeInput,
 } from '@cribstone/shared'
-import { protectedProcedure, router, ownerProcedure } from '../trpc'
+import { managerProcedure, router } from '../trpc'
 
 export const inventoryRouter = router({
-  list: protectedProcedure.query(async ({ ctx }) => {
+  list: managerProcedure.query(async ({ ctx }) => {
     const rows = await ctx.db
       .select()
       .from(ingredients)
@@ -22,7 +22,7 @@ export const inventoryRouter = router({
     }))
   }),
 
-  lowStock: protectedProcedure.query(async ({ ctx }) => {
+  lowStock: managerProcedure.query(async ({ ctx }) => {
     const rows = await ctx.db
       .select()
       .from(ingredients)
@@ -36,7 +36,7 @@ export const inventoryRouter = router({
     return rows
   }),
 
-  movements: protectedProcedure.query(async ({ ctx }) => {
+  movements: managerProcedure.query(async ({ ctx }) => {
     return ctx.db
       .select()
       .from(inventoryMovements)
@@ -45,7 +45,7 @@ export const inventoryRouter = router({
       .limit(50)
   }),
 
-  recipes: protectedProcedure.query(async ({ ctx }) => {
+  recipes: managerProcedure.query(async ({ ctx }) => {
     const rows = await ctx.db
       .select({
         id: recipes.id,
@@ -61,7 +61,7 @@ export const inventoryRouter = router({
     return rows
   }),
 
-  adjust: protectedProcedure
+  adjust: managerProcedure
     .input(adjustStockInput)
     .mutation(async ({ ctx, input }) => {
       const [ing] = await ctx.db
@@ -94,7 +94,7 @@ export const inventoryRouter = router({
       return updated
     }),
 
-  createIngredient: ownerProcedure
+  createIngredient: managerProcedure
     .input(ingredientInput)
     .mutation(async ({ ctx, input }) => {
       const [ing] = await ctx.db
@@ -110,7 +110,7 @@ export const inventoryRouter = router({
       return ing
     }),
 
-  updateIngredient: ownerProcedure
+  updateIngredient: managerProcedure
     .input(ingredientInput.partial().extend({ id: z.number().int().positive() }))
     .mutation(async ({ ctx, input }) => {
       const { id, ...rest } = input
@@ -130,7 +130,7 @@ export const inventoryRouter = router({
       return ing
     }),
 
-  setRecipes: ownerProcedure
+  setRecipes: managerProcedure
     .input(recipeInput.array())
     .mutation(async ({ ctx, input }) => {
       const productId = input[0]?.productId
