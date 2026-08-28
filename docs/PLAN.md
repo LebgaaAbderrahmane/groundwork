@@ -1,7 +1,7 @@
 # Cribstone Coffee — Full System Plan
 
 > Living document. Update statuses as phases complete.
-> Last updated: 2026-08-06
+> Last updated: 2026-08-28
 
 ## 1. Goal
 
@@ -27,13 +27,13 @@ coffeeshop/                      # pnpm workspace (git repo)
 ├── apps/
 │   ├── web/                     # customer site (existing project moved here)
 │   ├── admin/                   # dashboard (placeholder; built in Phase 6)
-│   └── api/                     # Express + tRPC + Drizzle + JWT
-│       └── src/{index,env,db,trpc}.ts, lib/auth.ts, routers/*
+│   └── api/                     # Express + tRPC + Drizzle + Better Auth
+│       └── src/{index,env,db,trpc}.ts, lib/*(auth), routers/*
 └── packages/
     ├── shared/                  # zod schemas + domain constants/types
     │   └── src/{domain,orders,auth,menu,inventory,ops}.ts
     └── db/                      # Drizzle schema + migrations + seed
-        ├── src/schema.ts        # all 17 tables
+        ├── src/schema.ts        # all 23 tables
         ├── migrations/          # generated SQL (commit)
         └── scripts/{migrate,seed}.ts
 ```
@@ -58,8 +58,9 @@ pnpm db:migrate / db:generate / db:seed / db:studio
 - Owner login: `braxton@cribstonecoffee.com` / `cribstone2026`
 - 4 categories · 6 products · milk/size option groups · 5 ingredients + recipes · 3 tables
 
-**Env vars** (`.env.example`): `DATABASE_URL`, `JWT_SECRET`, `PORT`,
-`NODE_ENV`, `WEB_ORIGIN`, `ADMIN_ORIGIN`.
+**Env vars** (`.env.example`): `DATABASE_URL`, `PORT`, `NODE_ENV`,
+`WEB_ORIGIN`, `ADMIN_ORIGIN`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`,
+`BETTER_AUTH_TRUSTED_ORIGINS` (+ optional social provider keys).
 
 > Note: scripts load `.env` from repo root explicitly — do not rely on
 > cwd-relative dotenv.
@@ -71,8 +72,9 @@ All prices integer pence. JSONB for snapshots/settings.
 | Table | Notes |
 |---|---|
 | `shops` | profile, hours, paymentMode, settings jsonb |
-| `users` | role: owner/manager/barista, active, bcrypt hash |
-| `refresh_tokens` | sha256 hash, 30d expiry |
+| `staff_users` | role: owner/manager/barista, active, Better Auth (email + password) |
+| `staff_sessions` / `staff_account` / `staff_verification` | Better Auth staff sessions/accounts |
+| `user` / `session` / `account` / `verification` | Better Auth customer sessions (optional) |
 | `categories` | shop-scoped, sort, active |
 | `products` | price_pence, image, dietary_tags[], active |
 | `option_groups` | required, min, max (e.g. Milk, Size) |
@@ -92,10 +94,12 @@ Order status pipeline: `received → making → ready → collected` (+ `cancell
 
 ## 5. API (tRPC + Express)
 
-- Routers: `auth` · `menu` · `orders` · `inventory` · `staff` · `customers` ·
+- Routers: `menu` · `orders` · `inventory` · `staff` · `customers` ·
   `analytics` · `tables` · `settings`
-- Auth: httpOnly cookies (`gw_access` 15m JWT, `gw_refresh` 30d rotating);
-  `publicProcedure` / `protectedProcedure` / `ownerProcedure`
+- Auth: [Better Auth](https://better-auth.com). Staff sign-in via `/api/staff-auth/*`
+  (Bearer token / staff cookie); customers via Better Auth sessions. Procedures:
+  `publicProcedure` / `protectedProcedure` / `ownerProcedure` / `managerProcedure` /
+  `customerProcedure`
 - Realtime: `GET /api/events` SSE (`order:update` events)
 - Services: inventory auto-deduct on order, loyalty points, mock payments
   (`PaymentProvider` interface)
