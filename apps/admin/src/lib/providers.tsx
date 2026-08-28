@@ -4,9 +4,11 @@ import { httpBatchLink } from '@trpc/client'
 import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc'
 import { useApiUrlStore } from '@/store/apiUrl'
+import { useSession } from '@/store/session'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const apiUrl = useApiUrlStore((s) => s.apiUrl)
+  const token = useSession((s) => s.token)
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -30,9 +32,19 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const trpcClient = useMemo(
     () =>
       trpc.createClient({
-        links: [httpBatchLink({ url: apiUrl })],
+        links: [
+          httpBatchLink({
+            url: apiUrl,
+            fetch: (url, init) =>
+              fetch(url, { ...init, credentials: 'include' }),
+            headers() {
+              if (!token) return {}
+              return { Authorization: `Bearer ${token}` }
+            },
+          }),
+        ],
       }),
-    [apiUrl],
+    [apiUrl, token],
   )
 
   return (

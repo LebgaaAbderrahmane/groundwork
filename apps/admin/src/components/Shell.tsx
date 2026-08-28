@@ -10,11 +10,13 @@ import {
   Settings,
   UserRound,
   Table2,
+  ChefHat,
   ChevronDown,
 } from 'lucide-react'
 import { BRAND } from '@cribstone/shared'
 import { trpc } from '@/lib/trpc'
-import { useSession } from '@/store/session'
+import { useSession, type SessionUser, type SessionUserRecord } from '@/store/session'
+import { useSession as useAuthSession, signOut } from '@/lib/auth'
 import { LoginPage } from '@/pages/LoginPage'
 import { Button, ConfirmDialog } from '@/components/ui'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -23,37 +25,63 @@ import { isUnsavedDirty, subscribeUnsaved, setUnsavedDirty } from '@/lib/unsaved
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { OfflineBanner } from '@/components/OfflineBanner'
 
-const NAV = [
-  { to: '/', label: 'Dashboard', icon: Home, end: true },
-  { to: '/orders', label: 'Orders', icon: LayoutList },
-  { to: '/menu', label: 'Menu', icon: Coffee },
-  { to: '/inventory', label: 'Inventory', icon: Boxes },
-  { to: '/customers', label: 'Customers', icon: UserRound },
-  { to: '/tables', label: 'Tables', icon: Table2 },
-  { to: '/staff', label: 'Staff', icon: Users },
-  { to: '/settings', label: 'Settings', icon: Settings },
+type Role = SessionUser['role']
+
+const NAV: {
+  to: string
+  label: string
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
+  end?: boolean
+  roles: Role[]
+}[] = [
+  { to: '/', label: 'Dashboard', icon: Home, end: true, roles: ['owner', 'manager', 'barista'] },
+  { to: '/orders', label: 'Orders', icon: LayoutList, roles: ['owner', 'manager', 'barista'] },
+  { to: '/kitchen', label: 'Kitchen', icon: ChefHat, roles: ['owner', 'manager', 'barista'] },
+  { to: '/menu', label: 'Menu', icon: Coffee, roles: ['owner', 'manager'] },
+  { to: '/inventory', label: 'Inventory', icon: Boxes, roles: ['owner', 'manager'] },
+  { to: '/customers', label: 'Customers', icon: UserRound, roles: ['owner', 'manager'] },
+  { to: '/tables', label: 'Tables', icon: Table2, roles: ['owner', 'manager'] },
+  { to: '/staff', label: 'Staff', icon: Users, roles: ['owner'] },
+  { to: '/settings', label: 'Settings', icon: Settings, roles: ['owner'] },
 ]
+
+function navFor(role: Role) {
+  return NAV.filter((item) => item.roles.includes(role))
+}
 
 function Layout() {
   const user = useSession((s) => s.user)
-  const setUser = useSession((s) => s.setUser)
+  const setSession = useSession((s) => s.setSession)
   const navigate = useNavigate()
   const utils = trpc.useUtils()
+  const auth = useAuthSession()
 
-  const me = trpc.auth.me.useQuery(undefined, { retry: false })
+  const sessionUser = auth.data?.user as SessionUserRecord | undefined
+  const sessionToken = auth.data?.session.token
 
   useEffect(() => {
-    if (me.data?.user) setUser(me.data.user)
-    if (me.isError) setUser(null)
-  }, [me.data, me.isError, setUser])
+    if (sessionUser) {
+      setSession(
+        {
+          id: sessionUser.id,
+          name: sessionUser.name,
+          email: sessionUser.email,
+          role: sessionUser.role as Role,
+          shopId: Number(sessionUser.shopId),
+        },
+        sessionToken,
+      )
+    } else if (!auth.isPending) {
+      setSession(null)
+    }
+  }, [sessionUser, sessionToken, auth.isPending, setSession])
 
-  const logout = trpc.auth.logout.useMutation({
-    onSuccess: async () => {
-      setUser(null)
-      await utils.invalidate()
-      navigate('/login')
-    },
-  })
+  const logout = async () => {
+    await signOut()
+    setSession(null)
+    await utils.invalidate()
+    navigate('/login')
+  }
 
   const dirty = useSyncExternalStore(subscribeUnsaved, isUnsavedDirty)
 
@@ -91,7 +119,7 @@ function Layout() {
     if (blocker.state === 'blocked') blocker.reset()
   }
 
-  if (me.isLoading) {
+  if (auth.isPending) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-background">
         <Coffee className="size-8 animate-pulse text-accent" strokeWidth={1.6} />
@@ -102,6 +130,8 @@ function Layout() {
   if (!user) {
     return <LoginPage />
   }
+
+  const roleNav = navFor(user.role)
 
   return (
     <div className="flex min-h-screen bg-surface">
@@ -117,7 +147,7 @@ function Layout() {
         </div>
 
         <nav className="flex-1 space-y-1 px-3">
-          {NAV.map((item) => (
+          {roleNav.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -139,8 +169,8 @@ function Layout() {
       </aside>
 
       <div className="flex min-h-screen flex-1 flex-col md:pl-56">
-        <MobileNav user={user} onLogout={() => logout.mutate()} />
-        <TopBar user={user} onLogout={() => logout.mutate()} />
+        <MobileNav user={user} onLogout={logout} />
+        <TopBar user={user} onLogout={logout} />
         <main id="main-content" className="flex-1 px-6 py-8 md:px-16 md:py-10">
           <ErrorBoundary>
             <Outlet />
@@ -253,7 +283,7 @@ function MobileNav({
         </div>
       </div>
       <nav className="flex gap-1 overflow-x-auto px-3 pb-2">
-        {NAV.map((item) => (
+        {navFor(user.role).map((item) => (
           <NavLink
             key={item.to}
             to={item.to}

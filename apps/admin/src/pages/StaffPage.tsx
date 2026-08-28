@@ -44,7 +44,7 @@ export default function StaffPage() {
   })
 
   const [form, setForm] = useState({ name: '', email: '', role: 'barista', password: '' })
-  const [removeTarget, setRemoveTarget] = useState<{ id: number; name: string } | null>(null)
+  const [removeTarget, setRemoveTarget] = useState<{ id: string; name: string } | null>(null)
 
   const staff = list.data ?? []
 
@@ -118,7 +118,7 @@ export default function StaffPage() {
                       {u.name}
                       {u.id === me?.id && <Badge className="bg-accent/15 text-accent">You</Badge>}
                     </p>
-                    <p className={cn('text-sm text-muted-foreground', u.active === 0 && 'line-through opacity-60')}>
+                    <p className={cn('text-sm text-muted-foreground', !u.active && 'line-through opacity-60')}>
                       {u.email}
                     </p>
                   </div>
@@ -140,14 +140,14 @@ export default function StaffPage() {
                     <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
                       <input
                         type="checkbox"
-                        checked={u.active === 1}
+                        checked={u.active}
                         onChange={(e) =>
                           setActive.mutate({ userId: u.id, active: e.target.checked })
                         }
                         className="size-4 accent-[hsl(var(--primary))]"
                       />
                       <span className="text-[10px] font-medium uppercase tracking-[0.1em]">
-                        {u.active === 1 ? 'Active' : 'Disabled'}
+                        {u.active ? 'Active' : 'Disabled'}
                       </span>
                     </label>
                     <Badge className="bg-background text-muted-foreground ring-1 ring-border">
