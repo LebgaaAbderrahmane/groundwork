@@ -17,7 +17,7 @@ import {
   myOrdersInput,
   type OrderStatus,
 } from '@cribstone/shared'
-import { publicProcedure, protectedProcedure, router } from '../trpc'
+import { customerProcedure, publicProcedure, protectedProcedure, router } from '../trpc'
 import type { DB } from '../db'
 import { deductInventory } from '../services/inventory'
 import { applyLoyalty } from '../services/loyalty'
@@ -192,6 +192,7 @@ export const ordersRouter = router({
         paymentStatus,
         pickupAt: input.pickupAt ? new Date(input.pickupAt) : null,
         tableId,
+        customerUserId: ctx.customer?.id ?? null,
       })
       .returning()
 
@@ -228,6 +229,29 @@ export const ordersRouter = router({
       .where(and(eq(orders.shopId, shopId), eq(orders.customerPhone, input.phone)))
       .orderBy(desc(orders.createdAt))
       .limit(5)
+    const itemRows = await ctx.db
+      .select()
+      .from(orderItems)
+      .where(inArray(orderItems.orderId, rows.map((r) => r.id)))
+    const itemsByOrder = new Map<number, typeof itemRows>()
+    for (const item of itemRows) {
+      const list = itemsByOrder.get(item.orderId) ?? []
+      list.push(item)
+      itemsByOrder.set(item.orderId, list)
+    }
+    const labels = await tableLabelsFor(ctx.db, rows)
+    return rows.map((o) => toOrderWithItems(o, itemsByOrder.get(o.id) ?? [], labels.get(o.tableId ?? -1)))
+  }),
+
+  myOrders: customerProcedure.query(async ({ ctx }) => {
+    const shopId = await getShopId(ctx.db)
+    const uid = ctx.customer!.id
+    const rows = await ctx.db
+      .select()
+      .from(orders)
+      .where(and(eq(orders.shopId, shopId), eq(orders.customerUserId, uid)))
+      .orderBy(desc(orders.createdAt))
+      .limit(50)
     const itemRows = await ctx.db
       .select()
       .from(orderItems)
