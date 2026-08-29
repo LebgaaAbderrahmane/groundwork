@@ -6,6 +6,14 @@ export function defaultApiUrl(): string {
   return '/api/trpc'
 }
 
+/** SSE events endpoint derived from the configured tRPC URL (browser proxied or absolute host). */
+export function eventsUrl(): string {
+  const api = useApiUrlStore.getState().apiUrl
+  if (api === defaultApiUrl()) return '/api/events'
+  const base = api.replace(/\/trpc\/?$/, '').replace(/\/+$/, '')
+  return `${base}/api/events`
+}
+
 function storedApiUrl(): string {
   try {
     const v = localStorage.getItem(STORAGE_KEY)

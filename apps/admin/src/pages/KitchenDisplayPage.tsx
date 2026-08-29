@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Coffee, Timer } from 'lucide-react'
 import { trpc } from '@/lib/trpc'
+import { eventsUrl } from '@/store/apiUrl'
 import { dollars } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { useDocumentTitle, useBroadcastChannel } from '@/lib/hooks'
@@ -83,7 +84,7 @@ export default function KitchenDisplayPage() {
   }, [queue.data, post])
 
   useEffect(() => {
-    const es = new EventSource('/api/events')
+    const es = new EventSource(eventsUrl())
     es.onmessage = () => utils.orders.queue.invalidate()
     return () => es.close()
   }, [utils.orders.queue])
@@ -118,8 +119,8 @@ export default function KitchenDisplayPage() {
   void now
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-surface-alt">
-      <header className="flex items-center justify-between border-b px-6 py-3">
+    <div className="flex flex-col bg-surface-alt">
+      <header className="mb-4 flex items-center justify-between rounded-xl border bg-card px-6 py-3 shadow-sm">
         <div className="flex items-center gap-3">
           <Coffee className="size-5 text-accent" strokeWidth={1.7} />
           <h1 className="font-display text-lg font-semibold tracking-tight">Kitchen Display</h1>
@@ -129,7 +130,7 @@ export default function KitchenDisplayPage() {
         </div>
       </header>
 
-      <main className="flex min-h-0 flex-1 gap-4 overflow-x-auto p-4">
+      <main className="flex h-[calc(100svh-11rem)] min-h-0 gap-4 overflow-x-auto p-4">
         {grouped.map((col) => (
           <section key={col.key} className="flex min-w-[320px] flex-1 flex-col rounded-xl border bg-card/60 p-3">
             <div className="mb-3 flex items-center justify-between">
