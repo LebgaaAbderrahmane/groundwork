@@ -7,6 +7,7 @@ import { Badge, Button, Card, EmptyState, LiveBadge, PaymentStatusBadge, TimeAgo
 import { cn } from '@/lib/utils'
 import { useDocumentTitle, useBroadcastChannel } from '@/lib/hooks'
 import { notify } from '@/lib/notifications'
+import { eventsUrl } from '@/store/apiUrl'
 
 const STATUS_STYLES: Record<string, string> = {
   received: 'bg-surface text-foreground',
@@ -49,7 +50,7 @@ export default function OrdersPage() {
   }, [queue.data, post])
 
   useEffect(() => {
-    const es = new EventSource('/api/events')
+    const es = new EventSource(eventsUrl())
     es.onmessage = () => {
       utils.orders.queue.invalidate()
     }
