@@ -34,6 +34,13 @@ test.describe('Kitchen display', () => {
     await placeOrderBtn.click()
     await page.waitForURL(/\/order\/\d+/, { timeout: 10_000 })
 
+    // Kitchen is now login-gated (renders inside the shell like other tabs)
+    await page.goto(`${ADMIN}/login`)
+    await page.getByLabel(/email/i).fill('braxton@cribstonecoffee.com')
+    await page.getByLabel(/password/i).fill('cribstone2026')
+    await page.getByRole('button', { name: /sign in/i }).click()
+    await page.waitForURL(`${ADMIN}/`, { timeout: 10_000 })
+
     // Open kitchen display
     await page.goto(`${ADMIN}/kitchen`)
     await page.waitForSelector('h1:text("Kitchen Display")', { timeout: 10_000 })
