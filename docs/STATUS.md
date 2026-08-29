@@ -7,15 +7,15 @@
 
 ## 1. Current branch / head
 
-- **Branch:** `stage/32-rate-limiting`
-- **Open PR:** [PR #33](https://github.com/LebgaaAbderrahmane/groundwork/pull/33) → base `main`
-- **Title:** Stage 32: rate limiting
-- **Head commit:** `TBD` (commits: dependency, service + wiring, tests, docs)
+- **Branch:** `stage/33-expand-tests`
+- **Open PR:** [PR #34](https://github.com/LebgaaAbderrahmane/groundwork/pull/34) → base `main`
+- **Title:** Stage 33: expand tests
+- **Head commit:** `TBD` (commits: helpers, one commit per router test file, docs)
 - CI (`verify` + `e2e`) must be green before merging.
 
 ## 2. What has been done (shipped/merged through main)
 
-Work up to `main` = `0aebdd9` (merge of PR #32, Stage 31).
+Work up to `main` = `0062b7e` (merge of PR #33, Stage 32).
 
 ### Phases (from `docs/PLAN.md`)
 | # | Phase | Status |
@@ -57,7 +57,7 @@ Work up to `main` = `0aebdd9` (merge of PR #32, Stage 31).
 - **CI wired:** added a Postgres service + `pnpm test` step to `verify`; restored the disabled
   `e2e` job with Better Auth env.
 
-### Stage 32 — Rate limiting (PR #33, under review)
+### Stage 32 — Rate limiting (merged, PR #33)
 - Added `express-rate-limit` to the API.
 - New `apps/api/src/services/rateLimit.ts`: per-IP limiter factories (`authRateLimit`,
   `orderCreateRateLimit`) with tunable windows/limits and a unified `429 { error }` JSON body.
@@ -71,20 +71,42 @@ Work up to `main` = `0aebdd9` (merge of PR #32, Stage 31).
 - The web/admin auth clients already toast on a `429` — no client change needed.
 - **Result: 15/15 tests green (11 prior + 4 new).**
 
+### Stage 33 — Expand tests (PR #34, under review)
+- Grew the API vitest/supertest suite from 15 to **60 tests across 12 files**, adding coverage
+  for every admin/ops router and the procedure role tiers:
+  - `test/helpers.ts` — shared `staffToken`/`staffAgent` (staff sign-in + Bearer) + `STAFF`.
+  - `menu-admin.test.ts` — menu admin CRUD + owner-vs-barista gating (category/product/option/reorder).
+  - `inventory.test.ts` — low-stock flag, `lowStock`, adjust/clamp-at-zero, ingredient
+    create/update, recipes + setRecipes (uses scratch ingredients only).
+  - `staff.test.ts` — list, invite/duplicate-409, role update on scratch users, owner self-demote
+    400, self-deactivate 400.
+  - `customers.test.ts` — byPhone/search/list/transactions, awardPoints 404, redeemPoints
+    insufficient 400.
+  - `analytics.test.ts` — dashboard/revenueTrend/periodComparison after placing an order.
+  - `tables.test.ts` — byToken, list-401, create/list/regenerateQR/remove, dine_in, barista 403.
+  - `settings.test.ts` — get-401, get-any-staff, update owner-only 403, update+restore.
+  - `roles.test.ts` — procedure tier gating (barista/manager/owner/customer-401) + customer
+    weekly session cookie.
+- e2e (Playwright, 6 specs) verified green against the full stack; only the pre-existing
+  `customer-tracker` queue-`.first()` race is flaky but passes on its configured `retry: 1`.
+- Shared-DB discipline: mutating tests use **scratch fixtures** and never touch seeded data
+  other suites depend on (Whole milk / Espresso beans stock, Flat White recipes, seeded users'
+  roles or Julia's manager role).
+- **Result: 60/60 API tests green; `e2e` verified.**
+
 ## 3. In flight
 
-- Review + merge of **PR #33 (Stage 32)**. Verify CI (both `verify` and `e2e`) is green.
+- Review + merge of **PR #34 (Stage 33)**. Verify CI (both `verify` and `e2e`) is green.
 - After merge: update `main`.
 
 ## 4. What has to be done (forward plan)
 
 Stage ordering currently planned (per-user confirmation):
-**33 (expand tests) → 34 (real Stripe payments)**, then the
+**34 (real Stripe payments)**, then the
 backlog (PWA offline, TLS/deploy hardening, observability, security hardening).
 
 | Stage | Scope | Notes / approach |
 |---|---|---|
-| **33** | **Expand tests** | Grow the vitest/supertest suite (menu CRUD, inventory, staff roles, settings, analytics, customers/loyalty) and restore/verify Playwright e2e coverage. |
 | **34** | **Real Stripe payments** | Replace the `PaymentProvider` mock with a real Stripe integration (server-confirmed `card` flow), keeping the interface so mock mode still works in dev/tests. |
 | Backlog | **PWA offline** | Service worker + offline shell for the customer web app. |
 | Backlog | **TLS / deploy hardening** | HTTPS, secrets, container hardening, env-based config for prod. |
@@ -97,13 +119,17 @@ Keep these in mind on every stage (full detail in `docs/PROCESS.md`):
 
 - One branch + one push + one PR per stage, base `main`, title `Stage N: …`.
 - Gates before commit: `pnpm typecheck` · `pnpm lint` (only pre-existing web warnings) ·
-  `pnpm test` (15/15, needs db up) · `pnpm build`.
+  `pnpm test` (60/60, needs db up) · `pnpm build`.
 - Migration policy: test DB is recreated+migrated+seeded per run; **never** `drizzle migrate()`
   on the dev DB — apply schema to dev via direct SQL.
 - Drizzle-kit can bake a generate-time literal into a column default instead of `now()` — grep
   migrations for `DEFAULT '20` after generating.
 - Test fixtures: no hardcoded product/option IDs; discover via `menu.publicMenu`. Flat White has
   3 option groups. Loyalty: `earnPoints(430) = 4`.
+- Mutating tests share one `cribstone_test` DB across files: use **scratch fixtures** (own
+  products/ingredients/staff/orders) and never mutate seeded data other suites rely on (Whole
+  milk / Espresso beans stock used by `orders.test.ts` deltas, Flat White recipes, seeded users'
+  roles — never demote Julia the manager). `fileParallelism: false` keeps order deterministic.
 - Rate limiting: default auth limit 20/15min, order-create 20/1min per IP; `/api/health` +
   `/api/events` exempt. `createApp(rateLimit?)` injects a config for tests — use a fresh app
   instance per rate-limit test (each has its own in-memory store / key space). `trust proxy` is

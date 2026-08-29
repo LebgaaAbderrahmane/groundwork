@@ -2,7 +2,7 @@
 
 > Living runbook: how this repo is structured, how work is gated, and the exact
 > workflow (branch → gates → commit → PR → merge) used for every stage.
-> Last updated: 2026-08-28
+> Last updated: 2026-08-29
 
 ## 1. The repo at a glance
 
@@ -130,6 +130,16 @@ The e2e job was restored (was previously commented out) with Better Auth env
   one) or their requests will count into another test's quota. Inject small limits via
   `createApp({ authLimit, orderLimit, ... })`; auth tests share the same `authLimit` budget, so
   isolate each scenario.
+- **Self-contained / scratch fixtures (shared DB):** the whole suite shares one `cribstone_test`
+  DB across files, so a given file can rely on seed data, but **mutating** tests must build their
+  own fixtures and never mutate anything other tests read:
+  - Don't touch seeded stock used by `orders.test.ts` deltas (Whole milk, Espresso beans) or the
+    Flat White recipes — create your own scratch ingredient/product instead.
+  - Don't demote/dev-reactivate the seeded `julia@` manager or repoint the shop in a way that
+    outlives the file (restore `settings` when you mutate it). `fileParallelism: false` is what
+    makes this deterministic.
+  - `test/helpers.ts` exports `staffToken`/`staffAgent`/`STAFF` for the four seeded staff
+    (`braxton` owner, `julia` manager, `quinn`/`maya` baristas).
 
 ## 8. Observability / quality gates on every PR
 
