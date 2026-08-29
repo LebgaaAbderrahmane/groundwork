@@ -1,7 +1,7 @@
 # Cribstone Coffee — Full System Plan
 
 > Living document. Update statuses as phases complete.
-> Last updated: 2026-08-28
+> Last updated: 2026-08-29
 
 ## 1. Goal
 
@@ -107,14 +107,17 @@ Order status pipeline: `received → making → ready → collected` (+ `cancell
 - Services: inventory auto-deduct on order, loyalty points, mock payments
   (`PaymentProvider` interface)
 - Tests: vitest + supertest against a fresh `cribstone_test` DB (recreated by
-  `test/global-setup.ts`; run `pnpm test`)
+  `test/global-setup.ts`; run `pnpm test`) — **60 tests / 12 files** covering every admin/ops
+  router (menu-admin CRUD, inventory, staff, customers/loyalty, analytics, tables, settings) plus
+  procedure role-tier gating; e2e (Playwright) against the full stack.
 
 **Done (P3):** auth login/logout/me · menu publicMenu + admin CRUD · orders
 create (server-priced, option-group validated) / queue / advance / cancel /
 myRecent · inventory list/lowStock/movements/adjust + ingredient CRUD + recipes
 · staff invite/roles · customers search/awardPoints · analytics dashboard ·
 tables · settings. Verified: 11 vitest tests green + live smoke test (order →
-SSE → inventory deduct → analytics).
+SSE → inventory deduct → analytics). Extended in Stage 33 to **60 vitest tests / 12 files**
+covering all admin/ops routers + role gating, with e2e verified.
 
 ## 6. Frontend — Customer App (`apps/web`)
 
