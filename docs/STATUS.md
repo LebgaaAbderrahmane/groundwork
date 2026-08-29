@@ -8,7 +8,7 @@
 ## 1. Current branch / head
 
 - **Branch:** `stage/32-rate-limiting`
-- **Open PR:** [PR #34](https://github.com/LebgaaAbderrahmane/groundwork/pull/34) → base `main`
+- **Open PR:** [PR #33](https://github.com/LebgaaAbderrahmane/groundwork/pull/33) → base `main`
 - **Title:** Stage 32: rate limiting
 - **Head commit:** `TBD` (commits: dependency, service + wiring, tests, docs)
 - CI (`verify` + `e2e`) must be green before merging.
@@ -57,7 +57,7 @@ Work up to `main` = `0aebdd9` (merge of PR #32, Stage 31).
 - **CI wired:** added a Postgres service + `pnpm test` step to `verify`; restored the disabled
   `e2e` job with Better Auth env.
 
-### Stage 32 — Rate limiting (PR #34, under review)
+### Stage 32 — Rate limiting (PR #33, under review)
 - Added `express-rate-limit` to the API.
 - New `apps/api/src/services/rateLimit.ts`: per-IP limiter factories (`authRateLimit`,
   `orderCreateRateLimit`) with tunable windows/limits and a unified `429 { error }` JSON body.
@@ -73,7 +73,7 @@ Work up to `main` = `0aebdd9` (merge of PR #32, Stage 31).
 
 ## 3. In flight
 
-- Review + merge of **PR #34 (Stage 32)**. Verify CI (both `verify` and `e2e`) is green.
+- Review + merge of **PR #33 (Stage 32)**. Verify CI (both `verify` and `e2e`) is green.
 - After merge: update `main`.
 
 ## 4. What has to be done (forward plan)
