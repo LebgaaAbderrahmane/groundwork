@@ -33,7 +33,9 @@ pnpm dev             # api :4000 · web :5173 · admin :5174
 `dev` · `build` · `lint` · `typecheck` · `test` (API vitest) · `test:e2e` (Playwright) ·
 `db:migrate` · `db:generate` · `db:seed` · `db:reset` · `db:studio`.
 
-**Seed / login:** demo admin `braxton@cribstonecoffee.com` / `cribstone2026` (role `owner`).
+**Seed / login:** all demo accounts (4 staff roles, 6 loyalty customers, dine-in table tokens)
+are listed in `docs/STATUS.md` §6. Demo owner: `braxton@cribstonecoffee.com` / `cribstone2026`.
+Every staff password is `cribstone2026`.
 
 **Env:** copies of `.env.example` → `.env` at repo root (gitignored; `.env.example` is
 committed). Env vars are validated in `apps/api/src/env.ts` (zod) at process boot — a missing

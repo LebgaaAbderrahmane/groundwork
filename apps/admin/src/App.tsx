@@ -36,14 +36,11 @@ const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path: '/kitchen',
-    element: <LazyPage><KitchenDisplayPage /></LazyPage>,
-  },
-  {
     element: <AppShell />,
     children: [
       { path: '/', element: <LazyPage><DashboardPage /></LazyPage> },
       { path: '/orders', element: <LazyPage><OrdersPage /></LazyPage> },
+      { path: '/kitchen', element: <LazyPage><KitchenDisplayPage /></LazyPage> },
       { path: '/menu', element: <LazyPage><MenuPage /></LazyPage> },
       { path: '/inventory', element: <LazyPage><InventoryPage /></LazyPage> },
       { path: '/staff', element: <LazyPage><StaffPage /></LazyPage> },
