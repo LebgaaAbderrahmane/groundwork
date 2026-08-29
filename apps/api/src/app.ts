@@ -9,9 +9,18 @@ import { appRouter } from './routers'
 import { customerAuth } from './lib/customerAuth'
 import { staffAuth, STAFF_BASE_PATH } from './lib/staffAuth'
 import { orderEvents } from './services/events'
+import {
+  authRateLimit,
+  orderCreateRateLimit,
+  defaultRateLimitConfig,
+  type RateLimitConfig,
+} from './services/rateLimit'
 
-export function createApp() {
+export function createApp(rateLimit?: Partial<RateLimitConfig>) {
   const app = express()
+  const limitConfig: RateLimitConfig = { ...defaultRateLimitConfig, ...rateLimit }
+  const authLimit = authRateLimit(limitConfig)
+  const orderLimit = orderCreateRateLimit(limitConfig)
 
   const additional = env.ADDITIONAL_ORIGINS.split(',')
     .map((o) => o.trim())
@@ -35,9 +44,10 @@ export function createApp() {
     }),
   )
 
-  // Better Auth must be mounted before body-parsing middleware.
-  app.all('/api/auth/*splat', toNodeHandler(customerAuth))
-  app.all(`${STAFF_BASE_PATH}/*splat`, toNodeHandler(staffAuth))
+  // Better Auth must be mounted before body-parsing middleware. Rate-limit the
+  // auth endpoints per-IP to blunt brute-force / credential-stuffing attempts.
+  app.all('/api/auth/*splat', authLimit, toNodeHandler(customerAuth))
+  app.all(`${STAFF_BASE_PATH}/*splat`, authLimit, toNodeHandler(staffAuth))
 
   app.use(express.json())
   app.use(cookieParser())
@@ -59,6 +69,9 @@ export function createApp() {
     orderEvents.on('order:update', handler)
     req.on('close', () => orderEvents.off('order:update', handler))
   })
+
+  // Rate-limit public order creation (spam / abuse protection).
+  app.post('/api/trpc/orders.create', orderLimit)
 
   app.use(
     '/api/trpc',
