@@ -136,8 +136,49 @@ Keep these in mind on every stage (full detail in `docs/PROCESS.md`):
   unset (single-instance), so `X-Forwarded-For` is ignored.
 - Don't commit `apps/api/tsconfig.tsbuildinfo`.
 
-## 6. Quick reference
+## 6. Access & demo accounts (seed data)
 
-- Admin login: `braxton@cribstonecoffee.com` / `cribstone2026`.
-- API: `http://localhost:4000` (tRPC `/api/trpc`, SSE `/api/events`, health `/api/health`).
-- Web: `:5173` · Admin: `:5174` · Full-stack demo via `docker compose`: web `:8080`, admin `:8081`.
+Everything below is created by `packages/db/scripts/seed.ts`. Re-apply with
+`pnpm db:seed` (or `pnpm test` reseeds `cribstone_test` automatically).
+All staff passwords are the same: **`cribstone2026`**.
+
+**URLs / ports**
+
+- API: `http://localhost:4000` — tRPC `/api/trpc`, SSE `/api/events`, health `/api/health`
+- Web (customer): `http://localhost:5173`
+- Admin (staff): `http://localhost:5174`
+- Full-stack demo via `docker compose`: web `:8080`, admin `:8081`
+
+**Staff (admin sign-in at `http://localhost:5174`)**
+
+| Role | Name | Email | Can do |
+|---|---|---|---|
+| Owner | Braxton Jarratt | `braxton@cribstonecoffee.com` | everything + staff, settings, analytics |
+| Manager | Julia Jarratt | `julia@cribstonecoffee.com` | ops: orders, menu, inventory, customers, tables (no staff/settings) |
+| Barista | Quinn Jarratt | `quinn@cribstonecoffee.com` | orders queue, menu, inventory (read) |
+| Barista | Maya Chen | `maya@cribstonecoffee.com` | orders queue, menu, inventory (read) |
+
+> Role model: `owner` → full · `manager` → ops (excl. staff/settings) · `barista` → orders/menu.
+> The admin sidebar routes are role-gated to match.
+
+**Customers (loyalty, created when you check out with a phone)**
+
+| Name | Phone | Points |
+|---|---|---|
+| Alice Morgan | `+1 207 555 0101` | 120 |
+| Ben Harper | `+1 207 555 0102` | 45 |
+| Claire Dubois | `+1 207 555 0103` | 210 |
+| Daniel Reeves | `+1 207 555 0104` | 80 |
+| Emma Walsh | `+1 207 555 0105` | 15 |
+| Frank Okafor | `+1 207 555 0106` | 95 |
+
+**Dine-in tables (QR tokens)**
+
+| Label | Notes |
+|---|---|
+| Counter | fixed token `00000000-0000-4000-8000-000000000001` (deterministic for tests/QR) |
+| Window 1 · Window 2 · Patio 1 · Patio 2 | random `qrToken` generated per seed |
+
+**Demo data** — 17 products / 4 categories · 3 option groups on the espresso line (Milk, Size,
+Extras) · 11 ingredients with recipes · 27 orders for today (incl. 3 live in the queue + 1 with
+a `pending` payment), total revenue `$207.40`.
