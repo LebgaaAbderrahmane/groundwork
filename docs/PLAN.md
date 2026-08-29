@@ -101,6 +101,9 @@ Order status pipeline: `received → making → ready → collected` (+ `cancell
   `publicProcedure` / `protectedProcedure` / `ownerProcedure` / `managerProcedure` /
   `customerProcedure`
 - Realtime: `GET /api/events` SSE (`order:update` events)
+- Rate limiting: `express-rate-limit` per-IP thottling on the auth mounts (`/api/auth/*`,
+  `/api/staff-auth/*`) and public `orders.create`; configurable via `createApp(rateLimit?)`.
+  `services/rateLimit.ts` holds defaults; `/api/health` + `/api/events` are exempt.
 - Services: inventory auto-deduct on order, loyalty points, mock payments
   (`PaymentProvider` interface)
 - Tests: vitest + supertest against a fresh `cribstone_test` DB (recreated by
@@ -155,4 +158,6 @@ Verify each phase: `pnpm typecheck` + `pnpm lint` + `pnpm test` (+ manual happy 
 - **tRPC over REST** — shared types across web/admin/api.
 - **Separate `admin` app** — dashboard bundle isolated from public site.
 - **Mock payments v1** — `payment_status = in_store`; Stripe adapter later.
+- **Rate limiting** — `express-rate-limit` (in-memory, per-IP). Good for a single-instance v1;
+  revisit with a shared store (Redis) if/when horizontally scaling the API behind a proxy.
 - **tsx runtime** (dev + prod) for the API; packages export TS source directly.
