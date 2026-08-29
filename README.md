@@ -4,7 +4,7 @@ A full single-shop coffee shop system: a public marketing + order-ahead site, a 
 dashboard, and a shared API + Postgres backend — all in one pnpm monorepo.
 
 **Stack:** React 19 + Vite + Tailwind CSS v4 · Express + tRPC v11 + Drizzle ORM · PostgreSQL 16 ·
-Zustand · React Query.
+Zustand · React Query · express-rate-limit.
 
 ## Apps & packages
 
@@ -89,6 +89,10 @@ docker compose up -d --build     # db + api + web(8080) + admin(8081)
   phone number, and emits SSE updates. Status pipeline: `received → making → ready → collected`.
 - **Real-time queue**: the admin orders page opens `GET /api/events` (SSE) and invalidates its
   queue query on every event; nginx is configured with `proxy_buffering off` for that route.
+- **Rate limiting**: `express-rate-limit` throttles the auth endpoints (`/api/auth/*`,
+  `/api/staff-auth/*`) and public `orders.create` per IP (defaults 20/15min and 20/1min;
+  tunable in `apps/api/src/services/rateLimit.ts`). `GET /api/health` and `GET /api/events`
+  are exempt. Clients toast on HTTP `429`.
 - **Loyalty**: customers are keyed by `(shopId, phone)`; every order with a phone creates/finds
   the customer, increments visits, and adds a point.
 - **Payments**: mock. `in_store` orders start `pending` and are marked `paid` at `collected`;
